@@ -1,2 +1,6 @@
 *.nes
 *.asm
+*.html
+*.css
+*~
+*.dis65_rec
