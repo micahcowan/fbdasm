@@ -585,7 +585,19 @@
 "Comments":{
 "594":"Falls thru to next string start",
 "598":"Falls thru to next string start",
+"1275":"get the typed line number",
+"1280":"line num = 65535?",
+"1282":"no",
+"1284":"maybe... check high byte too",
+"1286":"less than 65535",
+"1288":" = 65535, not allowed",
+"1301":"get a char",
+"1304":"is it a space?",
+"1306":"no -\u003e stick with this char",
+"1308":"yes: get the next char",
 "1329":"useless and silly",
+"1354":"delete any existing line w same #",
+"1357":"then insert ours",
 "1360":"Point zpTxtLink at program start",
 "1370":"read offset to next ln. != 0?",
 "1372":"not zero -\u003e continue to process",
@@ -596,6 +608,15 @@
 "1390":"line numbers equal -\u003e return",
 "1392":"sought line # \u003c cur line #? -\u003e also return",
 "1409":"Loop back around and check the new line",
+"1423":"-\u003e rts",
+"1427":"get offset to following line",
+"1448":"increment copy source",
+"1454":"increment copy dest",
+"1462":"have we reached the program end?",
+"1464":"no -\u003e copy next byte",
+"1466":"maybe: check low byte, too",
+"1470":"not the end-\u003e copy next byte",
+"1472":"source ptr reached end; move end back to dest ptr",
 "2159":"reset NMI sub-command",
 "2386":"-\u003e rts",
 "2407":"zpOutTxtCurPos \u003c- #$FF",
@@ -910,7 +931,7 @@
 "MaxWidth":80,
 "BackgroundColor":0},
 
-"4873":{
+"4715":{
 "Text":"Tokenize the line pointed at by zpTXTPTR ($09.$0A), to TokenizeBuffer ($300)",
 "IsFancy":true,
 "BoxMode":false,
@@ -1136,6 +1157,34 @@
 
 "3924":{
 "Text":"Multiplies the contents of $28.29 by $2C.2D leaving the results in $28.29.",
+"IsFancy":true,
+"BoxMode":false,
+"MaxWidth":80,
+"BackgroundColor":0},
+
+"1412":{
+"Text":"Delete designated line of BASIC code",
+"IsFancy":true,
+"BoxMode":false,
+"MaxWidth":80,
+"BackgroundColor":0},
+
+"1442":{
+"Text":"Starting from the next line, copy back over the deleted line, including offsets, moving all forward lines back by the amount of space this line used to occupy.\r\nNot a terribly fast copy: checks source pointer against program end on _every_ byte written.",
+"IsFancy":true,
+"BoxMode":false,
+"MaxWidth":80,
+"BackgroundColor":0},
+
+"1269":{
+"Text":"Handles a numbered line. If the line consists only of a number, then delete the indicated line; otherwise, tokenize the line and insert it where it belongs.",
+"IsFancy":true,
+"BoxMode":false,
+"MaxWidth":80,
+"BackgroundColor":0},
+
+"1486":{
+"Text":"Make room for a newly-tokenized line to be inserted into the program... then insert it!",
 "IsFancy":true,
 "BoxMode":false,
 "MaxWidth":80,
@@ -2181,9 +2230,9 @@
 "Type":"GlobalAddr",
 "LabelAnno":"None"},
 
-"4873":{
+"4715":{
 "Label":"Tokenize",
-"Value":37625,
+"Value":37467,
 "Source":"User",
 "Type":"GlobalAddr",
 "LabelAnno":"None"},
@@ -2807,6 +2856,76 @@
 "3924":{
 "Label":"WordMultiplyWithTypeCheck",
 "Value":36676,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"1290":{
+"Label":"proceed",
+"Value":34042,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"1311":{
+"Label":"notSp",
+"Value":34063,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"1412":{
+"Label":"TxtDeleteLineAccum",
+"Value":34164,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"1454":{
+"Label":"noHi",
+"Value":34206,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"1460":{
+"Label":"noHi2",
+"Value":34212,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"1442":{
+"Label":"CopyLinesBack",
+"Value":34194,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"718":{
+"Label":"directExec",
+"Value":33470,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"1269":{
+"Label":"ProcessNumberedLine",
+"Value":34021,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"1486":{
+"Label":"InsertTokenizedLine",
+"Value":34238,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"1420":{
+"Label":"TxtDeleteLine",
+"Value":34172,
 "Source":"User",
 "Type":"GlobalAddr",
 "LabelAnno":"None"}},
@@ -5917,6 +6036,46 @@
 "Extra":"↑FB3_CHRROM.bin"}},
 
 "LvTables":{
+"1269":{
+"Variables":[{
+"DataDescriptor":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Hex",
+"SymbolRef":null,
+"Extra":null},
+
+"Comment":"line number",
+"HasWidth":true,
+"Direction":"ReadWrite",
+"MultiMask":null,
+"Label":"vLineNum",
+"Value":160,
+"Source":"Variable",
+"Type":"ExternalAddr",
+"LabelAnno":"None"}],
+"ClearPrevious":false},
+
+"1412":{
+"Variables":[{
+"DataDescriptor":{
+"Length":1,
+"Format":"NumericLE",
+"SubFormat":"Hex",
+"SymbolRef":null,
+"Extra":null},
+
+"Comment":"offset to next line",
+"HasWidth":true,
+"Direction":"ReadWrite",
+"MultiMask":null,
+"Label":"vNextLnOff",
+"Value":60,
+"Source":"Variable",
+"Type":"ExternalAddr",
+"LabelAnno":"None"}],
+"ClearPrevious":false},
+
 "15584":{
 "Variables":[{
 "DataDescriptor":{

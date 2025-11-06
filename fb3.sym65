@@ -1,5 +1,7 @@
 zpTXTTAB    @   $05     2       ; Pointer to the start of the BASIC program code. Always set to $6006.
+zpVARTAB    @   $07     2       ; Ponter to variables start/program end
 zpTXTPTR    @   $09     2       ; Points at the next char of BASIC program to be processed.
+zpTxtNextLink   @       $0B     2   ; Points at the next line of BASIC program after current
 zpACCTYP        @       $27 ; Designates the type of data in zpAccum16. #$02 = 16-bit Integer; #$03 = ???
 zpACC16         @       $28     2   ; Forms both the first operand, and the result, of various 16-bit integer operations.
 zpPARAM16     @       $2C     2 ; forms the second operand of various binary operators
