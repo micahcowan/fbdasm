@@ -650,6 +650,15 @@
 "4765":"skip high bytes without storing",
 "4769":"skip control chars w/o store",
 "4821":" -\u003e TokBufTerminate",
+"4836":"did num fit in a single byte?",
+"4838":"no -\u003e process word",
+"4842":"low byte \u003e 9?",
+"4844":"yes -\u003e process as word",
+"4846":"no: store as single byte",
+"4847":"pop the num tok, won\u0027t use it",
+"4848":"inc so we can\u0027t get #$00",
+"4853":" = 32768?",
+"4863":"this num preceded by \u0027-\u0027?",
 "4913":"space?",
 "4915":"no -\u003e rts",
 "4917":"yes: store and check next",
@@ -659,6 +668,14 @@
 "4996":"is it a command that takes a line number arg?",
 "4998":"no -\u003e return to normal tokenizing",
 "5000":"yes -\u003e parse line number if it\u0027s there",
+"5105":" -\u003e rts",
+"5122":"did we get #$ff (end-of-table byte)?",
+"5123":"yes -\u003e return false (load txt char, set carry, rts)",
+"5145":"chars matched, incr and check next",
+"5156":"reached token byte of next kwd, so keyword matched!",
+"5157":"return true (zpToken has the token)",
+"5161":"did user abbreviate the keyword?",
+"5163":"yes -\u003e we matched, return true",
 "10188":" \u003c \u00270\u0027 (punctuation, or control chars)?",
 "10192":" digit?",
 "10196":" additional punctuation?",
@@ -1241,6 +1258,48 @@
 
 "10188":{
 "Text":"clears carry if A is alphanumeric, sets otherwise",
+"IsFancy":true,
+"BoxMode":false,
+"MaxWidth":80,
+"BackgroundColor":0},
+
+"3586":{
+"Text":"Sets Z flag iff Accum16 contains (+/-)32768 (#$8000)",
+"IsFancy":true,
+"BoxMode":false,
+"MaxWidth":80,
+"BackgroundColor":0},
+
+"4413":{
+"Text":"Parse a decimal word at TXTPTR, and throw an overflow error if it overflowed to negative. As a special exception, a value of 32,768 is allowed (so that later code can check if it was preceded with \u0027-\u0027).",
+"IsFancy":true,
+"BoxMode":false,
+"MaxWidth":80,
+"BackgroundColor":0},
+
+"5133":{
+"Text":"Loop over keyword from tbl_KeywordTokens, and word at zpTXTPTR, to see if they\u0027re a match",
+"IsFancy":true,
+"BoxMode":false,
+"MaxWidth":80,
+"BackgroundColor":0},
+
+"5110":{
+"Text":"Returns with carry clear if keyword matched; carry set otherwise",
+"IsFancy":true,
+"BoxMode":false,
+"MaxWidth":80,
+"BackgroundColor":0},
+
+"4775":{
+"Text":"Copy presumed var name out to TokenizeBuffer, verbatim ",
+"IsFancy":true,
+"BoxMode":false,
+"MaxWidth":80,
+"BackgroundColor":0},
+
+"4760":{
+"Text":"We didn\u0027t recognize anything special.\r\nSkip high-bit-set bytes, skip control chars, and store everything\r\nelse verbatim.",
 "IsFancy":true,
 "BoxMode":false,
 "MaxWidth":80,
@@ -3215,7 +3274,168 @@
 "Value":37862,
 "Source":"User",
 "Type":"GlobalAddr",
-"LabelAnno":"Uncertain"}},
+"LabelAnno":"None"},
+
+"3586":{
+"Label":"NumIs32768",
+"Value":36338,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"3593":{
+"Label":"ckLo",
+"Value":36345,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"4427":{
+"Label":"errOverfl",
+"Value":37179,
+"Source":"User",
+"Type":"LocalOrGlobalAddr",
+"LabelAnno":"None"},
+
+"4421":{
+"Label":"ck32768",
+"Value":37173,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"4413":{
+"Label":"ParsePosDecWFromTxt",
+"Value":37165,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"4903":{
+"Label":"tokStorAndCont",
+"Value":37655,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"4853":{
+"Label":"tokNumWord",
+"Value":37605,
+"Source":"User",
+"Type":"LocalOrGlobalAddr",
+"LabelAnno":"None"},
+
+"4861":{
+"Label":"is32768",
+"Value":37613,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"4870":{
+"Label":"errOverfl",
+"Value":37622,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"4892":{
+"Label":"storeWordAndCont",
+"Value":37644,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"5098":{
+"Label":"TokTblGetChar",
+"Value":37850,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"5179":{
+"Label":"kwdNotFnd",
+"Value":37931,
+"Source":"User",
+"Type":"LocalOrGlobalAddr",
+"LabelAnno":"None"},
+
+"5103":{
+"Label":"IncrTokTblScn",
+"Value":37855,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"5184":{
+"Label":"SaveTXTPTR",
+"Value":37936,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"5193":{
+"Label":"RestoreTXTPTR",
+"Value":37945,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"5133":{
+"Label":"cmpKwd",
+"Value":37885,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"5156":{
+"Label":"retTrue",
+"Value":37908,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"5168":{
+"Label":"skipToNextKwd",
+"Value":37920,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"4248":{
+"Label":"TxtPtrGetCharAndIncr",
+"Value":37000,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"4273":{
+"Label":"hi",
+"Value":37025,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"5118":{
+"Label":"nxtKwd",
+"Value":37870,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"5158":{
+"Label":"ckForAbbrv",
+"Value":37910,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"4760":{
+"Label":"TokOther",
+"Value":37512,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"}},
 
 "OperandFormats":{
 "0":{
@@ -3545,6 +3765,16 @@
 "SymbolRef":null,
 "Extra":null},
 
+"4365":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"TYP_INT",
+"Part":"Low"},
+
+"Extra":null},
+
 "4730":{
 "Length":2,
 "Format":"NumericLE",
@@ -3585,6 +3815,26 @@
 "Format":"NumericLE",
 "SubFormat":"Hex",
 "SymbolRef":null,
+"Extra":null},
+
+"4830":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"tok_NUM_AFTER",
+"Part":"Low"},
+
+"Extra":null},
+
+"4863":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"tok_OP_MINUS",
+"Part":"Low"},
+
 "Extra":null},
 
 "4941":{
@@ -3727,6 +3977,33 @@
 "Extra":null},
 
 "5087":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Ascii",
+"SymbolRef":null,
+"Extra":null},
+
+"5110":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"tbl_KeywordTokens",
+"Part":"Low"},
+
+"Extra":null},
+
+"5114":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"tbl_KeywordTokens",
+"Part":"High"},
+
+"Extra":null},
+
+"5161":{
 "Length":2,
 "Format":"NumericLE",
 "SubFormat":"Ascii",

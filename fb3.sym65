@@ -21,6 +21,7 @@ zpCursTileAddr  @       $4A     2 ; PPU address of tile under cursor
 zpTokenizeOut   @       $4D     2
 zpPpuScreenBasePage     @       $4F ; The VRAM page used for current display screen's start
 zpOutputStr     @       $52     2
+zpTokTblScn     @       $54     2 ; Used to scan thru tbl_KeywordTokens
 zpTxtLink       @       $5B     2 ; Points to the start of the current program line (including the 3-byte preamble)
 zpSavedRts      @       $5f     2 ; FOR, GOSUB, other cmds pull return from stack, save here
 zpOutTxtCurPos  @       $62
@@ -30,7 +31,9 @@ zpOutTxtStartPos        @       $64
 zpSavedCH       @       $6B
 zpSavedCV       @       $6C
 zpLineBufIdx    @       $76 ; Current write position into LineBuffer ($500)
+zpSavedTxtChar  @       $98
 zpToken         @       $99
+zpSavedTXTPTR   @       $9a     2   ; Saved val of zpTXTPTR
 zpLastLineNum   @       $A0     2   ; Last line number used (for AUTO)
 
 zp_nmi_some_flag        @       $AB
@@ -68,6 +71,9 @@ NC_BufferCurLine    = 2
 NC_ClearToEndOfRow  = 4
 
 TYP_INT = $02
+
+tok_LNUM_AFTER  = $0b   ; indicates a line number (word) follows this byte
+tok_NUM_AFTER   = $12   ; indicates a number (word) follows this byte
 
 tok_GOTO    = $80
 tok_GOSUB   = $81
