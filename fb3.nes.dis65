@@ -762,6 +762,7 @@
 "21":"End of \"GAME 1\"",
 "23":"End of \"GAME 2\"",
 "25":"End of \"GAME 3\"",
+"216":"JMP opcode",
 "594":"Falls thru to next string start",
 "598":"Falls thru to next string start",
 "1275":"get the typed line number",
@@ -4119,6 +4120,26 @@
 "Format":"Dense",
 "SubFormat":"None",
 "SymbolRef":null,
+"Extra":null},
+
+"220":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"NMI_DefaultHandler",
+"Part":"Low"},
+
+"Extra":null},
+
+"224":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"NMI_DefaultHandler",
+"Part":"High"},
+
 "Extra":null},
 
 "395":{
