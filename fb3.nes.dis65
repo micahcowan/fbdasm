@@ -758,6 +758,10 @@
 },
 
 "Comments":{
+"19":"End of \"GAME 0\" in mem (prog len + $6006)",
+"21":"End of \"GAME 1\"",
+"23":"End of \"GAME 2\"",
+"25":"End of \"GAME 3\"",
 "594":"Falls thru to next string start",
 "598":"Falls thru to next string start",
 "1275":"get the typed line number",
@@ -1533,6 +1537,34 @@
 
 "2345":{
 "Text":"end unreachable",
+"IsFancy":true,
+"BoxMode":false,
+"MaxWidth":80,
+"BackgroundColor":0},
+
+"21520":{
+"Text":"\"GAME 0\" built-in BASIC program, tokenized",
+"IsFancy":true,
+"BoxMode":false,
+"MaxWidth":80,
+"BackgroundColor":0},
+
+"23566":{
+"Text":"\"GAME 1\" built-in BASIC program, tokenized",
+"IsFancy":true,
+"BoxMode":false,
+"MaxWidth":80,
+"BackgroundColor":0},
+
+"26258":{
+"Text":"\"GAME 2\" built-in BASIC program, tokenized",
+"IsFancy":true,
+"BoxMode":false,
+"MaxWidth":80,
+"BackgroundColor":0},
+
+"29464":{
+"Text":"\"GAME 3\" built-in BASIC program, tokenized",
 "IsFancy":true,
 "BoxMode":false,
 "MaxWidth":80,
