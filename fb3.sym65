@@ -39,10 +39,12 @@ zpLastLineNum   @       $A0     2   ; Last line number used (for AUTO)
 zp_nmi_some_flag        @       $AB
 zp_nmi_some_flag_1      @       $AC ; if $AC is non-zero, $AB is set to #$FF (triggering flag check on next frame)
 
+zpErrCode       @       $B5
 zpVScroll0      @       $E4 ; Vertical scroll used when zpPpuScreenBasePage ($4F) is #$20; updated when $F0 is reset
 zpVScroll1      @       $E5 ; Vertical scroll used when zpPpuScreenBasePage ($4F) is NOT #$20; updated when $F0 is set
 zpNmiTrampoline @       $ED 3 ; Contains a JMP instruction to the real NMI handler. It's set to: JMP $8971
 zpSomeKindaScrollingFlagF0      @       $F0 ; Flag indicating which vertical scroll var to update.
+zpGameNum       @       $F3 ; Game number (GAME cmd)
 
 TokenizeBuffer  @       $300    256
 fnKey1_DfnBuf   @       $480    16  ; Current definitions of the FN-key shortcuts, each 16 chars
