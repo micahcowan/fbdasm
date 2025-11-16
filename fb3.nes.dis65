@@ -821,6 +821,26 @@
 "2749":"line doesn\u0027t wrap -\u003e done; terminate active NMICMD",
 "2751":"line wraps: copy next row on next NMI",
 "2753":"(always)",
+"3621":"zpWAccum = -32768? -\u003e ensure zpWParam is 0",
+"3666":"BUG: produces OV ERROR even if WParam is zero lol",
+"3694":"strlen == 0?",
+"3696":"yes -\u003e just use other operand then",
+"3699":"param len == 0?",
+"3701":"yes -\u003e nothing to do, return",
+"3703":"add the two strlens",
+"3705":" \u003e= 32?",
+"3707":"yes -\u003e too big to fit in a string var",
+"3711":"copy strptr to $19.1A",
+"3721":"copy zpWAccum str to outbuf",
+"3732":"copy PARAM str to outbuf (after ACC)",
+"3774":"are we working with strs?",
+"3776":"yes -\u003e concatenate them",
+"3778":"no: we are working with integer words",
+"3780":"WAccum neg -\u003e handle that case",
+"3782":"WParam neg?",
+"3784":"yes -\u003e handle",
+"3786":"both args positive, just add",
+"3789":"and error if the result is neg",
 "4316":"\u00279\u0027 + 1",
 "4318":"better: bcs $90D3",
 "4707":"exceeded our buffer? -\u003e error",
@@ -856,6 +876,14 @@
 "5157":"return true (zpToken has the token)",
 "5161":"did user abbreviate the keyword?",
 "5163":"yes -\u003e we matched, return true",
+"7542":"divert to save screen, not prog",
+"7577":"get prog len from prog start and end",
+"7785":"is there an arg?",
+"7788":"no -\u003e nothing to do; return",
+"7790":"yes: expect prog name str",
+"7803":"is the string empty?",
+"7806":"yes -\u003e return",
+"7812":"copy eval\u0027d str as progname",
 "10188":" \u003c \u00270\u0027 (punctuation, or control chars)?",
 "10192":" digit?",
 "10196":" additional punctuation?",
@@ -970,7 +998,7 @@
 "BackgroundColor":0},
 
 "1326":{
-"Text":"Record tokenized length in zpAccum16",
+"Text":"Record tokenized length in zpWAccum",
 "IsFancy":true,
 "BoxMode":false,
 "MaxWidth":80,
@@ -1131,7 +1159,7 @@
 "BackgroundColor":0},
 
 "4365":{
-"Text":"Parses a decimal number at zpTxtPtr into zpAccum16, leaving zpTXTPTR after the parsed number.",
+"Text":"Parses a decimal number at zpTxtPtr into zpWAccum, leaving zpTXTPTR after the parsed number.",
 "IsFancy":true,
 "BoxMode":false,
 "MaxWidth":80,
@@ -1446,7 +1474,7 @@
 "BackgroundColor":0},
 
 "3586":{
-"Text":"Sets Z flag iff Accum16 contains (+/-)32768 (#$8000)",
+"Text":"Sets Z flag iff zpWAccum contains (+/-)32768 (#$8000)\r\nSets C if and only if zpWAccum is negative",
 "IsFancy":true,
 "BoxMode":false,
 "MaxWidth":80,
@@ -1566,6 +1594,48 @@
 
 "29464":{
 "Text":"\"GAME 3\" built-in BASIC program, tokenized",
+"IsFancy":true,
+"BoxMode":false,
+"MaxWidth":80,
+"BackgroundColor":0},
+
+"7778":{
+"Text":"Used by SAVE, LOAD, etc. Checks if there\u0027s a string argument, and if so, copies it to ProgName. Otherwise, sets ProgName to 16 blanks (space characters).",
+"IsFancy":true,
+"BoxMode":false,
+"MaxWidth":80,
+"BackgroundColor":0},
+
+"7834":{
+"Text":"Initialize the ProgName to 16 spaces, followed by the null terminator",
+"IsFancy":true,
+"BoxMode":false,
+"MaxWidth":80,
+"BackgroundColor":0},
+
+"1196":{
+"Text":"Z is set, if and only if we\u0027re at the end of the command (no more args)",
+"IsFancy":true,
+"BoxMode":false,
+"MaxWidth":80,
+"BackgroundColor":0},
+
+"7853":{
+"Text":"Copy ProgName (stored from LineBuffer + 128), to LineBuffer + 1",
+"IsFancy":true,
+"BoxMode":false,
+"MaxWidth":80,
+"BackgroundColor":0},
+
+"3615":{
+"Text":"This routine, together with the Add routine it wraps, is the most ridiculously overcoded and overcomplicated \"subtract two words\" implementation I have ever laid eyes on. Could save a ton of code space by just using WordSubtract and checking for overflow afterward.",
+"IsFancy":true,
+"BoxMode":false,
+"MaxWidth":80,
+"BackgroundColor":0},
+
+"3772":{
+"Text":"This routine is the most ridiculously overcoded and overcomplicated \"add two words\" implementation I have ever laid eyes on. Could save a ton of code space by just using WordAdd and checking for overflow afterward. And why does it insist on negating the operands and (conditionally) using sbc, instead of just using adc?",
 "IsFancy":true,
 "BoxMode":false,
 "MaxWidth":80,
@@ -2486,7 +2556,7 @@
 "LabelAnno":"None"},
 
 "3650":{
-"Label":"WordNegate",
+"Label":"WAccumNegate",
 "Value":36402,
 "Source":"User",
 "Type":"GlobalAddr",
@@ -2724,7 +2794,7 @@
 "LabelAnno":"None"},
 
 "10784":{
-"Label":"ErrorUnlessXXXSomething",
+"Label":"ErrorUnlessString",
 "Value":43536,
 "Source":"User",
 "Type":"GlobalAddr",
@@ -3256,7 +3326,7 @@
 "LabelAnno":"None"},
 
 "1412":{
-"Label":"TxtDeleteLineAccum",
+"Label":"TxtDeleteLineWAccum",
 "Value":34164,
 "Source":"User",
 "Type":"GlobalAddr",
@@ -3543,7 +3613,7 @@
 "LabelAnno":"None"},
 
 "3586":{
-"Label":"NumIs32768",
+"Label":"Cmp32768",
 "Value":36338,
 "Source":"User",
 "Type":"GlobalAddr",
@@ -4016,6 +4086,209 @@
 "Value":65530,
 "Source":"User",
 "Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"8845":{
+"Label":"EvalString",
+"Value":41597,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"7833":{
+"Label":"rts",
+"Value":40585,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"7812":{
+"Label":"cpyName",
+"Value":40564,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"7778":{
+"Label":"GetProgNameArg",
+"Value":40530,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"7840":{
+"Label":"setSpcLp",
+"Value":40592,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"7834":{
+"Label":"ProgNameInit",
+"Value":40586,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"1196":{
+"Label":"IsEndOfCmd",
+"Value":33948,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"1193":{
+"Label":"AdvThenIsEndOfCmd",
+"Value":33945,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"7857":{
+"Label":"namCpy",
+"Value":40609,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"7853":{
+"Label":"ProgNameCpyToLineBuffer",
+"Value":40605,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"3615":{
+"Label":"Subtract",
+"Value":36367,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"3611":{
+"Label":"SetIntAndSubtract",
+"Value":36363,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"3663":{
+"Label":"rts_8E3F",
+"Value":36415,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"3841":{
+"Label":"rts",
+"Value":36593,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"3597":{
+"Label":"WParamNegate",
+"Value":36349,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"3792":{
+"Label":"ParamNegateThenSubtract",
+"Value":36544,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"3795":{
+"Label":"WordSubtract",
+"Value":36547,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"3674":{
+"Label":"errOverfl",
+"Value":36426,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"3689":{
+"Label":"rts_8E59",
+"Value":36441,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"3677":{
+"Label":"CopyWParamToWAccum",
+"Value":36429,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"3721":{
+"Label":"cpyWaccumOutb",
+"Value":36473,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"3742":{
+"Label":"cpyParamOutb",
+"Value":36494,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"3690":{
+"Label":"ConcatenateStrings",
+"Value":36442,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"3772":{
+"Label":"Add",
+"Value":36524,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"3768":{
+"Label":"SetIntAndAdd",
+"Value":36520,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"3809":{
+"Label":"AddInt_WAccumIsNeg",
+"Value":36561,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"3822":{
+"Label":"AddInt_BothNeg",
+"Value":36574,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"3647":{
+"Label":"haveNegArg",
+"Value":36399,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"3664":{
+"Label":"Sub_WAccumIs32768",
+"Value":36416,
+"Source":"User",
+"Type":"GlobalAddr",
 "LabelAnno":"None"}},
 
 "OperandFormats":{
@@ -4268,6 +4541,33 @@
 "SymbolRef":null,
 "Extra":null},
 
+"1203":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Ascii",
+"SymbolRef":null,
+"Extra":null},
+
+"1234":{
+"Length":3,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"BasicProgram",
+"Part":"Low"},
+
+"Extra":null},
+
+"1237":{
+"Length":3,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"BasicProgram",
+"Part":"Low"},
+
+"Extra":null},
+
 "2420":{
 "Length":2,
 "Format":"NumericLE",
@@ -4444,6 +4744,66 @@
 "SubFormat":"Symbol",
 "SymbolRef":{
 "Label":"NC_NoCmd",
+"Part":"Low"},
+
+"Extra":null},
+
+"3685":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"zpPARAM16",
+"Part":"Low"},
+
+"Extra":null},
+
+"3687":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"zpWAccum",
+"Part":"Low"},
+
+"Extra":null},
+
+"3715":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"zpWAccum",
+"Part":"Low"},
+
+"Extra":null},
+
+"3736":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"zpPARAM16",
+"Part":"Low"},
+
+"Extra":null},
+
+"3768":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"TYP_INT",
+"Part":"Low"},
+
+"Extra":null},
+
+"3774":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"TYP_STR",
 "Part":"Low"},
 
 "Extra":null},
@@ -4714,6 +5074,23 @@
 "SymbolRef":null,
 "Extra":null},
 
+"7540":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Ascii",
+"SymbolRef":null,
+"Extra":null},
+
+"10223":{
+"Length":3,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"StrResultPtr",
+"Part":"Low"},
+
+"Extra":null},
+
 "10366":{
 "Length":2,
 "Format":"NumericLE",
@@ -4796,6 +5173,16 @@
 "Format":"NumericLE",
 "SubFormat":"Hex",
 "SymbolRef":null,
+"Extra":null},
+
+"10784":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"TYP_STR",
+"Part":"Low"},
+
 "Extra":null},
 
 "12947":{

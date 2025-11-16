@@ -2,9 +2,9 @@ zpTXTTAB    @   $05     2       ; Pointer to the start of the BASIC program code
 zpVARTAB    @   $07     2       ; Ponter to variables start/program end
 zpTXTPTR    @   $09     2       ; Points at the next char of BASIC program to be processed.
 zpTxtNextLink   @       $0B     2   ; Points at the next line of BASIC program after current
-zpACCTYP        @       $27 ; Designates the type of data in zpAccum16. #$02 = 16-bit Integer; #$03 = ???
-zpACC16         @       $28     2   ; Forms both the first operand, and the result, of various 16-bit integer operations.
-zpPARAM16     @       $2C     2 ; forms the second operand of various binary operators
+zpArgTyp        @       $27         ; Designates the type of data in zpWAccum.
+zpWAccum        @       $28     3   ; Like a 16-bit Accumulator. Forms both the first operand, and the result, of various 16-bit integer operations. Or: byte Len followed by word ptr, for strings.
+zpWParam        @       $2C     3   ; Like a 16-bit Data register. forms the second operand of various binary operators
 
 zpPpuCtrlVal    @       $32
 zpPpuMaskVal    @       $33
@@ -47,6 +47,8 @@ zpSomeKindaScrollingFlagF0      @       $F0 ; Flag indicating which vertical scr
 zpGameNum       @       $F3 ; Game number (GAME cmd)
 
 TokenizeBuffer  @       $300    256
+StrResultLen    @       $400        ; Length of the string result
+StrResultPtr    @       $401    2   ; String result after evaluating formula (arg)
 fnKey1_DfnBuf   @       $480    16  ; Current definitions of the FN-key shortcuts, each 16 chars
 fnKey2_DfnBuf   @       $490    16
 fnKey3_DfnBuf   @       $4A0    16
@@ -56,7 +58,8 @@ fnKey6_DfnBuf   @       $4D0    16
 fnKey7_DfnBuf   @       $4E0    16
 fnKey8_DfnBuf   @       $4F0    16
 
-LineBuffer      @       $500    256 ; NMICMD_PutCurrentLineIntoLineBuffer copies the full current, potentially multi-row line to here
+LineBuffer      @       $500    256 ; NMICMD_BufferCurLine copies the full current, potentially multi-row line to here
+ProgName        @       $580    17  ; SAVE and LOAD put their string arg here.
 
 isRowWrappedArray0      @       $601 24 ; Marks which visible screen rows are wrapped from previous line, if $4C = #$20.
 isRowWrappedArray1      @       $61B 24 ; Marks which visible screen rows are wrapped from previous line, if $4C != #$20.
@@ -72,7 +75,8 @@ NC_FlushOutp        = 1
 NC_BufferCurLine    = 2
 NC_ClearToEndOfRow  = 4
 
-TYP_INT = $02
+TYP_INT = $02   ; For zpArgTyp. Integer word.
+TYP_STR = $03   ; For zpArgTyp. String.
 
 tok_LNUM_AFTER  = $0b   ; indicates a line number (word) follows this byte
 tok_NUM_AFTER   = $12   ; indicates a number (word) follows this byte
