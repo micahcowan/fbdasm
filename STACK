@@ -26,3 +26,45 @@
 #    $857F
 #
 #  Write up what I know so far, and the bugs I've found
+
+fn sub(a, b):
+    if a == -32768:
+        if b >= 0: # BUG. s/b: b > 0
+            raise ErrorOverflow
+        else:
+            return add(a, -b)
+    else:
+        # a != -32768
+        if (-a) < 0 || b < 0:
+            return -( add(-a, b) )
+        else:
+            ret = -a + b
+            if ret == -32768:
+                return ret
+            else if ret >= 0:
+                return -ret
+            else:
+                raise ErrorOverflow
+
+fn add(a, b):
+    if a < 0:
+        if b < 0:
+            # neg plus neg
+            ret = (-a) + (-b)
+            if ret == -32768:
+                return ret  # already negative 
+            elif ret < 0:
+                raise ErrorOverflow
+            else:
+                return -ret
+        else:
+            # neg plus pos
+            return -( (-a) - b )
+    else if b < 0:
+        # pos plus neg
+        return a - (-b)
+    else:
+        # pos plus pos
+        ret = acc + parm;
+        if ret < 0:
+            raise ErrorOverflow
