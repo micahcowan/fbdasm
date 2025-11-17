@@ -34,3 +34,21 @@ To generate the disassembly as an external file (HTML or plain text), use the `E
 
 ![The Export dialog window from SourceGen. Checked boxes are "Show Address column", "Show Bytes column", and "Put long labels on separate line". Column widths for label, opcode, oeprand, and comment, are 16, 8, 24, and 100, respectively.](images/export-diag.png)
 
+## Roadmap and Project Status
+
+The primary motivation of this project has been to discover detailed information about the following aspects of Family BASIC (all versions):
+
+ - How to convert between **untokenized BASIC text**, the BASIC program text typed by users, and **tokenized BASIC text**, the representation of a line of BASIC code in memory, with single-byte tokens substituted for keywords, and binary representations substituted for numbers, etc.
+ - Where a BASIC program resides in memory, and how it is represented.
+ - How a BASIC program is represented in the form of cassette audio data, and how such audio data may be read and written.
+ - How background screen graphics are represented as cassette audio data, and how such audio data may be read and written.
+
+This information could then be used to create tools (external to Family BASIC) for
+ - tokenizing/detokenizing Family BASIC programs,
+ - converting between Family BASIC's bespoke character encoding, and Unicode, for easier editing on modern PCs,
+ - checking the syntax of Family BASIC programs,
+ - injecting, modifying, or extracting BASIC programs within a Famicom emulator that is running Family BASIC
+
+At this time, **all of the desired information listed above, *has been discovered*** for Family BASIC v3, except that the cassette audio representation for background screen graphics has not yet been explored. This work is expected to go quickly, at which point efforts will be shifted to finding the same information goals for Family BASIC v2. It is known that Family BASIC v2 saves are incompatible with Family BASIC v3; it is not yet known whether this is due to changes in representation on the cassette data, or changes in keyword token representation, or both. Discovery for Family BASIC v2 is expected to go very quickly, as we can use the existing information from v3 as our guide.
+
+Once the desired information has been obtained for both versions of Family BASIC, ongoing disassembly/annotation efforts are likely to slow, as more energy will be put toward using this information to create tools. However, it would be very nice to have full disassemblies of at least v3 of Family BASIC, and most of the hardest work has already been done, so what remains, though it is larger in scale, will likely not pose a great challenge.
