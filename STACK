@@ -1,33 +1,43 @@
-# SEARCH STACK:
-#   
-#   I think GAME codes are stored at $D400 and on. In a data pointer table at $B00B
-#     Something interesting at $D000, too. a game background map, probably?
-#   Any other st* to NMICMD
-#   WaitForNmiSubcommand
-#   MarkWrappedLine
-#   PrintString
-#   QueueStringForOutput
-#   QueueCharForOutput
-#   QueueNullForOutput
-#   Any remaining fns in CtrlCharInputHandlersTbl
+# STACK: This document is a "note to self" that I use
+# to keep track of what code I'm currently analyzing, and how I got
+# there, so I can work my way back up to find the next bit of code
+# to work on for some larger, overall routine.
 #
-#   ReadKeyboard
+# Unlike a 6502 CPU stack, all addresses given are the actual address
+# (and not one less).
 
-# BRANCH STACK:
-#   DefaultNmiHandler
-#   A more in-depth look at what ExprUnaryOrLiteral ($A490) does
-#   DirectModeLoop
-#  $8334 ExecuteDirectModeLineIThink
-#  $97A6 second of two functions called when direct-mode line begins with number
-#  $84E5 first of two functions called when direct-mode line begins with number
-#   -> $904D
-#     -> $8EF7
-#   $853A
-#    $857F
+SEARCH STACK:
+  
+  I think GAME codes are stored at $D400 and on. In a data pointer table at $B00B
+    Something interesting at $D000, too. a game background map, probably?
+  Any other st* to NMICMD
+  WaitForNmiSubcommand
+  MarkWrappedLine
+  PrintString
+  QueueStringForOutput
+  QueueCharForOutput
+  QueueNullForOutput
+  Any remaining fns in CtrlCharInputHandlersTbl
+
+  ReadKeyboard
+
+BRANCH STACK:
+  DefaultNmiHandler
+  A more in-depth look at what ExprUnaryOrLiteral ($A490) does
+  DirectModeLoop
+ $8334 ExecuteDirectModeLineIThink
+ $97A6 second of two functions called when direct-mode line begins with number
+ $84E5 first of two functions called when direct-mode line begins with number
+  -> $904D
+    -> $8EF7
+  $853A
+   $857F
+
+ Write up what I know so far, and the bugs I've found
+
+ CmdFn_LOAD
+
 #
-#  Write up what I know so far, and the bugs I've found
-#
-#  CmdFn_LOAD
 
 Saving a program to cassette:
   a clear (zero) bit is sent as a single, short (hi-freq) cycle
