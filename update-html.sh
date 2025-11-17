@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 main() {
     HTML=fb3.nes.html
