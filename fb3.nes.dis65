@@ -959,7 +959,7 @@
 "15626":"beep length: was set at top of fn",
 "15681":"Exit loop if we\u0027re on the topmost line",
 "15692":"Row is wrapped: loop back to preceding row",
-"15701":"Fetch the on-screen, possibly-wrapped line from PPU into LineBuffer",
+"15701":"Fetch the on-screen, possibly-wrapped line from PPU into lineBuffer",
 "15729":"Space: strip it and loop to preceding character",
 "16181":"Prog header starts with 40 high bits followed by 40 zeroes",
 "16192":"I think this is to disable NMI?",
@@ -1095,7 +1095,7 @@
 "BackgroundColor":0},
 
 "2711":{
-"Text":"Copies the current row, through to the end of the line, into LineBuffer.  (Copies multiple rows if the line is wrapped.)\r\nThis command is invoked when handling CR on input, to get a copy of the line for input processing.\r\n",
+"Text":"Copies the current row, through to the end of the line, into lineBuffer.  (Copies multiple rows if the line is wrapped.)\r\nThis command is invoked when handling CR on input, to get a copy of the line for input processing.\r\n",
 "IsFancy":true,
 "BoxMode":false,
 "MaxWidth":80,
@@ -1137,7 +1137,7 @@
 "BackgroundColor":0},
 
 "2996":{
-"Text":"Point zpTxtPtr at LineBuffer ($500)",
+"Text":"Point zpTxtPtr at lineBuffer ($500)",
 "IsFancy":true,
 "BoxMode":false,
 "MaxWidth":80,
@@ -1214,7 +1214,7 @@
 "BackgroundColor":0},
 
 "4715":{
-"Text":"Tokenize the line pointed at by zpTXTPTR ($09.$0A), to TokenizeBuffer ($300)",
+"Text":"Tokenize the line pointed at by zpTXTPTR ($09.$0A), to tokenizeBuffer ($300)",
 "IsFancy":true,
 "BoxMode":false,
 "MaxWidth":80,
@@ -1410,7 +1410,7 @@
 "BackgroundColor":0},
 
 "15636":{
-"Text":"Read a line of user input into LineBuffer",
+"Text":"Read a line of user input into lineBuffer",
 "IsFancy":true,
 "BoxMode":false,
 "MaxWidth":80,
@@ -1473,14 +1473,14 @@
 "BackgroundColor":0},
 
 "4696":{
-"Text":"Store two NULs in a row at the end of TokenizeBuffer",
+"Text":"Store two NULs in a row at the end of tokenizeBuffer",
 "IsFancy":true,
 "BoxMode":false,
 "MaxWidth":80,
 "BackgroundColor":0},
 
 "4926":{
-"Text":"Entered when we just processed a REM keyword into a token.\r\nCopies the rest of the line verbatim, to the TokenizeBuffer.\r\n\r\nThis has a BUG! If the katakana \"small yo\" (ョ) character appears anywhere within the REM statement, then the verbatim copying _ends_, and BASIC returns to trying to convert keywords into tokens, corrupting the REM statement\u0027s contents. This happens because this character has the same value as the token used for REM, and a typo means the copier is told to stop at the next REM character, instead of at NUL (#$00).\r\n\r\nMany Japanese words contain this character. I kind of can\u0027t believe searching for this bug didn\u0027t come up with any results, as users back in the day must have run across it. Maybe they didn\u0027t understand how the REM line was getting corrupted, as it would only show up when you think to LIST it back out again. Or maybe hardly anyone used REM directly, but used the single-quot (`) instead.\r\n\r\nNote that the single-quot (\u0027) shorthand for REM, handled separately at $9272, does _not_ exhibit this bug.",
+"Text":"Entered when we just processed a REM keyword into a token.\r\nCopies the rest of the line verbatim, to the tokenizeBuffer.\r\n\r\nThis has a BUG! If the katakana \"small yo\" (ョ) character appears anywhere within the REM statement, then the verbatim copying _ends_, and BASIC returns to trying to convert keywords into tokens, corrupting the REM statement\u0027s contents. This happens because this character has the same value as the token used for REM, and a typo means the copier is told to stop at the next REM character, instead of at NUL (#$00).\r\n\r\nMany Japanese words contain this character. I kind of can\u0027t believe searching for this bug didn\u0027t come up with any results, as users back in the day must have run across it. Maybe they didn\u0027t understand how the REM line was getting corrupted, as it would only show up when you think to LIST it back out again. Or maybe hardly anyone used REM directly, but used the single-quot (`) instead.\r\n\r\nNote that the single-quot (\u0027) shorthand for REM, handled separately at $9272, does _not_ exhibit this bug.",
 "IsFancy":true,
 "BoxMode":false,
 "MaxWidth":80,
@@ -1529,7 +1529,7 @@
 "BackgroundColor":0},
 
 "4775":{
-"Text":"Copy presumed var name out to TokenizeBuffer, verbatim ",
+"Text":"Copy presumed var name out to tokenizeBuffer, verbatim ",
 "IsFancy":true,
 "BoxMode":false,
 "MaxWidth":80,
@@ -1627,14 +1627,14 @@
 "BackgroundColor":0},
 
 "7778":{
-"Text":"Used by SAVE, LOAD, etc. Checks if there\u0027s a string argument, and if so, copies it to ProgName. Otherwise, sets ProgName to 16 blanks (space characters).",
+"Text":"Used by SAVE, LOAD, etc. Checks if there\u0027s a string argument, and if so, copies it to progName. Otherwise, sets ProgName to 16 blanks (space characters).",
 "IsFancy":true,
 "BoxMode":false,
 "MaxWidth":80,
 "BackgroundColor":0},
 
 "7834":{
-"Text":"Initialize the ProgName to 16 spaces, followed by the null terminator",
+"Text":"Initialize the progName to 16 spaces, followed by the null terminator",
 "IsFancy":true,
 "BoxMode":false,
 "MaxWidth":80,
@@ -1648,7 +1648,7 @@
 "BackgroundColor":0},
 
 "7853":{
-"Text":"Copy ProgName (stored from LineBuffer + 128), to LineBuffer + 1",
+"Text":"Copy progName (stored from lineBuffer + 128), to LineBuffer + 1",
 "IsFancy":true,
 "BoxMode":false,
 "MaxWidth":80,
@@ -1897,7 +1897,7 @@
 "LabelAnno":"Generated"},
 
 "2483":{
-"Label":"NMICMD_JumpTable",
+"Label":"jtbl_NMICMD",
 "Value":35235,
 "Source":"User",
 "Type":"GlobalAddr",
@@ -1995,7 +1995,7 @@
 "LabelAnno":"None"},
 
 "14542":{
-"Label":"tbl_CtrlCharInputHandlers",
+"Label":"jtbl_CtrlCharInputHandlers",
 "Value":47294,
 "Source":"User",
 "Type":"GlobalAddr",
@@ -3360,7 +3360,7 @@
 "LabelAnno":"None"},
 
 "20175":{
-"Label":"CommandsJumpTable",
+"Label":"jtbl_Commands",
 "Value":52927,
 "Source":"User",
 "Type":"GlobalAddr",
@@ -4936,7 +4936,7 @@
 "Format":"NumericLE",
 "SubFormat":"Symbol",
 "SymbolRef":{
-"Label":"TokenizeBuffer",
+"Label":"tokenizeBuffer",
 "Part":"Low"},
 
 "Extra":null},
@@ -4946,7 +4946,7 @@
 "Format":"NumericLE",
 "SubFormat":"Symbol",
 "SymbolRef":{
-"Label":"TokenizeBuffer",
+"Label":"tokenizeBuffer",
 "Part":"High"},
 
 "Extra":null},
@@ -5136,7 +5136,7 @@
 "Format":"NumericLE",
 "SubFormat":"Symbol",
 "SymbolRef":{
-"Label":"LineBuffer",
+"Label":"lineBuffer",
 "Part":"Low"},
 
 "Extra":null},
@@ -5146,7 +5146,7 @@
 "Format":"NumericLE",
 "SubFormat":"Symbol",
 "SymbolRef":{
-"Label":"LineBuffer",
+"Label":"lineBuffer",
 "Part":"High"},
 
 "Extra":null},
@@ -5247,7 +5247,7 @@
 "Format":"NumericLE",
 "SubFormat":"Symbol",
 "SymbolRef":{
-"Label":"TokenizeBuffer",
+"Label":"tokenizeBuffer",
 "Part":"Low"},
 
 "Extra":null},
@@ -5257,7 +5257,7 @@
 "Format":"NumericLE",
 "SubFormat":"Symbol",
 "SymbolRef":{
-"Label":"TokenizeBuffer",
+"Label":"tokenizeBuffer",
 "Part":"High"},
 
 "Extra":null},
@@ -5586,7 +5586,7 @@
 "Format":"NumericLE",
 "SubFormat":"Symbol",
 "SymbolRef":{
-"Label":"LineBuffer",
+"Label":"lineBuffer",
 "Part":"Low"},
 
 "Extra":null},
@@ -5596,7 +5596,7 @@
 "Format":"NumericLE",
 "SubFormat":"Symbol",
 "SymbolRef":{
-"Label":"LineBuffer",
+"Label":"lineBuffer",
 "Part":"High"},
 
 "Extra":null},
@@ -5606,7 +5606,7 @@
 "Format":"NumericLE",
 "SubFormat":"Symbol",
 "SymbolRef":{
-"Label":"StrResultPtr",
+"Label":"strResultPtr",
 "Part":"Low"},
 
 "Extra":null},
@@ -6358,7 +6358,7 @@
 "Format":"NumericLE",
 "SubFormat":"Symbol",
 "SymbolRef":{
-"Label":"LineBuffer",
+"Label":"lineBuffer",
 "Part":"Low"},
 
 "Extra":null},
@@ -6368,7 +6368,7 @@
 "Format":"NumericLE",
 "SubFormat":"Symbol",
 "SymbolRef":{
-"Label":"LineBuffer",
+"Label":"lineBuffer",
 "Part":"High"},
 
 "Extra":null},
@@ -6378,7 +6378,7 @@
 "Format":"NumericLE",
 "SubFormat":"Symbol",
 "SymbolRef":{
-"Label":"ProgName",
+"Label":"progName",
 "Part":"Low"},
 
 "Extra":null},
@@ -6388,7 +6388,7 @@
 "Format":"NumericLE",
 "SubFormat":"Symbol",
 "SymbolRef":{
-"Label":"ProgName",
+"Label":"progName",
 "Part":"High"},
 
 "Extra":null},

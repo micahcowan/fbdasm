@@ -1,3 +1,25 @@
+; This file maintains (1) labels for RAM locations, and (2) constants.
+; It does *not* manage labels for any ROM locations (code or hard-coded data).
+;
+; It is automatically imported into SourceGen when you open fb3.nes.dis65.
+;
+; NAMING CONVENTIONS
+;
+; "zp" prefix for all labels for zero-page locations.
+; "tbl_" prefix for data tables.
+; "jtbl_" prefix for jump tables (tables of code addresses).
+; Capitalized names for "global" code labels.
+; lowerCase names for:
+;  - all data (ROM or RAM).
+;  - code labels that aren't properly full routiness in their own right.
+; CamelCase in general. Acronyms treated like any other word (except
+;  in some prefixes).
+; Some vars, like TXTTAB, VARTAB, TXTPTR, get all-caps. They are
+;  named bc their function is similar to same-named vars in common
+;  Microsoft BASIC implementations.
+; References to keywords are also ALL-CAPS.
+; I'm not super-consistent about naming of constants. Kinda by vibe.
+
 zpTXTTAB    @   $05     2       ; Pointer to the start of the BASIC program code. Always set to $6006.
 zpVARTAB    @   $07     2       ; Ponter to variables start/program end
 zpTXTPTR    @   $09     2       ; Points at the next char of BASIC program to be processed.
@@ -28,12 +50,12 @@ zpNewLineOffset @       $5a       ; Offset to next line for not-yet-placed, toke
 zpTxtLink       @       $5b     2 ; Points to the start of the current program line (including the 3-byte preamble)
 zpSavedRts      @       $5f     2 ; FOR, GOSUB, other cmds pull return from stack, save here
 zpOutTxtCurPos  @       $62
-zpNMICMD        @       $63 ; Which command the NMI handler should execute. 1 + the command's index in NMICMD_JumpTable.
+zpNMICMD        @       $63 ; Which command the NMI handler should execute. 1 + the command's index in jtbl_NMICMD.
 
 zpOutTxtStartPos        @       $64
 zpSavedCH       @       $6B
 zpSavedCV       @       $6C
-zpLineBufIdx    @       $76 ; Current write position into LineBuffer ($500)
+zpLineBufIdx    @       $76 ; Current write position into lineBuffer ($500)
 zpCasCksum      @       $91     2   ; Checksum for cassette data, also used for misc counting
 zpSavedTxtChar  @       $98
 zpToken         @       $99
@@ -41,8 +63,8 @@ zpSavedTXTPTR   @       $9a     2   ; Saved val of zpTXTPTR
 zpNxtAutoLNum   @       $a0     2   ; Next line number to use (for AUTO)
 zAutoLNumIncr   @       $a2     2   ; How much to auto-increment each line number (from AUTO)
 
-zp_nmi_some_flag        @       $AB
-zp_nmi_some_flag_1      @       $AC ; if $AC is non-zero, $AB is set to #$FF (triggering flag check on next frame)
+zpNmiSomeFlag   @       $AB
+zpNmiSomeFlag1  @       $AC ; if $AC is non-zero, $AB is set to #$FF (triggering flag check on next frame)
 
 zpCasBufPtr     @       $AD     2   ; Start of data to send to cassette
 zpCasEndPtr     @       $AF     2   ; End of data to send to cassette
@@ -54,9 +76,9 @@ zpNmiTrampoline @       $ED 3 ; Contains a JMP instruction to the real NMI handl
 zpSomeKindaScrollingFlagF0      @       $F0 ; Flag indicating which vertical scroll var to update.
 zpGameNum       @       $F3 ; Game number (GAME cmd)
 
-TokenizeBuffer  @       $300    256
-StrResultLen    @       $400        ; Length of the string result
-StrResultPtr    @       $401    2   ; String result after evaluating formula (arg)
+tokenizeBuffer  @       $300    256
+strResultLen    @       $400        ; Length of the string result
+strResultPtr    @       $401    2   ; String result after evaluating formula (arg)
 fnKey1_DfnBuf   @       $480    16  ; Current definitions of the FN-key shortcuts, each 16 chars
 fnKey2_DfnBuf   @       $490    16
 fnKey3_DfnBuf   @       $4A0    16
@@ -66,17 +88,17 @@ fnKey6_DfnBuf   @       $4D0    16
 fnKey7_DfnBuf   @       $4E0    16
 fnKey8_DfnBuf   @       $4F0    16
 
-LineBuffer      @       $500    256 ; NMICMD_BufferCurLine copies the full current, potentially multi-row line to here
-ProgName        @       $580    17  ; SAVE and LOAD put their string arg here.
+lineBuffer      @       $500    256 ; NMICMD_BufferCurLine copies the full current, potentially multi-row line to here
+progName        @       $580    17  ; SAVE and LOAD put their string arg here.
 
 isRowWrappedArray0      @       $601 24 ; Marks which visible screen rows are wrapped from previous line, if $4C = #$20.
 isRowWrappedArray1      @       $61B 24 ; Marks which visible screen rows are wrapped from previous line, if $4C != #$20.
 
-KbdData @       $634    9
+kbdDataAry @       $634    9
 unkKbdFlag      @       $63B
 outTxtBuf       @       $700    256 ; user directive messages (at least) get writen out to here
 
-BasicProgram    @       $6006 ; The start of the BASIC program in memory
+basicProgram    @       $6006 ; The start of the BASIC program in memory
 
 NC_NoCmd            = 0
 NC_FlushOutp        = 1
