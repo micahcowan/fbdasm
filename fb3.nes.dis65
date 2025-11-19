@@ -4543,28 +4543,28 @@
 "LabelAnno":"None"},
 
 "15885":{
-"Label":"CasBufSetProgHeader",
+"Label":"CasBufSetHeader",
 "Value":48637,
 "Source":"User",
 "Type":"GlobalAddr",
 "LabelAnno":"None"},
 
 "15863":{
-"Label":"CasBufSetProgData",
+"Label":"CasBufSetData",
 "Value":48615,
 "Source":"User",
 "Type":"GlobalAddr",
 "LabelAnno":"None"},
 
 "16175":{
-"Label":"CasSendProgHeader",
+"Label":"CasSendHeader",
 "Value":48927,
 "Source":"User",
 "Type":"GlobalAddr",
 "LabelAnno":"None"},
 
 "16192":{
-"Label":"CasSendProgData",
+"Label":"CasSendData",
 "Value":48944,
 "Source":"User",
 "Type":"GlobalAddr",

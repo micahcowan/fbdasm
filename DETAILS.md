@@ -81,4 +81,61 @@ Although Family BASIC itself never uses [ScrollScreenUpOneRow](https://famibe.ad
 
 ## Magnetic Data Cassette Representation
 
+### Overview
+
+Data bits (one and zero) are represented as a single audio-signal cycle, of differing lengths/frequencies. Details are in the next subsection.
+
+Whenever data is to be sent out to the cassette recorder, it will be packaged as follows:
+ 1. **the sync**, a stream of 20,000 zero bits (about nine-and-a-half seconds' worth of signal). Presumably for sync, though it's way overkill.
+ 2. **the announce stream**, an equal number of N one bits, N zero bits, and one final one bit.
+ 3. **the payload** - the actual datastream.
+ 4. **the checksum**, which is a 16-bit word count of how many one bits were in the datastream, followed by a final, single one bit.
+
+When sending a BASIC program or screen save, two separate payloads are sent in this way, back-to-back. A 128-byte header, providing such information as data size and file name, and then the actual program or screen data.
+
+This cassette send pattern is handled by [CassetteSend](https://famibe.addictivecode.org/disassembly/fb3.nes.html#SymCassetteSend). See also [CmdFn_SAVE](https://famibe.addictivecode.org/disassembly/fb3.nes.html#SymCmdFn_SAVE) and [CmdFn_LOAD](https://famibe.addictivecode.org/disassembly/fb3.nes.html#SymCmdFn_LOAD).
+
+### General/Low-Level Representations
+
+#### Bit Representation
+
+Data saved on cassette ultimately boils down to two different bits, one and zero. Those bits are represented via a single signal/audio cycle, with an equal period of signal-low and signal-high. When the bit is a zero, the cycle is approximately 842 CPU cycles, or 2,125 Hz. When it's a zero, the signal cycle is roughly twice as long (half the frequency), at approximately 1,706 CPU cycles, or 1,050 Hz.
+
+![diagram of a short stream of bits represented as an audio signal wave, with one cycle highlighted and labeled "1" bit, and another cycle, half the length, labeled "0" bit](images/bits.png)
+
+Note: the signal in the diagram above reflects the actual signal output from the Famicom, as recorded directly to a digital audio file. The signal will look rather different if it passes through real magnetic cassette media first, due to the nature of the media. What matters from the Famicom's point of view, is the signal rise and fall through 0db.
+
+The lengths of these cycles are not precise: they vary based on the amount of code that has to be run between the end of one cycle, and the start of the next. Sending one bit to the cassette is handled by [CassetteSendZero](https://famibe.addictivecode.org/disassembly/fb3.nes.html#SymCassetteSendZero) and [CassetteSendOne](https://famibe.addictivecode.org/disassembly/fb3.nes.html#SymCassetteSendOne), both of which just initialize values for how long to send the low and the high periods of the signal cycle, and then pass control to [CassetteSendBit](https://famibe.addictivecode.org/disassembly/fb3.nes.html#SymCassetteSendBit), which handles the actual signal generation. The low period takes place entirely within [CassetteSendBit](https://famibe.addictivecode.org/disassembly/fb3.nes.html#SymCassetteSendBit), and so should have a very consistent length across bits of the same value. When the routine completes, it has left the signal value high, and the Famicom will continue to keep the outgoing signal high until the next time [CassetteSendBit](https://famibe.addictivecode.org/disassembly/fb3.nes.html#SymCassetteSendBit) is entered once again. Therefore, the length of the high period will increase as the number of CPU cycles spent running instructions outside of this routine grows. In particular, the last bit of a byte will be very slightly longer than the other bits in a byte, as that bit will be lengthened by the need to go and fetch the next byte of data to be sent, and handle an outer loop around payload bytes. Similarly, all those other bits in a byte will be very slightly longer signals than the bits in the initial "sync" stream or "announce" streams (described below), because the latter bits are looped around directly, while the bits in a byte require a bit more code to manipulate the bits within a byte, and examine them.
+
+Of course, since each CPU cycle is only about 1.8 millionths of a second long, it would take quite a few to seriously throw off the length of an audio signal cycle.
+
+I imagine that further study of [CmdFn_LOAD](https://famibe.addictivecode.org/disassembly/fb3.nes.html#SymCmdFn_LOAD), and/or empirical study, will discover what the tolerances are for how far from the target frequencies these signals are permitted to stray.
+
+Note that the nature of this representation for bits means that one cannot meaningfully speak about Family BASIC using a "1200-baud" or "300-baud" signal, etc, since the speed of transmission differs greatly, depending on what bit is being sent. This differs from, e.g., [KCS or CUTS modulation](https://en.wikipedia.org/wiki/Kansas_City_standard), which, like Family BASIC, uses frequencies for one and zero that differ by a factor of roughly two, but unlike Family BASIC, (a) swaps which bits have the shorter or longer frequencies, and (b) issue multiple cycles per bit, sending double the cycles when they're half the length, so that each bit takes exactly the same amount of time to transfer.
+
+#### Signal Sync
+
+Not much more to say about it, really. 9.5 seconds of monotonous sync signal, consisting of a stream of 20,000 zero bits. Since a BASIC program on cassette consists of two payloads, this guarantees that no matter how tiny your program, is, it will take about twenty seconds at an absolute minimum, to either save or load. Oh, your program is only 4 bytes long? Well, the header payload will add another 128 bytes... and the two sync signals will together add roughly 5kb!
+
+#### Announce Stream
+
+The number of ones and zeroes sent indicate the type of the payload: header, or data. Header payloads send 40 each, while data payloads send 20. These are followed by a single "one" bit. (Following this will be another "one" bit signalling the start of a payload byte (see next subsection), followed by the eight bits of that byte.)
+
+![A diagram of the announce section of the data payload](images/announce.png)
+
+#### Payload
+
+The payload is simply a stream of bytes. The header is always 128 bytes, and the data payload's size will have been given in the header. [CassetteSend](https://famibe.addictivecode.org/disassembly/fb3.nes.html#SymCassetteSend) sends each byte using [CassetteSendByte](https://famibe.addictivecode.org/disassembly/fb3.nes.html#SymCassetteSendByte).
+
+Each byte sent consists of a "start" bit (always one), followed by the eight bits of the byte, with the most-significant bit sent first.
+
+![A diagram of the first few bytes of data payload for a BASIC program, showing the last few bits from the announce stream, and four bytes of payload, with each start bit and each octet of content bits highlighted. The bytes shown are $13, $0A, $00, and $AB, representing the offset to the next line of BASIC code with the first byte ($13), a line number (10) with the next two bytes ($0A, $00), and the token byte for the keyword "CGEN" with the last shown byte ($AB).](images/payload.png)
+
+#### Checksum
+
+The checksum consists of a (possibly overflowed) 16-bit count of how many "one" bits were sent in the payload (not including start bits). This 16-bit value is sent using the same [CassetteSendByte](https://famibe.addictivecode.org/disassembly/fb3.nes.html#SymCassetteSendByte) facility used to send bytes from the payload; but the bytes of the checksum themselves are sent most-significant byte first.
+
+The data stream is finished out with a final, single "one" bit.
+
 ## BASIC Variables (TODO)
+
