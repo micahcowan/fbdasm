@@ -898,6 +898,24 @@
 "10192":" digit?",
 "10196":" additional punctuation?",
 "10200":" another set of punctuation?",
+"11802":"no args -\u003e",
+"11804":"get int arg",
+"11807":" \u003c 2?",
+"11809":"no -\u003e err",
+"11813":"push orig cursor Y pos",
+"11816":"push orig upd scr",
+"11819":"arg is 0? -\u003e switch to that",
+"11821":"no: switch to scr 1",
+"11823":"already updating scr 1?",
+"11825":"yes -\u003e leave alone, discard saved pos",
+"11827":"no -\u003e do the switch",
+"11831":"and clear scroll pos",
+"11837":"already updating scr 0?",
+"11839":"yes -\u003e leave alone, discard saved pos",
+"11841":"no -\u003e do the switch",
+"11845":"and clear scroll pos",
+"11851":"restore original update screen",
+"11854":"and original cursor Y pos",
 "11864":"get int arg.",
 "11867":"== 0? -\u003e",
 "11869":"== 1?",
@@ -937,6 +955,23 @@
 "13237":"RESUME without ERROR",
 "13239":"No BG Data",
 "13241":"Unprintable Error",
+"13463":"#$c0 first iteration, #$00 (256) iters 2-4.",
+"13465":"SPC char",
+"13471":"end of inner loop",
+"13474":"end outer loop. 960x (30 rows * 30 cols, w margins)",
+"13483":"go to the update screen\u0027s attribute table location",
+"13488":"and clear it",
+"13501":"Set PPUMASK = 0",
+"13514":"Set PPU cur addr to start of update screen",
+"13528":"Restore PPUMASK",
+"13531":"LOCATE 0,0 (also sets A = 0)",
+"13536":"upd scr == 0?",
+"13538":"yes -\u003e",
+"13540":"upd scr == 1, clear zpVScroll1",
+"13545":"upd scr == -, clear zpVScroll0",
+"13550":"upd scr == 0?",
+"13552":"yes -\u003e clear that screen\u0027s info",
+"13554":"no -\u003e clear screen 1\u0027s info",
 "13701":"is it a printable character?",
 "13705":"backspace (ctrl-H)",
 "13709":"insert space (ctrl-A)",
@@ -1879,18 +1914,18 @@
 "LabelAnno":"Generated"},
 
 "2516":{
-"Label":"T89C4",
+"Label":"NMICMD_PpuMaskUpdate",
 "Value":35268,
 "Source":"User",
 "Type":"GlobalAddr",
-"LabelAnno":"Generated"},
+"LabelAnno":"None"},
 
 "2513":{
-"Label":"T89C1",
+"Label":"NMICMD_PpuMaskClear",
 "Value":35265,
 "Source":"User",
 "Type":"GlobalAddr",
-"LabelAnno":"Generated"},
+"LabelAnno":"None"},
 
 "2894":{
 "Label":"T8B3E",
@@ -1998,11 +2033,11 @@
 "LabelAnno":"None"},
 
 "13499":{
-"Label":"TB4AB",
+"Label":"DoCLS",
 "Value":46251,
 "Source":"User",
 "Type":"GlobalAddr",
-"LabelAnno":"Generated"},
+"LabelAnno":"None"},
 
 "14172":{
 "Label":"CursorToRowStart",
@@ -4739,6 +4774,111 @@
 "Value":44691,
 "Source":"User",
 "Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"13467":{
+"Label":"lpSpaces",
+"Value":46219,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"13488":{
+"Label":"clrAttr",
+"Value":46240,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"13476":{
+"Label":"ClearScreenAttrs",
+"Value":46228,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"13461":{
+"Label":"ClearScreenAndAttrs",
+"Value":46213,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"13547":{
+"Label":"skip",
+"Value":46299,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"13545":{
+"Label":"scrIs0",
+"Value":46297,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"13554":{
+"Label":"clrScrInf1",
+"Value":46306,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"13563":{
+"Label":"clrScrInf0",
+"Value":46315,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"13495":{
+"Label":"DoCLS_1",
+"Value":46247,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"11799":{
+"Label":"doCls",
+"Value":44551,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"11790":{
+"Label":"CmdFn_CLS_Scr1",
+"Value":44542,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"11811":{
+"Label":"cls_fakedArg",
+"Value":44563,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"11835":{
+"Label":"swScr0",
+"Value":44587,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"11797":{
+"Label":"cls_noScrSwNeeded",
+"Value":44549,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"11847":{
+"Label":"doCls",
+"Value":44599,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
 "LabelAnno":"None"}},
 
 "OperandFormats":{
@@ -5163,7 +5303,7 @@
 "Format":"NumericLE",
 "SubFormat":"Symbol",
 "SymbolRef":{
-"Label":"T89C4",
+"Label":"NMICMD_PpuMaskUpdate",
 "Part":"Low"},
 
 "Extra":null},
@@ -5173,7 +5313,7 @@
 "Format":"NumericLE",
 "SubFormat":"Symbol",
 "SymbolRef":{
-"Label":"T89C1",
+"Label":"NMICMD_PpuMaskClear",
 "Part":"Low"},
 
 "Extra":null},
@@ -5206,6 +5346,13 @@
 "Label":"T8B8C",
 "Part":"Low"},
 
+"Extra":null},
+
+"2515":{
+"Length":3,
+"Format":"NumericLE",
+"SubFormat":"Hex",
+"SymbolRef":null,
 "Extra":null},
 
 "2697":{
@@ -6182,6 +6329,26 @@
 
 "Extra":null},
 
+"13499":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"NC_PpuMaskClear",
+"Part":"Low"},
+
+"Extra":null},
+
+"13526":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"NC_PpuMaskUpdate",
+"Part":"Low"},
+
+"Extra":null},
+
 "13536":{
 "Length":2,
 "Format":"NumericLE",
@@ -6199,6 +6366,26 @@
 "SymbolRef":{
 "Label":"VRAM_screen0",
 "Part":"High"},
+
+"Extra":null},
+
+"13554":{
+"Length":3,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"isRowWrappedArray1",
+"Part":"Low"},
+
+"Extra":null},
+
+"13563":{
+"Length":3,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"isRowWrappedArray0",
+"Part":"Low"},
 
 "Extra":null},
 
@@ -6397,7 +6584,7 @@
 "Format":"NumericLE",
 "SubFormat":"Symbol",
 "SymbolRef":{
-"Label":"TB4AB",
+"Label":"DoCLS",
 "Part":"Low"},
 
 "Extra":null},

@@ -104,6 +104,8 @@ NC_NoCmd            = 0
 NC_FlushOutp        = 1
 NC_BufferCurLine    = 2
 NC_ClearToEndOfRow  = 4
+NC_PpuMaskUpdate    = 11
+NC_PpuMaskClear     = 12
 
 VRAM_screen0    = $2000
 VRAM_screen1    = $2400

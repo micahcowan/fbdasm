@@ -36,33 +36,3 @@ BRANCH STACK:
  Write up what I know so far, and the bugs I've found
 
  CmdFn_LOAD
-
-#
-
-Saving a program to cassette:
-  a clear (zero) bit is sent as a single, short (hi-freq) cycle
-  a set (one) bit is sent as a single, longer (lo-freq) cycle
-
-  everything that is sent out to cassette, is sent as:
-    20,000 zeroes as padding/sync
-    N set bits
-    N clear bits (N varies, depending on type of data sent)
-    A single set bit
-    .
-    The payload. Each byte consists of a single start bit, always set,
-     and then an octet, MSB first.
-    .
-    A two-byte checksum, representing a count of how many set bits were
-    in the payload. This is sent big-endian (most-significant byte first)!
-    .
-    A final, single set bit
-
-  When a program is saved, two payloads are sent: program header
-  (including name, size) and tokenized program text
-
-  The program header consists of 128 bytes. The first byte (byte 0) is
-  always #$02. The next 17 bytes are the program name (up to 16 chars,
-  plus a null terminator). Bytes 18 and 19 contain the size of the
-  tokenized program text, and bytes 20 and 21 indicate where in memory
-  the start of the program was (idk if LOAD respects this). The
-  remaining bytes are random garbage.
