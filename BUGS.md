@@ -4,6 +4,8 @@ This document describes a number of bugs in Family BASIC that were discovered wh
 
 ## Overflow When Subtracting Zero
 
+(This bug does not exist in Family BASIC v2, only v3.)
+
 An **OV**erflow error is emitted when subtracting 0 from -32,768 (the minimum value for a (16-bit) integer in Family BASIC), even though the value won't change.
 
 Example:
