@@ -43,7 +43,7 @@ zpCV    @       $49 ; Current cursor row number
 zpCursTileAddr  @       $4A     2 ; PPU address of tile under cursor
 zpInsertMode    @       $4c       ; Zero = overwrite, non-zero = insert
 zpTokenizeOut   @       $4D     2
-zpPpuScreenBasePage     @       $4F ; The VRAM page used for current display screen's start
+zpPpuScreenBasePage     @       $4F ; The VRAM page used for the current screen we're UPDATING (may not be the one displayed)!
 zpOutputStr     @       $52     2 ; Pointer to null-term'd string to copy to outTxtBuf
 zpTokTblScn     @       $54     2 ; Used to scan thru tbl_KeywordTokens
 zpNewLineOffset @       $5a       ; Offset to next line for not-yet-placed, tokenized line
@@ -70,10 +70,10 @@ zpCasBufPtr     @       $AD     2   ; Start of data to send to cassette
 zpCasEndPtr     @       $AF     2   ; End of data to send to cassette
 
 zpErrCode       @       $B5
-zpVScroll0      @       $E4 ; Vertical scroll used when SCREEN 0 is in use
-zpVScroll1      @       $E5 ; Vertical scroll used when SCREEN 1 is in use; updated when $F0 is set
+zpVScroll0      @       $E4 ; Vertical scroll used when SCREEN 0 is displayed
+zpVScroll1      @       $E5 ; Vertical scroll used when SCREEN 1 is displayed; updated when $F0 is set
 zpNmiTrampoline @       $ED 3 ; Contains a JMP instruction to the real NMI handler. It's set to: JMP $8971
-zpSomeKindaScrollingFlagF0      @       $F0 ; Flag indicating which vertical scroll var to update.
+zpCurScreenNum  @       $F0 ; the _displayed_ SCREEN (0 or 1). Kept in sync with zpPpuScreenBasePage
 zpGameNum       @       $F3 ; Game number (GAME cmd)
 
 tokenizeBuffer  @       $300    256

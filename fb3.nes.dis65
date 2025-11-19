@@ -898,6 +898,23 @@
 "10192":" digit?",
 "10196":" additional punctuation?",
 "10200":" another set of punctuation?",
+"11864":"get int arg.",
+"11867":"== 0? -\u003e",
+"11869":"== 1?",
+"11877":"SCREEN 0? -\u003e",
+"11879":"SCREEN 1. Save base addr high byte.",
+"11885":"Tell PPU to switch active screen to 1",
+"11898":"LOCATE 0,0",
+"11901":"done with args?",
+"11904":"yes -\u003e finish up",
+"11909":"get next int arg",
+"11912":"== 0? -\u003e",
+"11914":"or == 1?",
+"11916":"neither? -\u003e illegal!",
+"11918":"== 1. send updates, only, to 1.",
+"11923":"send updates, only, to scr 0.",
+"11928":"SCREEN 0. Save base addr high byte.",
+"11934":"Tell PPU to switch active screen to 0",
 "13199":"NEXT without FOR",
 "13201":"Syntax Error",
 "13203":"RETURN without GOSUB",
@@ -4650,6 +4667,76 @@
 "15679":{
 "Label":"RL_handleCR",
 "Value":48431,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"8830":{
+"Label":"EvalInteger",
+"Value":41582,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"8827":{
+"Label":"EvalCommaThenInteger",
+"Value":41579,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"8818":{
+"Label":"errIllVal",
+"Value":41570,
+"Source":"User",
+"Type":"LocalOrGlobalAddr",
+"LabelAnno":"None"},
+
+"11873":{
+"Label":"got0or1",
+"Value":44625,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"11861":{
+"Label":"errIllVal_ae45",
+"Value":44613,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"11857":{
+"Label":"nmiOnAndRts",
+"Value":44609,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"11887":{
+"Label":"setPpuCtrlAndCont",
+"Value":44639,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"11928":{
+"Label":"useScr0",
+"Value":44680,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"11923":{
+"Label":"secondSrc0",
+"Value":44675,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"11939":{
+"Label":"errIllVal_AE93",
+"Value":44691,
 "Source":"User",
 "Type":"GlobalAddr",
 "LabelAnno":"None"}},
