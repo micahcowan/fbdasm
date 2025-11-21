@@ -194,8 +194,8 @@ UglyJoe/ximwix at [famicomworld.com](https://www.famicomworld.com/forum/index.ph
 
 The formats are quite similar. Some differences are:
  - (Biggest difference) The data is sent twice on the MZ format, with an intervening 256-cycle intermission, but sent only once on Family BASIC. In [the block diagrams at sharpmz.org]([https://www.sharpmz.org/mz-700/tapeproc.htm](https://www.sharpmz.org/mz-700/tapeproc.htm#:~:text=Tape%20Format)) that show the structures for saved data, Everything after the second "L" in each of those block diagrams, does not exist on Family BASIC tape saves.
- - Bits are very similarly represented, but not quite the same. The frequencies/wavelengths differ (which makes sense, because so do their CPU clockspeeds!). The MZ starts with the high period and finishes with the low, while the reverse is true for Famibe.
  - The MZ format uses two different lengths of **sync** signal (the MZ page calls this a "GAP"&mdash;"LGAP" or "SGAP", depending on whether it's the long, or the short variant). It uses the long one (22,000 cycles) before the header packet is sent, and the shorter one (11,000 cycles) before the data packet is sent. Family BASIC uses the same 20,000-cycle gap before each of those.
+ - When sending a single cycle to represent one bit, the MZ starts with the high period and finishes with the low, while the reverse is true for Famibe.
 
 ## BASIC Variables (TODO)
 
