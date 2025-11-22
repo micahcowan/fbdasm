@@ -33,7 +33,9 @@ BRANCH STACK:
   $853A
    $857F
 
- CmdFn_LOAD
+  CmdFn_LOAD
     $9DD8 - LOADS
-    LoadProgram
-    ;$9E32 * LEFT OFF
+  ->$C565 (LoadBackgroundMap)
+   ;$C575 left off
+
+  Use constants for header types 2 and 3, send and rcv

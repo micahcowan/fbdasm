@@ -907,6 +907,11 @@
 "7715":"don\u0027t trust header\u0027s load destination; override with TXTTAB",
 "7730":"Wherever we finished loading, wll, that\u0027s the program",
 "7732":" end. We should mark it.",
+"7738":"put NUL byte there",
+"7746":"next byte is start of vars",
+"7752":"NUL there",
+"7760":"next byte end of vars",
+"7766":"NUL there",
 "7785":"is there an arg?",
 "7788":"no -\u003e nothing to do; return",
 "7790":"yes: expect prog name str",
@@ -1106,6 +1111,26 @@
 "17693":"START HEADER CREATION",
 "17695":"Indicate this header precedes screen data",
 "17719":"END HEADER CREATION",
+"17781":"set up dest ptr: first page of screen 1",
+"17789":"find and read a header",
+"17792":"error? -\u003e rts",
+"17794":"get header type",
+"17797":"is it a graphics chunk?",
+"17799":"no -\u003e skip next \u0027til next header",
+"17801":"yes, it\u0027s a BG save. Does filename match?",
+"17804":"no -\u003e skip to next header",
+"17806":"match! (or missing.) Tell user we\u0027ll load it.",
+"17812":"set vert scroll from header val",
+"17814":"load the BG data",
+"17819":"wait until next vblank so we can safely write VRAM",
+"17826":"tell PPU: writes go to screen 1",
+"17831":"transfer a page of data (one quarter-screen) to screen 1",
+"17838":"loop until page sent",
+"17840":"re-enable NMI on vblank",
+"17846":"we\u0027ll set PPU to the succeeding page",
+"17850":"are we at the end of screen 1?",
+"17852":"no -\u003e read next page of screen data",
+"17854":"yes: return!",
 "19684":"all commands above this line take line number arguments",
 "20321":"SPC, only allowed in PRINT",
 "20323":"TAB, only allowed in PRINT"},
@@ -1932,6 +1957,13 @@
 
 "15938":{
 "Text":"Read a data announce/tape mark\r\n(skipping everything that isn\u0027t that)\r\n\r\nString of 20ones, first",
+"IsFancy":true,
+"BoxMode":false,
+"MaxWidth":80,
+"BackgroundColor":0},
+
+"15924":{
+"Text":"Load a file (whether program, or bg data) from cassette (after having processed the header)",
 "IsFancy":true,
 "BoxMode":false,
 "MaxWidth":80,
@@ -5302,7 +5334,7 @@
 "LabelAnno":"None"},
 
 "15924":{
-"Label":"CasRcvProgram",
+"Label":"CasRcvFileData",
 "Value":48676,
 "Source":"User",
 "Type":"GlobalAddr",
@@ -5348,6 +5380,34 @@
 "Value":40518,
 "Source":"User",
 "Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"17781":{
+"Label":"LoadBackgroundMap",
+"Value":50533,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"17778":{
+"Label":"LBM_SkipFile",
+"Value":50530,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"17831":{
+"Label":"cpyToVram",
+"Value":50583,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"17789":{
+"Label":"LBM_readAPage",
+"Value":50541,
+"Source":"User",
+"Type":"GlobalAddr",
 "LabelAnno":"None"}},
 
 "OperandFormats":{
@@ -6234,6 +6294,16 @@
 "SymbolRef":null,
 "Extra":null},
 
+"7550":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"CAS_HDR_PROG",
+"Part":"Low"},
+
+"Extra":null},
+
 "7599":{
 "Length":2,
 "Format":"NumericLE",
@@ -6319,6 +6389,16 @@
 "Format":"NumericLE",
 "SubFormat":"Ascii",
 "SymbolRef":null,
+"Extra":null},
+
+"7698":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"CAS_HDR_PROG",
+"Part":"Low"},
+
 "Extra":null},
 
 "10223":{
@@ -7709,6 +7789,16 @@
 "SymbolRef":{
 "Label":"VRAM_screen1",
 "Part":"High"},
+
+"Extra":null},
+
+"17797":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"CAS_HDR_SCREEN",
+"Part":"Low"},
 
 "Extra":null},
 
@@ -10605,7 +10695,23 @@
 "ClearPrevious":false},
 
 "17778":{
-"Variables":[],
+"Variables":[{
+"DataDescriptor":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Hex",
+"SymbolRef":null,
+"Extra":null},
+
+"Comment":"Where to send loaded screen 1 data",
+"HasWidth":true,
+"Direction":"ReadWrite",
+"MultiMask":null,
+"Label":"vZpVramAddr",
+"Value":95,
+"Source":"Variable",
+"Type":"ExternalAddr",
+"LabelAnno":"None"}],
 "ClearPrevious":true}},
 
 "Visualizations":[],
