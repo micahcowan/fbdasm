@@ -35,4 +35,5 @@ BRANCH STACK:
 
  CmdFn_LOAD
     $9DD8 - LOADS
- ,@LD_skipped
+    LoadProgram
+    ;$9E32 * LEFT OFF

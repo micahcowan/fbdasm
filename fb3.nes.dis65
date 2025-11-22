@@ -897,12 +897,26 @@
 "7673":"\"LOAD?\"?... actually literally the PRINT token",
 "7675":"no -\u003e leave flag at zero",
 "7677":" = #$ff",
+"7690":"does filename match our arg (if any)?",
+"7693":"no -\u003e skip this file and try the next",
+"7698":"is it a Program header?",
+"7700":"no; BG header or other. Skip that, too.",
+"7702":"yes, this is it! Tell user the good news",
+"7705":"\"LOAD?\"?",
+"7707":"no -\u003e load program",
+"7715":"don\u0027t trust header\u0027s load destination; override with TXTTAB",
+"7730":"Wherever we finished loading, wll, that\u0027s the program",
+"7732":" end. We should mark it.",
 "7785":"is there an arg?",
 "7788":"no -\u003e nothing to do; return",
 "7790":"yes: expect prog name str",
 "7803":"is the string empty?",
 "7806":"yes -\u003e return",
 "7812":"copy eval\u0027d str as filename",
+"7873":"did LOAD get a filename arg?",
+"7875":"no -\u003e just report true",
+"7877":"yes: compare",
+"7879":"16 char max filename",
 "10188":" \u003c \u00270\u0027 (punctuation, or control chars)?",
 "10192":" digit?",
 "10196":" additional punctuation?",
@@ -1022,6 +1036,20 @@
 "15692":"Row is wrapped: loop back to preceding row",
 "15701":"Fetch the on-screen, possibly-wrapped line from PPU into lineBuffer",
 "15729":"Space: strip it and loop to preceding character",
+"15916":"disable NMI",
+"15924":"disable NMI",
+"15935":"set up cassette loading to go where header says",
+"15942":"read a bit",
+"15945":"STOP pressed? -\u003e re-enable NMI, then TP error",
+"15947":"zero bit? -\u003e Not announce mark yet, check next",
+"15949":"got a \"one\" bit, see if we get 20 total",
+"15951":"not 20 yet? get another \"one\"",
+"15955":"read a bit",
+"15957":"STOP pressed? -\u003e re-enable NMI, then TP error",
+"15960":"one bit? -\u003e Not announce mark yet, check next",
+"15962":"got a zero bit, see if we get 20 total",
+"15964":"not 20 yet? get another zero",
+"15968":"Got the announce. Go get the program data",
 "15971":"presumably to disable NMI",
 "15978":"set up for loading a header",
 "15985":"read a bit",
@@ -1890,6 +1918,20 @@
 
 "16011":{
 "Text":"Header announce mark successfully read!",
+"IsFancy":true,
+"BoxMode":false,
+"MaxWidth":80,
+"BackgroundColor":0},
+
+"15953":{
+"Text":"String of 20 zeroes, next",
+"IsFancy":true,
+"BoxMode":false,
+"MaxWidth":80,
+"BackgroundColor":0},
+
+"15938":{
+"Text":"Read a data announce/tape mark\r\n(skipping everything that isn\u0027t that)\r\n\r\nString of 20ones, first",
 "IsFancy":true,
 "BoxMode":false,
 "MaxWidth":80,
@@ -5074,7 +5116,7 @@
 "Label":"LD_skipped",
 "Value":40437,
 "Source":"User",
-"Type":"NonUniqueLocalAddr",
+"Type":"GlobalAddr",
 "LabelAnno":"None"},
 
 "15985":{
@@ -5206,6 +5248,104 @@
 "16082":{
 "Label":"success",
 "Value":48834,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"7893":{
+"Label":"success",
+"Value":40645,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"7895":{
+"Label":"failure",
+"Value":40647,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"7881":{
+"Label":"cmpLp",
+"Value":40633,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"7873":{
+"Label":"LoadCheckFilename",
+"Value":40625,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"16045":{
+"Label":"load",
+"Value":48797,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"7715":{
+"Label":"LoadProgram",
+"Value":40467,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"15916":{
+"Label":"CasVrfyProgram",
+"Value":48668,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"15924":{
+"Label":"CasRcvProgram",
+"Value":48676,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"15929":{
+"Label":"CLP_vrfyEntry",
+"Value":48681,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"15938":{
+"Label":"CasRcvDataAnn",
+"Value":48690,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"15942":{
+"Label":"lpTwentyOnes",
+"Value":48694,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"15960":{
+"Label":"errIfSTOPped",
+"Value":48712,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"15957":{
+"Label":"lpTwentyZeroes",
+"Value":48709,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"7766":{
+"Label":"nullByteToCasBuf",
+"Value":40518,
 "Source":"User",
 "Type":"NonUniqueLocalAddr",
 "LabelAnno":"None"}},
@@ -7191,6 +7331,20 @@
 "Label":"lineBuffer",
 "Part":"High"},
 
+"Extra":null},
+
+"15938":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Decimal",
+"SymbolRef":null,
+"Extra":null},
+
+"15953":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Decimal",
+"SymbolRef":null,
 "Extra":null},
 
 "15981":{
@@ -10382,7 +10536,7 @@
 "Extra":"↑FB3_CHRROM.bin"}},
 
 "LvTables":{
-"15971":{
+"15924":{
 "Variables":[{
 "DataDescriptor":{
 "Length":1,
@@ -10400,7 +10554,7 @@
 "Source":"Variable",
 "Type":"ExternalAddr",
 "LabelAnno":"None"}],
-"ClearPrevious":false},
+"ClearPrevious":true},
 
 "16011":{
 "Variables":[],

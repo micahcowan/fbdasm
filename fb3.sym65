@@ -71,10 +71,11 @@ zpNmiSomeFlag1  @       $AC ; if $AC is non-zero, $AB is set to #$FF (triggering
 zpCasBufPtr     @       $AD     2   ; Start of data to send to cassette
 zpCasEndPtr     @       $AF     2   ; End of data to send to cassette
 
-zpVerifyFlag    @       $B1 ; If set, VERIFIES rather than LOADs.  Nothing ever sets it, and there's no opportunity for a BASIC program to set (without machine code support). Abandoned feature?
+zpVerfFlag       @      $B1 ; If set, VERIFIES rather than LOADs a program. Used for "LOAD?".
 zpErrCode       @       $B5
 zpVScroll0      @       $E4 ; Vertical scroll used when SCREEN 0 is displayed
 zpVScroll1      @       $E5 ; Vertical scroll used when SCREEN 1 is displayed; updated when $F0 is set
+zpHaveFNameArg  @       $EA ; true when LOAD was given a filename arg
 zpNmiTrampoline @       $ED 3 ; Contains a JMP instruction to the real NMI handler. It's set to: JMP $8971
 zpCurScreenNum  @       $F0 ; the _displayed_ SCREEN (0 or 1). Kept in sync with zpPpuScreenBasePage
 zpGameNum       @       $F3 ; Game number (GAME cmd)
