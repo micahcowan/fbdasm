@@ -22,90 +22,79 @@
 ; References to keywords are also ALL-CAPS.
 ; I'm not super-consistent about naming of constants. Kinda by vibe.
 
-zpTXTTAB    @   $05     2       ; Pointer to the start of the BASIC program code. Always set to $6006.
-zpTXTEND    @   $07     2       ; Ponter to just past the program end (zpzpTXTEND - zpTXTTAB = prog len)
-zpTXTPTR    @   $09     2       ; Points at the next char of BASIC program to be processed.
-zpTxtNextLink   @       $0B     2   ; Points at the next line of BASIC program after current
-zpMisc          @       $19     4   ; Used for a wide variety of things, mainly temporary pointers
-zpVARTAB        @       $1D     2   ; Start of variable storage
-zpVAREND        @       $1F     2   ; Just past end of variable storage
-zpArgTyp        @       $27         ; Designates the type of data in zpWAccum.
-zpWAccum        @       $28     3   ; Like a 16-bit Accumulator. Forms both the first operand, and the result, of various 16-bit integer operations. Or: byte Len followed by word ptr, for strings.
-zpWParam        @       $2C     3   ; Like a 16-bit Data register. forms the second operand of various binary operators
+zpTXTTAB        @  $05    2 ; Pointer to the start of the BASIC program code. Always set to $6006.
+zpTXTEND        @  $07    2 ; Ponter to just past the program end (zpTXTEND - zpTXTTAB = prog len)
+zpTXTPTR        @  $09    2 ; Points at the next char of BASIC program to be processed.
+zpTxtNextLink   @  $0B    2 ; Points at the next line of BASIC program after current
+zpMisc          @  $19    4 ; Used for a wide variety of things, mainly temporary pointers
+zpVARTAB        @  $1D    2 ; Start of variable storage
+zpVAREND        @  $1F    2 ; Just past end of variable storage
+zpArgTyp        @  $27    ; Designates the type of data in zpWAccum.
+zpWAccum        @  $28    3 ; Like a 16-bit Accumulator. Forms both the first operand, and the result, of various 16-bit integer operations. Or: byte Len followed by word ptr, for strings.
+zpWParam        @  $2C    3 ; Like a 16-bit Data register. forms the second operand of various binary operators
+zpPpuCtrlVal    @  $32
+zpPpuMaskVal    @  $33
+zpMulScratch    @  $34    8 ; Used for multiplication scratch space. Only the first four are ever actually used!
+zpHexStrTmp     @  $3D    5 ; Holds str output from HexStrFromWord
+zpLineNum       @  $44    2
+zpSomeRowIndicator  @  $47  ; zCV was copied to this just prior to setting zpNMICMD=2 and awaiting NMI. Other uses elsewhere.
+zpCH            @  $48      ; Current cursor column number
+zpCV            @  $49      ; Current cursor row number
+zpCursTileAddr  @  $4A    2 ; PPU address of tile under cursor
+zpInsertMode    @  $4C      ; Zero = overwrite, non-zero = insert
+zpTokenizeOut   @  $4D    2
+zpPpuScreenBasePage     @  $4F ; The VRAM page used for the current screen we're UPDATING (may not be the one displayed)!
+zpOutputStr     @  $52    2 ; Pointer to null-term'd string to copy to outTxtBuf
+zpTokTblScn     @  $54    2 ; Used to scan thru tbl_KeywordTokens
+zpNewLineOffset @  $5A      ; Offset to next line for not-yet-placed, tokenized line
+zpTxtLink       @  $5B    2 ; Points to the start of the current program line (including the 3-byte preamble)
+zpSavedRts      @  $5F    2 ; FOR, GOSUB, other cmds pull return from stack, save here
+zpOutTxtCurPos  @  $62
+zpNMICMD        @  $63      ; Which command the NMI handler should execute. 1 + the command's index in jtbl_NMICMD.
+zpOutTxtStartPos    @  $64
+zpSavedCH       @  $6B
+zpSavedCV       @  $6C
+zpLineBufIdx    @  $76      ; Current write position into lineBuffer ($500)
+zpCasCksum      @  $91    2 ; Checksum for cassette data, also used for misc counting
+zpSavedTxtChar  @  $98
+zpToken         @  $99
+zpSavedTXTPTR   @  $9A    2 ; Saved val of zpTXTPTR
+zpLoadQFlag     @  $9F      ; True if we're in "LOAD?" rather than "LOAD"
+zpNxtAutoLNum   @  $A0    2 ; Next line number to use (for AUTO)
+zAutoLNumIncr   @  $A2    2 ; How much to auto-increment each line number (from AUTO)
+zpNmiSomeFlag   @  $AB
+zpNmiSomeFlag1  @  $AC      ; if $AC is non-zero, $AB is set to #$FF (triggering flag check on next frame)
+zpCasBufPtr     @  $AD    2 ; Start of data to send to cassette
+zpCasEndPtr     @  $AF    2 ; End of data to send to cassette
+zpVerfFlag      @  $B1      ; If set, VERIFIES rather than LOADs a program. Used for "LOAD?".
+zpErrCode       @  $B5
+zpVScroll0      @  $E4      ; Vertical scroll used when SCREEN 0 is displayed
+zpVScroll1      @  $E5      ; Vertical scroll used when SCREEN 1 is displayed; updated when $F0 is set
+zpHaveFNameArg  @  $EA      ; true when LOAD was given a filename arg
+zpNmiTrampoline @  $ED    3 ; Contains a JMP instruction to the real NMI handler. It's set to: JMP $8971
+zpCurScreenNum  @  $F0      ; the _displayed_ SCREEN (0 or 1). Kept in sync with zpPpuScreenBasePage
+zpGameNum       @  $F3      ; Game number (GAME cmd)
 
-zpPpuCtrlVal    @       $32
-zpPpuMaskVal    @       $33
+tokenizeBuffer  @  $300   256
+strResultLen    @  $400     ; Length of the string result
+strResultPtr    @  $401   2 ; String result after evaluating formula (arg)
+fnKey1_DfnBuf   @  $480   16; Current definitions of the FN-key shortcuts, each 16 chars
+fnKey2_DfnBuf   @  $490   16
+fnKey3_DfnBuf   @  $4A0   16
+fnKey4_DfnBuf   @  $4B0   16
+fnKey5_DfnBuf   @  $4C0   16
+fnKey6_DfnBuf   @  $4D0   16
+fnKey7_DfnBuf   @  $4E0   16
+fnKey8_DfnBuf   @  $4F0   16
+lineBuffer      @  $500   256; NMICMD_BufferCurLine copies the full current, potentially multi-row line to here
+;fileName       @  $580   17; SAVE and LOAD put their string arg here.
+isRowWrappedArray0  @  $601 24 ; Marks which visible screen rows are wrapped from previous line, if SCREEN 0.
+isRowWrappedArray1  @  $61B 24 ; Marks which visible screen rows are wrapped from previous line, if SCREEN 1.
+kbdDataAry      @  $634   9 
+unkKbdFlag      @  $63B
+outTxtBuf       @  $700   256; user directive messages (at least) get writen out to here
 
-zpMulScratch  @       $34     8   ; Used for multiplication scratch space. Only the first four are ever actually used!
-
-zpHexStrTmp     @       $3D     5   ; Holds str output from HexStrFromWord
-zpLineNum       @       $44     2
-zpSomeRowIndicator      @       $47 ; zCV was copied to this just prior to setting zpNMICMD=2 and awaiting NMI. Other uses elsewhere.
-zpCH    @       $48 ; Current cursor column number
-zpCV    @       $49 ; Current cursor row number
-
-zpCursTileAddr  @       $4A     2 ; PPU address of tile under cursor
-zpInsertMode    @       $4C       ; Zero = overwrite, non-zero = insert
-zpTokenizeOut   @       $4D     2
-zpPpuScreenBasePage     @       $4F ; The VRAM page used for the current screen we're UPDATING (may not be the one displayed)!
-zpOutputStr     @       $52     2 ; Pointer to null-term'd string to copy to outTxtBuf
-zpTokTblScn     @       $54     2 ; Used to scan thru tbl_KeywordTokens
-zpNewLineOffset @       $5A       ; Offset to next line for not-yet-placed, tokenized line
-zpTxtLink       @       $5B     2 ; Points to the start of the current program line (including the 3-byte preamble)
-zpSavedRts      @       $5F     2 ; FOR, GOSUB, other cmds pull return from stack, save here
-zpOutTxtCurPos  @       $62
-zpNMICMD        @       $63 ; Which command the NMI handler should execute. 1 + the command's index in jtbl_NMICMD.
-
-zpOutTxtStartPos        @       $64
-zpSavedCH       @       $6B
-zpSavedCV       @       $6C
-zpLineBufIdx    @       $76 ; Current write position into lineBuffer ($500)
-zpCasCksum      @       $91     2   ; Checksum for cassette data, also used for misc counting
-zpSavedTxtChar  @       $98
-zpToken         @       $99
-zpSavedTXTPTR   @       $9A     2   ; Saved val of zpTXTPTR
-zpLoadQFlag     @       $9F ; True if we're in "LOAD?" rather than "LOAD"
-zpNxtAutoLNum   @       $A0     2   ; Next line number to use (for AUTO)
-zAutoLNumIncr   @       $A2     2   ; How much to auto-increment each line number (from AUTO)
-
-zpNmiSomeFlag   @       $AB
-zpNmiSomeFlag1  @       $AC ; if $AC is non-zero, $AB is set to #$FF (triggering flag check on next frame)
-
-zpCasBufPtr     @       $AD     2   ; Start of data to send to cassette
-zpCasEndPtr     @       $AF     2   ; End of data to send to cassette
-
-zpVerfFlag       @      $B1 ; If set, VERIFIES rather than LOADs a program. Used for "LOAD?".
-zpErrCode       @       $B5
-zpVScroll0      @       $E4 ; Vertical scroll used when SCREEN 0 is displayed
-zpVScroll1      @       $E5 ; Vertical scroll used when SCREEN 1 is displayed; updated when $F0 is set
-zpHaveFNameArg  @       $EA ; true when LOAD was given a filename arg
-zpNmiTrampoline @       $ED 3 ; Contains a JMP instruction to the real NMI handler. It's set to: JMP $8971
-zpCurScreenNum  @       $F0 ; the _displayed_ SCREEN (0 or 1). Kept in sync with zpPpuScreenBasePage
-zpGameNum       @       $F3 ; Game number (GAME cmd)
-
-tokenizeBuffer  @       $300    256
-strResultLen    @       $400        ; Length of the string result
-strResultPtr    @       $401    2   ; String result after evaluating formula (arg)
-fnKey1_DfnBuf   @       $480    16  ; Current definitions of the FN-key shortcuts, each 16 chars
-fnKey2_DfnBuf   @       $490    16
-fnKey3_DfnBuf   @       $4A0    16
-fnKey4_DfnBuf   @       $4B0    16
-fnKey5_DfnBuf   @       $4C0    16
-fnKey6_DfnBuf   @       $4D0    16
-fnKey7_DfnBuf   @       $4E0    16
-fnKey8_DfnBuf   @       $4F0    16
-
-lineBuffer      @       $500    256 ; NMICMD_BufferCurLine copies the full current, potentially multi-row line to here
-;fileName        @       $580    17  ; SAVE and LOAD put their string arg here.
-
-isRowWrappedArray0      @       $601 24 ; Marks which visible screen rows are wrapped from previous line, if SCREEN 0.
-isRowWrappedArray1      @       $61B 24 ; Marks which visible screen rows are wrapped from previous line, if SCREEN 1.
-
-kbdDataAry @       $634    9
-unkKbdFlag      @       $63B
-outTxtBuf       @       $700    256 ; user directive messages (at least) get writen out to here
-
-basicProgram    @       $6006 ; The start of the BASIC program in memory
+basicProgram    @  $6006  ; The start of the BASIC program in memory
 
 NC_NoCmd            = 0
 NC_FlushOutp        = 1
@@ -114,125 +103,125 @@ NC_ClearToEndOfRow  = 4
 NC_PpuMaskUpdate    = 11
 NC_PpuMaskClear     = 12
 
-VRAM_screen0    = $2000
-VRAM_screen1    = $2400
+VRAM_screen0    =  $2000
+VRAM_screen1    =  $2400
 
-TYP_INT = $02   ; For zpArgTyp. Integer word.
-TYP_STR = $03   ; For zpArgTyp. String.
+TYP_INT         =  $02      ; For zpArgTyp. Integer word.
+TYP_STR         =  $03      ; For zpArgTyp. String.
 
-CAS_HDR_PROG   = $02 ; Identity byte in header for prog saves to cassette tape.
-CAS_HDR_SCREEN = $03 ; Identity byte in header for screen saves to cassette tape.
+CAS_HDR_PROG    = $02       ; Identity byte in header for prog saves to cassette tape.
+CAS_HDR_SCREEN  = $03       ; Identity byte in header for screen saves to cassette tape.
 
-tok_LNUM_AFTER  = $0B   ; indicates a line number (word) follows this byte
-tok_HEX_AFTER   = $11   ; indicates a number (word) follows this byte, originally hexadecimal
-tok_NUM_AFTER   = $12   ; indicates a number (word) follows this byte, originally decimal
+tok_LNUM_AFTER  = $0B       ; indicates a line number (word) follows this byte
+tok_HEX_AFTER   = $11       ; indicates a number (word) follows this byte, originally hexadecimal
+tok_NUM_AFTER   = $12       ; indicates a number (word) follows this byte, originally decimal
 
-tok_GOTO    = $80
-tok_GOSUB   = $81
-tok_RUN = $82
-tok_RETURN  = $83
-tok_RESTORE = $84
-tok_THEN    = $85
-tok_LIST    = $86
-tok_SYSTEM  = $87
-tok_TO  = $88
-tok_STEP    = $89
-tok_SPRITE  = $8A
-tok_PRINT   = $8B
-tok_FOR = $8C
-tok_NEXT    = $8D
-tok_PAUSE   = $8E
-tok_INPUT   = $8F
-tok_LINPUT  = $90
-tok_DATA    = $91
-tok_IF  = $92
-tok_READ    = $93
-tok_DIM = $94
-tok_REM = $95
-tok_STOP    = $96
-tok_CONT    = $97
-tok_CLS = $98
-tok_CLEAR   = $99
-tok_ON  = $9A
-tok_OFF = $9B
-tok_CUT = $9C
-tok_NEW = $9D
-tok_POKE    = $9E
-tok_CGSET   = $9F
-tok_VIEW    = $A0
-tok_MOVE    = $A1
-tok_END = $A2
-tok_PLAY    = $A3
-tok_BEEP    = $A4
-tok_LOAD    = $A5
-tok_SAVE    = $A6
+tok_GOTO        = $80
+tok_GOSUB       = $81
+tok_RUN         = $82
+tok_RETURN      = $83
+tok_RESTORE     = $84
+tok_THEN        = $85
+tok_LIST        = $86
+tok_SYSTEM      = $87
+tok_TO          = $88
+tok_STEP        = $89
+tok_SPRITE      = $8A
+tok_PRINT       = $8B
+tok_FOR         = $8C
+tok_NEXT        = $8D
+tok_PAUSE       = $8E
+tok_INPUT       = $8F
+tok_LINPUT      = $90
+tok_DATA        = $91
+tok_IF          = $92
+tok_READ        = $93
+tok_DIM         = $94
+tok_REM         = $95
+tok_STOP        = $96
+tok_CONT        = $97
+tok_CLS         = $98
+tok_CLEAR       = $99
+tok_ON          = $9A
+tok_OFF         = $9B
+tok_CUT         = $9C
+tok_NEW         = $9D
+tok_POKE        = $9E
+tok_CGSET       = $9F
+tok_VIEW        = $A0
+tok_MOVE        = $A1
+tok_END         = $A2
+tok_PLAY        = $A3
+tok_BEEP        = $A4
+tok_LOAD        = $A5
+tok_SAVE        = $A6
 tok_POSITION    = $A7
-tok_KEY = $A8
-tok_COLOR   = $A9
-tok_DEF = $AA
-tok_CGEN    = $AB
-tok_SWAP    = $AC
-tok_CALL    = $AD
-tok_LOCATE  = $AE
-tok_PALET   = $AF
-tok_ERA = $B0
-tok_TR  = $B1
-tok_FIND    = $B2
-tok_GAME    = $B3
-tok_BGTOOL  = $B4
-tok_AUTO    = $B5
-tok_DELETE  = $B6
-tok_RENUM   = $B7
-tok_FILTER  = $B8
-tok_CLICK   = $B9
-tok_SCREEN  = $BA
-tok_BACKUP  = $BB
-tok_ERROR   = $BC
-tok_RESUME  = $BD
-tok_BGPUT   = $BE
-tok_BGGET   = $BF
-tok_CAN = $C0
-tok_XOR = $EF
-tok_OR  = $F0
-tok_AND = $F1
-tok_NOT = $F2
-tok_OP_NE   = $F3
-tok_OP_GE   = $F4
-tok_OP_LE   = $F5
-tok_OP_EQ   = $F6
-tok_OP_GT   = $F7
-tok_OP_LT   = $F8
-tok_OP_PLUS = $F9
+tok_KEY         = $A8
+tok_COLOR       = $A9
+tok_DEF         = $AA
+tok_CGEN        = $AB
+tok_SWAP        = $AC
+tok_CALL        = $AD
+tok_LOCATE      = $AE
+tok_PALET       = $AF
+tok_ERA         = $B0
+tok_TR          = $B1
+tok_FIND        = $B2
+tok_GAME        = $B3
+tok_BGTOOL      = $B4
+tok_AUTO        = $B5
+tok_DELETE      = $B6
+tok_RENUM       = $B7
+tok_FILTER      = $B8
+tok_CLICK       = $B9
+tok_SCREEN      = $BA
+tok_BACKUP      = $BB
+tok_ERROR       = $BC
+tok_RESUME      = $BD
+tok_BGPUT       = $BE
+tok_BGGET       = $BF
+tok_CAN         = $C0
+tok_XOR         = $EF
+tok_OR          = $F0
+tok_AND         = $F1
+tok_NOT         = $F2
+tok_OP_NE       = $F3
+tok_OP_GE       = $F4
+tok_OP_LE       = $F5
+tok_OP_EQ       = $F6
+tok_OP_GT       = $F7
+tok_OP_LT       = $F8
+tok_OP_PLUS     = $F9
 tok_OP_MINUS    = $FA
-tok_MOD = $FB
-tok_OP_DIV  = $FC
-tok_OP_MUL  = $FD
-tok_ABS = $CA
-tok_ASC = $CB
-tok_STR_STR    = $CC
-tok_FRE = $CD
-tok_LEN = $CE
-tok_PEEK    = $CF
-tok_RND = $D0
-tok_SGN = $D1
-tok_SPC = $D2
-tok_TAB = $D3
-tok_MID_STR    = $D4
-tok_STICK   = $D5
-tok_STRIG   = $D6
-tok_XPOS    = $D7
-tok_YPOS    = $D8
-tok_VAL = $D9
-tok_POS = $DA
-tok_CSRLIN  = $DB
-tok_CHR_STR    = $DC
-tok_HEX_STR    = $DD
-tok_INKEY_STR  = $DE
-tok_RIGHT_STR  = $DF
-tok_LEFT_STR   = $E0
-tok_SCR_STR    = $E1
-tok_INSTR   = $E2
-tok_CRASH   = $E3
-tok_ERR = $E4
-tok_ERL = $E5
-tok_VCT = $E6
+tok_MOD         = $FB
+tok_OP_DIV      = $FC
+tok_OP_MUL      = $FD
+tok_ABS         = $CA
+tok_ASC         = $CB
+tok_STR_STR     = $CC
+tok_FRE         = $CD
+tok_LEN         = $CE
+tok_PEEK        = $CF
+tok_RND         = $D0
+tok_SGN         = $D1
+tok_SPC         = $D2
+tok_TAB         = $D3
+tok_MID_STR     = $D4
+tok_STICK       = $D5
+tok_STRIG       = $D6
+tok_XPOS        = $D7
+tok_YPOS        = $D8
+tok_VAL         = $D9
+tok_POS         = $DA
+tok_CSRLIN      = $DB
+tok_CHR_STR     = $DC
+tok_HEX_STR     = $DD
+tok_INKEY_STR   = $DE
+tok_RIGHT_STR   = $DF
+tok_LEFT_STR    = $E0
+tok_SCR_STR     = $E1
+tok_INSTR       = $E2
+tok_CRASH       = $E3
+tok_ERR         = $E4
+tok_ERL         = $E5
+tok_VCT         = $E6
