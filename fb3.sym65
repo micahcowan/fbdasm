@@ -22,6 +22,7 @@
 ; References to keywords are also ALL-CAPS.
 ; I'm not super-consistent about naming of constants. Kinda by vibe.
 
+zpFRETOP        @  $03    2 ; Pointer to just past the end of free space.
 zpTXTTAB        @  $05    2 ; Pointer to the start of the BASIC program code. Always set to $6006.
 zpTXTEND        @  $07    2 ; Ponter to just past the program end (zpTXTEND - zpTXTTAB = prog len)
 zpTXTPTR        @  $09    2 ; Points at the next char of BASIC program to be processed.
@@ -58,6 +59,8 @@ zpSavedCH       @  $6B
 zpSavedCV       @  $6C
 zpLineBufIdx    @  $76      ; Current write position into lineBuffer ($500)
 zpVarName       @  $8A    2 ; Two-letter variable name
+zpVarData       @  $8C    2 ; pointer to selected variable data (deep, if var is array)
+zpVARPTR        @  $8E    2 ; pointer to start of selected variable
 zpTmp90         @  $90      ; For various, temporary uses
 zpCasCksum      @  $91    2 ; Checksum for cassette data, also used for misc counting
 zpSavedTxtChar  @  $98
@@ -114,6 +117,7 @@ VRAM_screen1    =  $2400
 
 TYP_INT         =  $02      ; For zpArgTyp. Integer word.
 TYP_STR         =  $03      ; For zpArgTyp. String.
+TYP_ARRAY_FLAG  =  $80      ; Flag bit indicating array type.
 
 CAS_HDR_PROG    = $02       ; Identity byte in header for prog saves to cassette tape.
 CAS_HDR_SCREEN  = $03       ; Identity byte in header for screen saves to cassette tape.

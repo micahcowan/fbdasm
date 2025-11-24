@@ -829,6 +829,10 @@
 "2749":"line doesn\u0027t wrap -\u003e done; terminate active NMICMD",
 "2751":"line wraps: copy next row on next NMI",
 "2753":"(always)",
+"3017":"subtract 4 from end of free space",
+"3027":"and compare what\u0027s in WAccum to that",
+"3030":"less than zpFRETOP - 4? -\u003e we\u0027re fine. Return.",
+"3032":"ERROR: insufficient memory!",
 "3070":"is next char a comma?",
 "3072":"yes -\u003e skip first arg, handle next",
 "3074":"got line-number arg indicator byte?",
@@ -949,6 +953,13 @@
 "9415":"matched -\u003e syntax error",
 "9417":"\u0027A\u0027 thru \u0027Z\u0027?",
 "9419":"yes -\u003e handle (presumed) var name",
+"9421":"MOVE fn?",
+"9423":"-\u003e eval that",
+"9427":"error unless we have a token \u003e= ABS but \u003c XOR",
+"9429":"(single-param fns)",
+"9434":"subtract value of tok_ABS",
+"9436":"and double for pointer index",
+"9438":"lookup the function, evaluate it, and return",
 "9484":"move numeric literal directly onto parse stack",
 "9487":"(not including leading token byte)",
 "9498":"advance zpTXTPTR past the literal",
@@ -957,6 +968,20 @@
 "9518":"store the high byte (#$00)",
 "9524":"incr buffer index past number, and terminating null?",
 "9526":"advance to next byte of tokenized line",
+"9537":"get the variable data\u0027s type",
+"9539":"(ignore whether or not it\u0027s from an array)",
+"9541":"is it a string?",
+"9543":"yes -\u003e do string stuff",
+"9545":"no: we have an int",
+"9547":"copy int onto parse stack",
+"9559":"and the... type ID byte of the var that follows it?",
+"9561":"I suppose it\u0027s just a padding byte to make the size come out right",
+"9567":"advance parse stack index past the evaluated var data",
+"9569":"and set var type as current expr value\u0027s type",
+"9575":"skip spaces and return",
+"9582":"strlen -\u003e parse stack",
+"9588":"then pointer at str contents",
+"9600":"advance the parse stack index and return",
 "9613":"empty the parse stack",
 "9617":"clear variable name second byte",
 "9619":"store var name first char (we already got)",
@@ -966,21 +991,134 @@
 "9629":"yes, store as var name 2nd char",
 "9631":"loop over any remaining alphanumeric chars, ignoring",
 "9660":"array index?",
+"9662":"yes -\u003e handle array var index",
+"9664":"find the var (string or int)",
+"9667":"found -\u003e get its data",
+"9669":"not found. Make one!",
+"9671":"(we\u0027re at end of vars tab now)",
+"9673":"store variable type",
+"9676":"store variable name",
+"9688":"store zeroes to next three bytes",
+"9690":"(appropriate for both int AND str!)",
+"9694":"(third byte indicates vars tab end, if INT)",
+"9700":"int? -\u003e",
+"9702":"string. Clear its contents to zero.",
+"9715":"add size of var type, name, and data to VARPTR",
+"9727":"error if we have insufficient free space for new var",
+"9732":"record the new vars table end location",
+"9741":"add 3 to VARPTR to skip type and name",
+"9743":"and store result in zpVarData",
 "9784":"high bit = \"array\" flag?",
 "9790":"evaluate int expression for array index",
-"9798":"save away first byte of index result",
+"9798":"save away first byte of idx",
 "9802":"verify idx fits in 1 byte, and pop from parse stack",
 "9805":"only one index? -\u003e handle",
+"9810":"evaluate int expr for 2nd index",
+"9818":"save away first byte of 2nd idx",
+"9822":"verify idx fits in 1 byte, and pop from parse stack",
+"9825":"didn\u0027t end with \u0027)\u0027? -\u003e error!",
+"9827":"advance TXTPTR past closing parenthesis",
+"9831":"restore 2nd index (to $1B)",
+"9834":"restore 1st index (to $19)",
+"9837":"restore var type",
+"9840":"restore 2nd byte of variable name",
+"9843":"restore 1st byte of var name",
+"9845":"find the matching variable",
+"9848":"didn\u0027t find? -\u003e error IL (arrays must be DIM\u0027d before use)",
+"9852":"is the found array var 2-dimensional?",
+"9854":"no -\u003e error (we\u0027re looking for 2-dimensional)",
+"9857":"get max idx for first dimen",
+"9859":"less than the specified 1st index?",
+"9861":"yes -\u003e error",
+"9863":"save max idx to x",
+"9865":"get max idx for second dimen",
+"9867":"less than the specified 2nd index?",
+"9869":"yes -\u003e error",
+"9874":"max idx, +1 -\u003e num elements in 1st dim",
+"9885":"times value for 2nd index",
+"9892":"and add the value of the 1st index",
+"9900":"multiply by size of element type",
+"9903":"add size of two-dimension array variable preamble",
+"9907":"do the preamble add",
+"9918":"add to the current pointer into var tab (pointing at found var)",
+"9921":"save result as ptr to the element value",
+"9937":"restore the index value",
+"9940":"this will have high-bit set now!",
+"9943":"restore var name",
+"9951":"didn\u0027t find -\u003e error IL (arrays must be DIM\u0027d before use)",
+"9955":"is the found array var 2-dimensional?",
+"9957":"yes -\u003e error (we\u0027re looking for single!)",
+"9960":"get max array index",
+"9962":"is it less than the index used in the expression?",
+"9964":"yes -\u003e error",
+"9978":"multiply index by size of elements",
+"9981":"add size of single-dimension array variable preamble",
 "9986":"second index byte is #$00?",
 "9989":"no -\u003e too big! error",
 "9991":"save our backed-up stack index",
 "9996":"next char == \u0027)\u0027?",
 "9998":"no -\u003e return false",
 "10000":"yes, return true",
+"10010":"INT? type #$02, has size #$02... -\u003e just return!",
+"10012":"strings are 33 bytes total. 1 len, 31 content, 1 terminating null",
+"10025":"end of variables table?",
+"10027":"yes -\u003e FAIL",
+"10029":"matches our sought variable type?",
+"10031":"no -\u003e skip to next var",
+"10036":"first letter of var name matches?",
+"10038":"no -\u003e skip to next var",
+"10043":"second char of var name matches?",
+"10045":"no -\u003e skip to next var",
+"10047":"var matched- return success (carry set)!",
+"10049":"skipVar",
+"10051":"is it an array type?",
+"10053":"yes -\u003e handle skipping array",
+"10055":"no, get basic type size",
+"10059":"add the 3 bytes for type and name",
+"10061":"and add to variables table index to skip the var",
+"10071":"did we reach end of var table?",
+"10075":"no -\u003e check next var for a match",
+"10077":"low byte matched.",
+"10079":"does high byte?",
+"10081":"no -\u003e check next var for a match",
+"10083":"yes: end of vars with no match. Return failure (carry clear)",
+"10087":"record array\u0027s element type (stripping array flag)",
+"10093":"number of array dimensions, minus one.",
+"10098":"max index of array",
+"10101":"max index of 2nd dimension of array (if 2 dimension)",
+"10103":"(otherwise, this is first byte of first element!)",
+"10105":"clear WParam+1, WAccum+1",
+"10108":"clear low byte of WParam as well",
+"10112":"1st dimension max index goes into WAccum",
+"10114":"one-dimensional array, or two?",
+"10116":"one -\u003e leave WParam zero (ought to skip the first multiply, but doesn\u0027t)",
+"10118":"two: max idx of 2nd dimension -\u003e WParam",
+"10122":"increment WParam (max idx -\u003e number-of-elements)",
+"10128":"increment WAccum (max idx -\u003e number-of-elements)",
+"10134":"multiply them (now have total number of elements)",
+"10139":"get element type size",
+"10142":"store in WParam",
+"10148":"multiply",
+"10151":"total number of bytes for the elements",
+"10153":" plus 5 for array type and name, and max index value",
+"10159":"...make that 6, for the two max index entries",
+"10161":"(do that add)",
+"10172":"now add to our index into the variables table",
+"10175":"and put result back into index",
+"10183":"we succesfully skipped the array var! Check the next.",
 "10188":" \u003c \u00270\u0027 (punctuation, or control chars)?",
 "10192":" digit?",
 "10196":" additional punctuation?",
 "10200":" another set of punctuation?",
+"10401":"evaluate MOVE arg",
+"10406":"arg \u003e= 8?",
+"10408":"yes -\u003e error",
+"10410":"get DEF MOVE data on specified sprite",
+"10413":"select whether movement is active",
+"10415":"zero? -\u003e keep that value",
+"10417":"non-zero, convert to value (-1)",
+"10419":"save that value to WAccum (as word)",
+"10423":"and push to parse stack",
 "11802":"no args -\u003e",
 "11804":"get int arg",
 "11807":" \u003c 2?",
@@ -1187,6 +1325,7 @@
 "17852":"no -\u003e read next page of screen data",
 "17854":"yes: return!",
 "19684":"all commands above this line take line number arguments",
+"20031":"all keywords below this line are built-in functions",
 "20321":"SPC, only allowed in PRINT",
 "20323":"TAB, only allowed in PRINT"},
 
@@ -2039,7 +2178,7 @@
 "BackgroundColor":0},
 
 "9986":{
-"Text":"Pops the evaluated array index off the parse stack, erroring if the index value exceeds one byte (too big to be an index!). Returns with carry set if and only if next token is a closing parenthesis (\u0027)\u0027)",
+"Text":"Pops the evaluated array index off the parse stack, erroring if the index value exceeds one byte (too big to be an index!). Returns with carry clear if and only if next token is a closing parenthesis (\u0027)\u0027)",
 "IsFancy":true,
 "BoxMode":false,
 "MaxWidth":80,
@@ -2047,6 +2186,48 @@
 
 "9807":{
 "Text":"If we reach here, there\u0027s a second index provided for this array",
+"IsFancy":true,
+"BoxMode":false,
+"MaxWidth":80,
+"BackgroundColor":0},
+
+"10015":{
+"Text":"Finds variable record from zpVarName ($8A.8B) and vZpVarType ($90, temp use).\r\nUnlike most other routines in Family BASIC, exiting with carry set indicates success, reset indicates failure.",
+"IsFancy":true,
+"BoxMode":false,
+"MaxWidth":80,
+"BackgroundColor":0},
+
+"4082":{
+"Text":"Compare WAccum to WParam",
+"IsFancy":true,
+"BoxMode":false,
+"MaxWidth":80,
+"BackgroundColor":0},
+
+"10438":{
+"Text":"Skips over a parentheses at TXTPTR, or errors if no paren.\r\nEvaluates the parenthesized expression, and copies the three bytes to WAccum",
+"IsFancy":true,
+"BoxMode":false,
+"MaxWidth":80,
+"BackgroundColor":0},
+
+"10778":{
+"Text":"If we\u0027re at a parenthesized integer expression, evaluate it and place in WAccum. If not, ErrorTypeMismatch.",
+"IsFancy":true,
+"BoxMode":false,
+"MaxWidth":80,
+"BackgroundColor":0},
+
+"11152":{
+"Text":"Illegal Value error if WAccum\u0027s high byte is non-zero",
+"IsFancy":true,
+"BoxMode":false,
+"MaxWidth":80,
+"BackgroundColor":0},
+
+"10772":{
+"Text":"Same as EvalParenIntOrError, below, but additionally error if the int value doesn\u0027t fit in a single byte.",
 "IsFancy":true,
 "BoxMode":false,
 "MaxWidth":80,
@@ -5757,6 +5938,293 @@
 "Value":42528,
 "Source":"User",
 "Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"10015":{
+"Label":"FindVar",
+"Value":42767,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"10023":{
+"Label":"findVarLoop",
+"Value":42775,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"10083":{
+"Label":"retFail",
+"Value":42835,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"10049":{
+"Label":"skipVar",
+"Value":42801,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"10071":{
+"Label":"contIfNotVarsEnd",
+"Value":42823,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"10085":{
+"Label":"skipAryVar",
+"Value":42837,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"10206":{
+"Label":"ClearOperandHiBytes",
+"Value":42958,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"10122":{
+"Label":"oneDim",
+"Value":42874,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"10128":{
+"Label":"waHi",
+"Value":42880,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"10134":{
+"Label":"wpHi",
+"Value":42886,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"10008":{
+"Label":"GetSizeOfType",
+"Value":42760,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"10014":{
+"Label":"rts",
+"Value":42766,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"10161":{
+"Label":"oneDim2",
+"Value":42913,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"10004":{
+"Label":"GetSizeOfElementType",
+"Value":42756,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"9905":{
+"Label":"EAV_getArrayElem",
+"Value":42657,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"9879":{
+"Label":"not256",
+"Value":42631,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"9738":{
+"Label":"EVN_varFound",
+"Value":42490,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"9752":{
+"Label":"CpyVarPtrToVarData",
+"Value":42504,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"9714":{
+"Label":"int",
+"Value":42466,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"9706":{
+"Label":"clearStrLp",
+"Value":42458,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"4082":{
+"Label":"WordCompare",
+"Value":36834,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"4089":{
+"Label":"cmpLow",
+"Value":36841,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"3013":{
+"Label":"rts_8BB5",
+"Value":35765,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"3005":{
+"Label":"PointOutStrAtLineBufStart",
+"Value":35757,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"3032":{
+"Label":"ErrorOutOfMemory",
+"Value":35784,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"3014":{
+"Label":"CheckFreeSpaceOrError",
+"Value":35766,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"9564":{
+"Label":"DEVN_advExprAndRts",
+"Value":42316,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"9578":{
+"Label":"DEVN_exprStr",
+"Value":42330,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"10438":{
+"Label":"EvalParenExprOrError",
+"Value":43190,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"10778":{
+"Label":"EvalParenIntOrError",
+"Value":43530,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"11152":{
+"Label":"ErrIfWAccumIsWord",
+"Value":43904,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"10772":{
+"Label":"EvalParenByteOrError",
+"Value":43524,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"10395":{
+"Label":"errIllVal_A88B",
+"Value":43147,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"10419":{
+"Label":"zero",
+"Value":43171,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"10504":{
+"Label":"PushWAccToParseStk",
+"Value":43256,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"10500":{
+"Label":"PushWAccIntToParseStk",
+"Value":43252,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"10638":{
+"Label":"SkipRParenPushIntToPrse",
+"Value":43390,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"10398":{
+"Label":"ExprMove",
+"Value":43150,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"9463":{
+"Label":"exprMove_A4E7",
+"Value":42215,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"20305":{
+"Label":"tbl_Functions",
+"Value":53057,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"9038":{
+"Label":"EvalBuiltinFn",
+"Value":41790,
+"Source":"User",
+"Type":"GlobalAddr",
 "LabelAnno":"None"}},
 
 "OperandFormats":{
@@ -6892,12 +7360,32 @@
 
 "Extra":null},
 
+"9434":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"tok_ABS",
+"Part":"Low"},
+
+"Extra":null},
+
 "9501":{
 "Length":2,
 "Format":"NumericLE",
 "SubFormat":"Symbol",
 "SymbolRef":{
 "Label":"TYP_INT",
+"Part":"Low"},
+
+"Extra":null},
+
+"9541":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"TYP_STR",
 "Part":"Low"},
 
 "Extra":null},
@@ -6936,10 +7424,47 @@
 "SymbolRef":null,
 "Extra":null},
 
+"9698":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"TYP_INT",
+"Part":"Low"},
+
+"Extra":null},
+
+"9784":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"TYP_ARRAY_FLAG",
+"Part":"Low"},
+
+"Extra":null},
+
 "9996":{
 "Length":2,
 "Format":"NumericLE",
 "SubFormat":"Ascii",
+"SymbolRef":null,
+"Extra":null},
+
+"10008":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"TYP_INT",
+"Part":"Low"},
+
+"Extra":null},
+
+"10012":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Decimal",
 "SymbolRef":null,
 "Extra":null},
 
@@ -11224,6 +11749,78 @@
 "9606":{
 "Variables":[{
 "DataDescriptor":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Hex",
+"SymbolRef":null,
+"Extra":null},
+
+"Comment":"",
+"HasWidth":true,
+"Direction":"ReadWrite",
+"MultiMask":null,
+"Label":"zpArrayVarIdx",
+"Value":25,
+"Source":"Variable",
+"Type":"ExternalAddr",
+"LabelAnno":"None"},
+
+{
+"DataDescriptor":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Hex",
+"SymbolRef":null,
+"Extra":null},
+
+"Comment":"The max indices for an array var\u0027s dimensions",
+"HasWidth":true,
+"Direction":"ReadWrite",
+"MultiMask":null,
+"Label":"vZpMaxIdx",
+"Value":74,
+"Source":"Variable",
+"Type":"ExternalAddr",
+"LabelAnno":"None"},
+
+{
+"DataDescriptor":{
+"Length":1,
+"Format":"NumericLE",
+"SubFormat":"Hex",
+"SymbolRef":null,
+"Extra":null},
+
+"Comment":"underlying (non-array) base type for the array var we\u0027re skipping",
+"HasWidth":true,
+"Direction":"ReadWrite",
+"MultiMask":null,
+"Label":"vZpSkipVarBaseType",
+"Value":115,
+"Source":"Variable",
+"Type":"ExternalAddr",
+"LabelAnno":"None"},
+
+{
+"DataDescriptor":{
+"Length":1,
+"Format":"NumericLE",
+"SubFormat":"Hex",
+"SymbolRef":null,
+"Extra":null},
+
+"Comment":"dimensionality of array var, -1 (0 or 1)",
+"HasWidth":true,
+"Direction":"ReadWrite",
+"MultiMask":null,
+"Label":"vZpAryNumDimens",
+"Value":116,
+"Source":"Variable",
+"Type":"ExternalAddr",
+"LabelAnno":"None"},
+
+{
+"DataDescriptor":{
 "Length":1,
 "Format":"NumericLE",
 "SubFormat":"Hex",
@@ -11241,7 +11838,7 @@
 "LabelAnno":"None"}],
 "ClearPrevious":false},
 
-"9986":{
+"10188":{
 "Variables":[],
 "ClearPrevious":true},
 

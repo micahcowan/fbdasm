@@ -17,6 +17,7 @@ SEARCH STACK:
   QueueStringForOutput
   QueueCharForOutput
   QueueNullForOutput
+  All routines in tbl_Commands and tbl_Functions
   Any remaining fns in CtrlCharInputHandlersTbl
 
   ReadKeyboard
@@ -34,16 +35,18 @@ BRANCH STACK:
     $857F
 
   Expressions : 
+    Get a firmer understanding about exprParseBuf $400 and why things don't get popped off as often as I expect (trace what happens in exprParseBuf during some expr's evaluation
     Follow the chain back down from ExprUnaryOrLiteral
-    Figure out what exprParseBuf $400 is actually used for
-    A more in-depth look at what ExprUnaryOrLiteral ($A490) does
-    - Read what Enri's page has to say about it
 
-    ExprUnaryOrLiteral
-      $A52C (DoExprVarName)
-        $A57F (EvalVarName)
-       ;$A63E
-        ->$A620 (EvalArrayVar) when it's being indexed as an array
-         ;$A63D
-          ->$A61D
-            ->$A68D (EvalSingleIdxAryVar) when it's a single index
+  Document how vars are stored in VARTAB, in DETAILS.md
+
+Arrays: DIM A$(10)
+
+  var name     max idx dim1
+     +--\         |
+     |   |        |
+Var type |  n.dimens   max idx dim2
+|    |   |     |  |     |
+$83 $41 $00 | $00 $0A [$04]   <-- (first byte of first element...)
+|    |   |     |  |     |
+$02 $49 $00 | $01 $03 $03
