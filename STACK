@@ -38,7 +38,8 @@ BRANCH STACK:
     Get a firmer understanding about exprParseBuf $400 and why things don't get popped off as often as I expect (trace what happens in exprParseBuf during some expr's evaluation
     Follow the chain back down from ExprUnaryOrLiteral
 
-  Document how vars are stored in VARTAB, in DETAILS.md
+  Document how vars are stored in VARTAB, in DETAILS.md (and BUGS.md)
+  CmdFn_DIM, to complement the work I did in ExprUnaryOrLiteral (possibly rename that to ExprLiteralUnaryOrFn?)
 
 Arrays: DIM A$(10)
 
