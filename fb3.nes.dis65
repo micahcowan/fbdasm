@@ -1506,7 +1506,9 @@
 "18664":"reset total movement remaining",
 "18677":"stop animation for this sprite",
 "18680":"continue on to next sprite",
-"18690":"get offset to start of this sprite\u0027s defMovS* vars",
+"18683":"sprite number...",
+"18687":"...times eight...",
+"18690":"...gives offset to start of this sprite\u0027s defMovS* vars",
 "18691":"decrement speed counter. Is it zero?",
 "18694":"no -\u003e skip animating this sprite this frame (throttle speed)",
 "18696":"yes: reset the counter to user-specified speed value",
@@ -1539,13 +1541,61 @@
 "19146":"save (possibly force-fitted) 2nd arg as facing",
 "19149":"get character/actor",
 "19152":"multiply times 2",
-"19154":"use character to look up, in a data table,",
+"19154":"Multiple indirections! We\u0027re doing something like:",
+"19157":" moveTables[actor id]-\u003e[2]-\u003e[facing]",
+"19159":"index tbl_MoveTables by actor id",
+"19162":" to get movement tables for this actor",
+"19164":"indicate actor-specific table by [2] (bytes #4 and #5)",
+"19175":"get the movement direction",
+"19179":"and index by that",
+"19181":"mask to obtain just horizontal and vertical flip",
+"19186":"clear horizontal and vertical flip in sprite\u0027s flags",
+"19195":"and insert the ones we got from the table lookups",
+"19201":"are we at \u0027)\u0027?",
+"19204":"yes -\u003e finish up",
+"19206":"no: get 3rd arg (speed)",
+"19209":"empty arg (comma)? -\u003e skip this one",
+"19211":"set frames-til-move",
+"19214":"and initializer for same",
+"19217":"are we at \u0027)\u0027?",
+"19220":"yes -\u003e finish up",
+"19222":"no: get 4th arg (movement distance)",
+"19225":"empty arg (comma)? -\u003e skip this one",
+"19227":"increment",
+"19229":"set as how far we have left to move",
+"19232":"and initializer for same",
+"19235":"are we at \u0027)\u0027?",
+"19238":"yes -\u003e finish up",
+"19240":"no: get 5th arg (display priority)",
+"19243":"empty arg (comma)? -\u003e skip this one",
+"19245":"\"fore\" (empty) flag",
+"19255":"zero? -\u003e skip next instr",
+"19257":"\"behind\" flag",
+"19264":"clear fore/behind flag in sprite\u0027s move flags",
+"19270":"store new fore/behind flag in sprite\u0027s move flags",
+"19276":"are we at \u0027)\u0027?",
+"19279":"yes -\u003e finish up",
+"19281":"no: get 6th arg (color palette #)",
+"19286":"-\u003e error if arg \u003e= 4",
+"19290":"push arg",
+"19296":"clear palette info from sprite\u0027s move flags",
+"19299":"pull arg",
+"19300":"combine with other move flags",
+"19303":"set combined flags",
+"19306":"must end with \u0027)\u0027 here",
+"19313":"center sprite in the middle of the screen",
+"19316":"(only if all 6 SPRITE arguments were provided)",
+"19324":"XXX what does this flag do",
 "19333":"parse comma",
 "19336":"is it an empty arg?",
 "19339":"yes -\u003e return with carry set",
 "19341":"no: parse byte arg",
 "19344":"reload x",
 "19346":"and return with carry unset",
+"19351":"did we get a \u0027)\u0027?",
+"19353":"yes -\u003e move past it, set carry",
+"19355":"no: clear carry",
+"19356":"return",
 "19684":"all commands above this line take line number arguments",
 "20031":"all keywords below this line are built-in functions",
 "20321":"SPC, only allowed in PRINT",
@@ -7175,6 +7225,76 @@
 "Value":50953,
 "Source":"User",
 "Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"19348":{
+"Label":"DefMvMaybeParseRParen",
+"Value":52100,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"19319":{
+"Label":"DefMvFinish",
+"Value":52071,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"19222":{
+"Label":"arg4",
+"Value":51974,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"19240":{
+"Label":"arg5",
+"Value":51992,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"19281":{
+"Label":"arg6",
+"Value":52033,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"12445":{
+"Label":"ErrUnlessZeroOrOne",
+"Value":45197,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"12434":{
+"Label":"rts_B082",
+"Value":45186,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"12453":{
+"Label":"errIllVal_B095",
+"Value":45205,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"19259":{
+"Label":"fore",
+"Value":52011,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"19330":{
+"Label":"errIllVal_CB72",
+"Value":52082,
+"Source":"User",
+"Type":"GlobalAddr",
 "LabelAnno":"None"}},
 
 "OperandFormats":{
@@ -10563,6 +10683,23 @@
 "Label":"tok_SPRITE",
 "Part":"Low"},
 
+"Extra":null},
+
+"19257":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"MF_BEHIND",
+"Part":"Low"},
+
+"Extra":null},
+
+"19309":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Decimal",
+"SymbolRef":null,
 "Extra":null},
 
 "19351":{

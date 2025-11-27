@@ -46,9 +46,6 @@ BRANCH STACK:
 
   AnimateOne
  ;$C8D8
-  CmdFn_DEFMOVE - have to process this first as Enri got the DEF MOVE stuff wrong (at least in character type vs facing), so now I need to check everything
- ;$CAAD
-    $A80E - I'm *pretty* sure this is MOD
 
 Arrays: DIM A$(10)
 
