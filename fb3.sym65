@@ -35,7 +35,7 @@ zpGpStrIdx      @  $21      ; Index for temp string storage in genPurposeBuf
 zpVARTAB        @  $1D    2 ; Start of variable storage
 zpVAREND        @  $1F    2 ; Just past end of variable storage
 zpArgTyp        @  $27    ; Designates the type of data in zpWAccum.
-zpWAccum        @  $28    3 ; Like a 16-bit Accumulator. Forms both the first operand, and the result, of various 16-bit integer operations. Or: byte Len followed by word ptr, for strings.
+zpWAccum        @  $28    4 ; Like a 16-bit Accumulator. Forms both the first operand, and the result, of various 16-bit integer operations. Or: byte Len followed by word ptr, for strings.
 zpWParam        @  $2C    3 ; Like a 16-bit Data register. forms the second operand of various binary operators
 zpExprStkIdx    @  $30    ; Current position in exprParseStk
 zpPpuCtrlVal    @  $32
@@ -54,6 +54,7 @@ zpOutputStr     @  $52    2 ; Pointer to null-term'd string to be queued for out
 zpTokTblScn     @  $54    2 ; Used to scan thru tbl_KeywordTokens
 zpNewLineOffset @  $5A      ; Offset to next line for not-yet-placed, tokenized line
 zpTxtLink       @  $5B    2 ; Points to the start of the current program line (including the 3-byte preamble)
+zpNmiAnimSprCtr @  $5D      ; Counts how many sprites are not currently animated, and turns off zpNmiAnimate if it reaches zero
 zpSavedRts      @  $5F    2 ; FOR, GOSUB, other cmds pull return from stack, save here
 zpOutTxtCurPos  @  $62
 zpNMICMD        @  $63      ; Which command the NMI handler should execute. 1 + the command's index in jtbl_NMICMD.
@@ -71,9 +72,13 @@ zpToken         @  $99
 zpSavedTXTPTR   @  $9A    2 ; Saved val of zpTXTPTR
 zpLoadQFlag     @  $9F      ; True if we're in "LOAD?" rather than "LOAD"
 zpNxtAutoLNum   @  $A0    2 ; Next line number to use (for AUTO)
-zAutoLNumIncr   @  $A2    2 ; How much to auto-increment each line number (from AUTO)
-zpNmiSomeFlag   @  $AB
-zpNmiSomeFlag1  @  $AC      ; if $AC is non-zero, $AB is set to #$FF (triggering flag check on next frame)
+zpAutoLNumIncr  @  $A2    2 ; How much to auto-increment each line number (from AUTO)
+zpSprNum        @  $A4      ; Current work sprite
+zpDefMovIdx  @  $A5      ; cur sprite # times 8, for indexing defMovS* vars
+zpNmiDefMovIdx  @  $A6      ; (NMI) cur sprite # times 8, for indexing defMovS* vars
+zpNmiSprNum     @  $A9      ; Current work sprite, used by NMI
+zpNmiAnimNxtFr  @  $AB      ; While zpNmiAnimate is non-zero, this flag toggles every frame. Z = Handle NMI subcmds; NZ = Handle MOVEs
+zpNmiAnimate    @  $AC      ; This flag indicates that animated sprites are active (via MOVE)
 zpCasBufPtr     @  $AD    2 ; Start of data to send to cassette
 zpCasEndPtr     @  $AF    2 ; End of data to send to cassette
 zpVerfFlag      @  $B1      ; If set, VERIFIES rather than LOADs a program. Used for "LOAD?".
@@ -106,6 +111,15 @@ isRowWrappedArray0  @  $601 24 ; Marks which visible screen rows are wrapped fro
 isRowWrappedArray1  @  $61B 24 ; Marks which visible screen rows are wrapped from previous line, if SCREEN 1.
 kbdDataAry      @  $634   9 
 unkKbdFlag      @  $63B
+sprMoveFlags    @  $645   8  ; DEF MOVE flags for the 8 sprites. See MF_YFLIP for flag values.
+defMovSFacing   @  $6C0      ; Sprite MOVE direction (swapped with type, relative to DEF MOVE arg order)
+defMovSActor    @  $6C1      ; Sprite MOVE actor (Mario, Lady, Star Killer, etc)
+defMovSSpdCtr   @  $6C2      ; Sprite MOVE speed counter
+defMovSMotionCtr @ $6C3      ; Sprite MOVE total movement remaining
+defMovSSpeed    @  $6C4      ; Sprite MOVE total movement remaining
+defMovSMotion   @  $6C5      ; Sprite MOVE total movement remaining
+defMovSPosX     @  $6C6      ; Sprite MOVE X position
+defMovSPosY     @  $6C7      ; Sprite MOVE Y position
 genPurposeBuf   @  $700   256; user directive messages (at least) get writen out to here
 
 basicProgram    @  $6006  ; The start of the BASIC program in memory
@@ -120,12 +134,41 @@ NC_PpuMaskClear     = 12
 VRAM_screen0    =  $2000
 VRAM_screen1    =  $2400
 
+; MOVE flags, $645.64C
+MF_VFLIP        = $80       ; MOVE bit 7. RESET: flip sprite vertically(?)
+MF_HFLIP        = $40       ; MOVE bit 6. RESET: flip sprite horizontally(?)
+MF_BEHIND       = $20       ; MOVE bit 5. SET: behind bg; RESET: in front
+MF_ANIMATE      = $10       ; MOVE bit 4. SET: sprite is animated
+
 TYP_INT         =  $02      ; For zpArgTyp. Integer word.
 TYP_STR         =  $03      ; For zpArgTyp. String.
 TYP_ARRAY_FLAG  =  $80      ; Flag bit indicating array type.
 
 CAS_HDR_PROG    = $02       ; Identity byte in header for prog saves to cassette tape.
 CAS_HDR_SCREEN  = $03       ; Identity byte in header for screen saves to cassette tape.
+
+err_NF          = $00       ; "NF" - NEXT without FOR
+err_SN          = $01       ; "SN" - Syntax Error
+err_RG          = $02       ; "RG" - RETURN without GOSUB
+err_OD          = $03       ; "OD" - Out of Data
+err_IL          = $04       ; "IL" - Illegal value
+err_OV          = $05       ; "OV" - Overflow
+err_OM          = $06       ; "OM" - Out of Memory
+err_UL          = $07       ; "UL" - Undefined Line number
+err_SO          = $08       ; "SO" - Subscript Out of range
+err_DD          = $09       ; "DD" - Duplicate Definition
+err_DZ          = $0A       ; "DZ" - Division by Zero
+err_TM          = $0B       ; "TM" - Type Mismatch
+err_ST          = $0C       ; "ST" - String Too long
+err_FT          = $0D       ; "FT" - Formula Too complex
+err_CC          = $0E       ; "CC" - Cannot Continue
+err_UF          = $0F       ; "UF" - Undefined Function
+err_MO          = $10       ; "MO" - Missing Operand
+err_TP          = $11       ; "TP" - Tape read error
+err_NR          = $12       ; "NR" - No Resume
+err_RE          = $13       ; "RE" - RESUME without ERROR
+err_NB          = $14       ; "NB" - No BG Data
+err_UP          = $15       ; "UP" - Unprintable Error
 
 tok_LNUM_AFTER  = $0B       ; indicates a line number (word) follows this byte
 tok_HEX_AFTER   = $11       ; indicates a number (word) follows this byte, originally hexadecimal
