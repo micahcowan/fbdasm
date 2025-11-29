@@ -74,8 +74,9 @@ zpLoadQFlag     @  $9F      ; True if we're in "LOAD?" rather than "LOAD"
 zpNxtAutoLNum   @  $A0    2 ; Next line number to use (for AUTO)
 zpAutoLNumIncr  @  $A2    2 ; How much to auto-increment each line number (from AUTO)
 zpSprNum        @  $A4      ; Current work sprite
-zpDefMovIdx  @  $A5      ; cur sprite # times 8, for indexing defMovS* vars
+zpDefMovIdx     @  $A5      ; cur sprite # times 8, for indexing defMovS* vars
 zpNmiDefMovIdx  @  $A6      ; (NMI) cur sprite # times 8, for indexing defMovS* vars
+zpNmiCurMTbl    @  $A7    2 ; (NMI) address of the mbtl for current sprite
 zpNmiSprNum     @  $A9      ; Current work sprite, used by NMI
 zpNmiAnimNxtFr  @  $AB      ; While zpNmiAnimate is non-zero, this flag toggles every frame. Z = Handle NMI subcmds; NZ = Handle MOVEs
 zpNmiAnimate    @  $AC      ; This flag indicates that animated sprites are active (via MOVE)
@@ -85,6 +86,11 @@ zpVerfFlag      @  $B1      ; If set, VERIFIES rather than LOADs a program. Used
 zpNextDataPtr   @  $B2    2 ; Pointer to first content byte of line to start search for next DATA to READ
 zpNextDataIdx   @  $B4      ; Char index into line at zpNextDataPtr to start from
 zpErrCode       @  $B5
+zpNmiCurFrCnts  @  $D5    2 ; (NMI) Pointer to vector being used for current sprite's anim frame counts, for each facing
+zpNmiNumFrames  @  $D7      ; (NMI) Holds the number of anim frames for the sprite's cur facing (in high nybble)
+zpNmiCurSprSht  @  $D9    2 ; (NMI) Pointer to sheet of sprites for each facing
+zpNmiSprTileMp  @  $DB    2 ; (NMI) Pointer to the 2x2 tilemap to display for current sprite
+zpNmiSprShtOff  @  $DD      ; (NMI) Value to add to each tile ID in a sprite sheet, to get IDs for this actor.
 zpVScroll0      @  $E4      ; Vertical scroll used when SCREEN 0 is displayed
 zpVScroll1      @  $E5      ; Vertical scroll used when SCREEN 1 is displayed; updated when $F0 is set
 zpHaveFNameArg  @  $EA      ; true when LOAD was given a filename arg
@@ -111,15 +117,15 @@ isRowWrappedArray0  @  $601 24 ; Marks which visible screen rows are wrapped fro
 isRowWrappedArray1  @  $61B 24 ; Marks which visible screen rows are wrapped from previous line, if SCREEN 1.
 kbdDataAry      @  $634   9 
 unkKbdFlag      @  $63B
-sprMoveFlags    @  $645   8  ; DEF MOVE flags for the 8 sprites. See MF_YFLIP for flag values.
+sprAttrFlags    @  $645   8  ; Sprite tile attributes for the 8 sprites. See SpAtt_* for flag values.
 defMovSFacing   @  $6C0      ; Sprite MOVE direction (swapped with type, relative to DEF MOVE arg order)
-defMovSActor    @  $6C1      ; Sprite MOVE actor (Mario, Lady, Star Killer, etc)
+defMovSActorFrm @  $6C1      ; Low nybble: sprite MOVE actor (Mario, Lady, Star Killer, etc)A; high nybble: which frame of animation frame we're on
 defMovSSpdCtr   @  $6C2      ; Sprite MOVE speed counter
 defMovSMotionCtr @ $6C3      ; Sprite MOVE total movement remaining
 defMovSSpeed    @  $6C4      ; Sprite MOVE total movement remaining
 defMovSMotion   @  $6C5      ; Sprite MOVE total movement remaining
-defMovSPosX     @  $6C6      ; Sprite MOVE X position
-defMovSPosY     @  $6C7      ; Sprite MOVE Y position
+defMovSPosX     @  $6C6      ; Sprite MOVE, current X position
+defMovSPosY     @  $6C7      ; Sprite MOVE, current Y position
 genPurposeBuf   @  $700   256; user directive messages (at least) get writen out to here
 
 basicProgram    @  $6006  ; The start of the BASIC program in memory
@@ -134,11 +140,11 @@ NC_PpuMaskClear     = 12
 VRAM_screen0    =  $2000
 VRAM_screen1    =  $2400
 
-; MOVE flags, $645.64C
-MF_VFLIP        = $80       ; MOVE bit 7. RESET: flip sprite vertically(?)
-MF_HFLIP        = $40       ; MOVE bit 6. RESET: flip sprite horizontally(?)
-MF_BEHIND       = $20       ; MOVE bit 5. SET: behind bg; RESET: in front
-MF_ANIMATE      = $10       ; MOVE bit 4. SET: sprite is animated
+; Sprite tile attributes flags, $645.64C
+SpAtt_VFLIP        = $80       ; MOVE bit 7. RESET: flip sprite vertically(?)
+SpAtt_HFLIP        = $40       ; MOVE bit 6. RESET: flip sprite horizontally(?)
+SpAtt_BEHIND       = $20       ; MOVE bit 5. SET: behind bg; RESET: in front
+SpAtt_ANIMATE      = $10       ; MOVE bit 4. SET: sprite is animated
 
 TYP_INT         =  $02      ; For zpArgTyp. Integer word.
 TYP_STR         =  $03      ; For zpArgTyp. String.

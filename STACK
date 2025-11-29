@@ -41,11 +41,8 @@ BRANCH STACK:
   CmdFn_READ
 
   Document that NMI toggles between bg updates and sprite updates, when
-   anims active
+   anims active, and how animation works
   Document how vars are stored in VARTAB, in DETAILS.md (and BUGS.md)
-
-  AnimateOne
- ;$C8D8
 
 Arrays: DIM A$(10)
 
