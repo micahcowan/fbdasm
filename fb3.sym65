@@ -30,10 +30,12 @@ zpTXTTAB        @  $05    2 ; Pointer to the start of the BASIC program code. Al
 zpTXTEND        @  $07    2 ; Ponter to just past the program end (zpTXTEND - zpTXTTAB = prog len)
 zpTXTPTR        @  $09    2 ; Points at the next char of BASIC program to be processed.
 zpTxtNextLink   @  $0B    2 ; Points at the next line of BASIC program after current
+zpSavedStack    @  $17      ; Saved SP
 zpMisc          @  $19    4 ; Used for a wide variety of things, mainly temporary pointers
-zpGpStrIdx      @  $21      ; Index for temp string storage in genPurposeBuf
 zpVARTAB        @  $1D    2 ; Start of variable storage
 zpVAREND        @  $1F    2 ; Just past end of variable storage
+zpGpStrIdx      @  $21      ; Index for temp string storage in genPurposeBuf
+zpStoppedFlag   @  $24      ; Non-zero if STOPped; zero otherwise.
 zpArgTyp        @  $27    ; Designates the type of data in zpWAccum.
 zpWAccum        @  $28    4 ; Like a 16-bit Accumulator. Forms both the first operand, and the result, of various 16-bit integer operations. Or: byte Len followed by word ptr, for strings.
 zpWParam        @  $2C    3 ; Like a 16-bit Data register. forms the second operand of various binary operators
@@ -42,7 +44,7 @@ zpPpuCtrlVal    @  $32
 zpPpuMaskVal    @  $33
 zpMulScratch    @  $34    8 ; Used for multiplication scratch space. Only the first four are ever actually used!
 zpTmp3C         @  $3C
-zpHexStrTmp     @  $3D    5 ; Holds str output from HexStrFromWord
+zpNumStrTmp     @  $3D    5 ; Holds str output from HexStrFromWord and DecStrFromWOrd
 zpLineNum       @  $44    2
 zpSomeRowIndicator  @  $47  ; zCV was copied to this just prior to setting zpNMICMD=2 and awaiting NMI. Other uses elsewhere.
 zpCH            @  $48      ; Current cursor column number
@@ -92,6 +94,7 @@ zpNmiNumFrames  @  $D7      ; (NMI) Holds the number of anim frames for the spri
 zpNmiCurSprSht  @  $D9    2 ; (NMI) Pointer to sheet of sprites for each facing
 zpNmiSprTileMp  @  $DB    2 ; (NMI) Pointer to the 2x2 tilemap to display for current sprite
 zpNmiSprShtOff  @  $DD      ; (NMI) Value to add to each tile ID in a sprite sheet, to get IDs for this actor.
+zpAutoEnabled   @  $E2      ; non-zero (=10) when AUTO active; zero means inactive
 zpVScroll0      @  $E4      ; Vertical scroll used when SCREEN 0 is displayed
 zpVScroll1      @  $E5      ; Vertical scroll used when SCREEN 1 is displayed; updated when $F0 is set
 zpHaveFNameArg  @  $EA      ; true when LOAD was given a filename arg

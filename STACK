@@ -33,6 +33,12 @@ BRANCH STACK:
   -> $8EF7
   $853A
     $857F
+  .
+    $82CC - auto linenum stuff
+      $87EE - when auto linenum exists
+     ;$8818
+        $9442
+N  ;$82FD - when next auto linenum doesn't exist (skips putting "*" up)
 
 .
 

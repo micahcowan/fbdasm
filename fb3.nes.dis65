@@ -765,8 +765,21 @@
 "216":"JMP opcode",
 "594":"Falls thru to next string start",
 "598":"Falls thru to next string start",
+"660":"restore stack ptr from zpSavedStack",
+"669":"STOPped?",
+"671":"no -\u003e skip period",
+"673":"yes: print period after \"OK\", to indicate it was a STOP",
+"675":" (and can be CONTinued)",
+"678":"another CRLF",
+"681":"auto-prefix line number, if active",
+"684":"read a line of the user\u0027s input",
 "687":"Control-C (cancel)?",
 "689":"yes -\u003e ignore line and reprompt",
+"732":"AUTO active?",
+"734":"no -\u003e nothing to do; return",
+"736":"copy the next auto linenum to zpLineNum",
+"744":"and search for that line number",
+"747":"no such line? -\u003e don\u0027t tag with an \"*\"",
 "989":"examine string length",
 "992":"zero? -\u003e just copy the length only",
 "994":"len \u003e= 32?",
@@ -809,6 +822,14 @@
 "1470":"not the end-\u003e copy next byte",
 "1472":"source ptr reached end; move end back to dest ptr",
 "1475":"subtract length of deleted line from prog end",
+"2032":"point zpOutputStr at zpNumStrTmp, as source",
+"2034":" for output queuing",
+"2035":"add index to start position",
+"2037":"(carry isn\u0027t needed, the string is up to 6 chars max)",
+"2043":"queue the output string",
+"2052":"put the line number at zpTXTPTR into WAccum",
+"2067":"queue up the line number to be printed",
+"2072":"and add a SPACE character afterward",
 "2124":"write $05 to keyboard: reset row/col scanning",
 "2127":"stall 21 cycles (~12 ns)",
 "2135":"write $04: prep read for column 0 of a new row",
@@ -955,11 +976,47 @@
 "4227":"len(b$) == 0? -\u003e they\u0027re both equal",
 "4316":"\u00279\u0027 + 1",
 "4318":"better: bcs $90D3",
+"4328":"did we get null terminator byte?",
+"4330":"yes -\u003e skipped too many, back up one so we have \u00270\u0027",
+"4332":"no; do we have a \u00270\u0027 digit?",
+"4334":"yes -\u003e move past it and check next",
+"4336":"no: we found first non-zero digit then. Return.",
+"4337":"back up one so we have \u00270\u0027",
 "4343":"Is cur char a \u0027-\u0027?",
 "4345":"no -\u003e then it better be a string of digits. Parse them.",
 "4347":"yes, then advance TXTPTR",
 "4350":"and call ourselves recursively to get a (possibly re-negated) number",
 "4353":"negating afterward.",
+"4437":"put 10,000 into zpWParam",
+"4445":"find digit for the ten-thousands place",
+"4448":"put 1,000 into zpWParam",
+"4456":"find digit for the thousands place",
+"4459":"put 100 into zpWParam",
+"4467":"find digit for the hundreds place",
+"4470":"put 10 into zpWParam",
+"4474":"find digit for the tens place",
+"4482":"finally, store the remaining ones digit",
+"4487":"and null-terminate the string",
+"4491":"restore vZpDigitIdx to what it was at start (usually #$00)",
+"4494":"we subtracted too far; add it back in",
+"4497":"put the digit, and advance to next",
+"4506":"start with the character \u00270\u0027",
+"4510":"did current place value \"go into\" WAccum? (division)",
+"4513":"no -\u003e put char and return for next place value",
+"4515":"yes: increment digit",
+"4517":"and see if it \"goes into\" WAccum again",
+"4524":"SPACE char",
+"4526":"is WAccum positive (or zero)?",
+"4528":"yes -\u003e keep prefix as SPACE char",
+"4530":"no: negate WAccum",
+"4533":" and prefix with \u0027-\u0027 instead",
+"4536":"push the prefix",
+"4537":"convert the positive decimal",
+"4540":"advance to first non-\u00270\u0027 digit",
+"4543":"then backup one from there",
+"4545":"pull prefix char",
+"4546":"and store it as the prefix",
+"4549":"then back up so it\u0027s at the start",
 "4707":"exceeded our buffer? -\u003e error",
 "4728":"NUL? -\u003e finish up",
 "4730":"shorthand for PRINT",
@@ -2027,6 +2084,7 @@
 "19430":"tell NMI hanlder there are animations to perform",
 "19684":"all commands above this line take line number arguments",
 "20031":"all keywords below this line are built-in functions",
+"20293":"tok_BACKUP",
 "20321":"SPC, only allowed in PRINT",
 "20323":"TAB, only allowed in PRINT"},
 
@@ -2263,7 +2321,7 @@
 "BackgroundColor":0},
 
 "4586":{
-"Text":"Converts a word (at $28) into a null-terminated string of four hexadecimal digits in ASCII, stored at $3D thru $41.",
+"Text":"Converts a word (at WAccum) into a null-terminated string of four hexadecimal digits in ASCII, stored at zpNumStrTmp.",
 "IsFancy":true,
 "BoxMode":false,
 "MaxWidth":80,
@@ -3135,6 +3193,34 @@
 "IsFancy":true,
 "BoxMode":false,
 "MaxWidth":80,
+"BackgroundColor":0},
+
+"13691":{
+"Text":"Go to start of next line... unless we\u0027re already at the start of a line.",
+"IsFancy":true,
+"BoxMode":false,
+"MaxWidth":80,
+"BackgroundColor":0},
+
+"415":{
+"Text":"SYSTEM command; also BACKUP.",
+"IsFancy":true,
+"BoxMode":false,
+"MaxWidth":80,
+"BackgroundColor":0},
+
+"4430":{
+"Text":"Converts a (POSITIVE) word (at WAccum) into a null-terminated string of five decimal digits in ASCII, stored at zpNumStrTmp.",
+"IsFancy":true,
+"BoxMode":false,
+"MaxWidth":80,
+"BackgroundColor":0},
+
+"4520":{
+"Text":"Converts a (possibly negative) word (at WAccum) into a null-terminated string of five decimal digits in ASCII, stored at zpNumStrTmp. Will be preceded either by a space (positive), or \u0027-\u0027 (negative)",
+"IsFancy":true,
+"BoxMode":false,
+"MaxWidth":80,
 "BackgroundColor":0}},
 
 "Notes":{
@@ -3660,7 +3746,7 @@
 "LabelAnno":"None"},
 
 "415":{
-"Label":"CmdFn_BACKUP",
+"Label":"CmdFn_SYSTEM",
 "Value":33167,
 "Source":"User",
 "Type":"GlobalAddr",
@@ -4772,9 +4858,9 @@
 "Type":"GlobalAddr",
 "LabelAnno":"None"},
 
-"4510":{
-"Label":"CmdFn_SYSTEM",
-"Value":37262,
+"4430":{
+"Label":"PosDecStrFromWord",
+"Value":37182,
 "Source":"User",
 "Type":"GlobalAddr",
 "LabelAnno":"None"},
@@ -8753,6 +8839,104 @@
 "Value":43062,
 "Source":"User",
 "Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"13691":{
+"Label":"EnsureSOL",
+"Value":46443,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"13053":{
+"Label":"PrintOK",
+"Value":45805,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"678":{
+"Label":"skipPd",
+"Value":33430,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"4510":{
+"Label":"divLp",
+"Value":37262,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"4506":{
+"Label":"DecStr_findPlaceValue",
+"Value":37258,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"4499":{
+"Label":"DecStr_putAndAdv",
+"Value":37251,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"4494":{
+"Label":"DecStr_putDigit",
+"Value":37246,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"4434":{
+"Label":"PosDecStrMidStr",
+"Value":37186,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"4520":{
+"Label":"DecStrFromWord",
+"Value":37272,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"4535":{
+"Label":"pos",
+"Value":37287,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"4326":{
+"Label":"FindFirstNonzeroDigit",
+"Value":37078,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"4324":{
+"Label":"nxtDig",
+"Value":37076,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"4337":{
+"Label":"null",
+"Value":37089,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"2032":{
+"Label":"QueueOutpNumStrTmp",
+"Value":34784,
+"Source":"User",
+"Type":"GlobalAddr",
 "LabelAnno":"None"}},
 
 "OperandFormats":{
@@ -9008,6 +9192,13 @@
 
 "Extra":null},
 
+"673":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Ascii",
+"SymbolRef":null,
+"Extra":null},
+
 "970":{
 "Length":2,
 "Format":"NumericLE",
@@ -9106,6 +9297,26 @@
 "SymbolRef":{
 "Label":"tok_OP_EQ",
 "Part":"Low"},
+
+"Extra":null},
+
+"2032":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"zpNumStrTmp",
+"Part":"Low"},
+
+"Extra":null},
+
+"2039":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"zpNumStrTmp",
+"Part":"High"},
 
 "Extra":null},
 
@@ -9466,6 +9677,20 @@
 "Label":"TYP_INT",
 "Part":"Low"},
 
+"Extra":null},
+
+"4506":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Ascii",
+"SymbolRef":null,
+"Extra":null},
+
+"4533":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Ascii",
+"SymbolRef":null,
 "Extra":null},
 
 "4605":{
@@ -10762,6 +10987,20 @@
 "Extra":null},
 
 "12947":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Ascii",
+"SymbolRef":null,
+"Extra":null},
+
+"13053":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Ascii",
+"SymbolRef":null,
+"Extra":null},
+
+"13058":{
 "Length":2,
 "Format":"NumericLE",
 "SubFormat":"Ascii",
@@ -16014,7 +16253,7 @@
 "Format":"NumericLE",
 "SubFormat":"Symbol",
 "SymbolRef":{
-"Label":"CmdFn_BACKUP",
+"Label":"CmdFn_SYSTEM",
 "Part":"Low"},
 
 "Extra":null},
@@ -16534,7 +16773,7 @@
 "Format":"NumericLE",
 "SubFormat":"Symbol",
 "SymbolRef":{
-"Label":"CmdFn_BACKUP",
+"Label":"CmdFn_SYSTEM",
 "Part":"Low"},
 
 "Extra":null},
@@ -17036,6 +17275,48 @@
 "ClearPrevious":false},
 
 "4232":{
+"Variables":[],
+"ClearPrevious":true},
+
+"4430":{
+"Variables":[{
+"DataDescriptor":{
+"Length":1,
+"Format":"NumericLE",
+"SubFormat":"Hex",
+"SymbolRef":null,
+"Extra":null},
+
+"Comment":"index into zpNumStrTmp to store next digit",
+"HasWidth":true,
+"Direction":"ReadWrite",
+"MultiMask":null,
+"Label":"vZpDigitIdx",
+"Value":70,
+"Source":"Variable",
+"Type":"ExternalAddr",
+"LabelAnno":"None"},
+
+{
+"DataDescriptor":{
+"Length":1,
+"Format":"NumericLE",
+"SubFormat":"Hex",
+"SymbolRef":null,
+"Extra":null},
+
+"Comment":"character holding the digit value for current decimal place",
+"HasWidth":true,
+"Direction":"ReadWrite",
+"MultiMask":null,
+"Label":"vZpDigitChar",
+"Value":71,
+"Source":"Variable",
+"Type":"ExternalAddr",
+"LabelAnno":"None"}],
+"ClearPrevious":true},
+
+"4552":{
 "Variables":[],
 "ClearPrevious":true},
 
