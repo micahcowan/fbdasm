@@ -26,20 +26,13 @@ BRANCH STACK:
   DefaultNmiHandler
 
   DirectModeLoop
-  $8334 ExecuteDirectModeLineIThink
-  $97A6 second of two functions called when direct-mode line begins with number
-  $84E5 first of two functions called when direct-mode line begins with number
-  -> $904D
-  -> $8EF7
-  $853A
-    $857F
-  .
-    $82CC - auto linenum stuff
-      $87EE - when auto linenum exists
-     ;$8818
-        $9442
-N  ;$82FD - when next auto linenum doesn't exist (skips putting "*" up)
+  $8334 ExecuteDirectModeLine
+    $8855 (StopIfStopKey)
 
+
+NAME:
+  LBB89 (table)
+  L8855
 .
 
   BUG: document that DATA token (small e) within comments is detected as DATA and handled accordingly. This is because it loops over SkipToken until it sees the DATA token, but SkipToken doesn't skip comments, just the REM or ' and each individual char after until it hits the token! (confirmed for both v2 and v3!)

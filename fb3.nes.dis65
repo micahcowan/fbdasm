@@ -775,11 +775,43 @@
 "684":"read a line of the user\u0027s input",
 "687":"Control-C (cancel)?",
 "689":"yes -\u003e ignore line and reprompt",
+"691":"point TXTPTR at lineBuffer",
+"700":"empty line?",
+"702":"yes -\u003e reprompt",
+"704":"start with a digit?",
+"707":"no -\u003e directly execute commands",
+"709":"yes -\u003e handle the numbered line",
+"712":"clear variables (we may have just trampled variable space)",
 "732":"AUTO active?",
 "734":"no -\u003e nothing to do; return",
 "736":"copy the next auto linenum to zpLineNum",
 "744":"and search for that line number",
-"747":"no such line? -\u003e don\u0027t tag with an \"*\"",
+"747":"no such line? -\u003e don\u0027t need to handle it then",
+"749":"save TXTPTR",
+"754":"set found line as new TXTPTR",
+"760":"print the line we found",
+"763":"restore saved TXTPTR",
+"766":"get CV (which is one past the just-printed line)",
+"768":"decrement (on the printed line)",
+"769":"decrement again (just above the printed line)",
+"770":"is this a row that wrapped to next line?",
+"773":"no -\u003e found end of prev line",
+"775":"yes, wraps. Back up one and see if *that* wraps",
+"778":"incr, from end of prev line, to start of our printed line",
+"779":"and save as current row",
+"781":"zCH is guaranteed to be 0 already,",
+"783":" since printed line ended with CRLF",
+"787":"copy auto linenum to WAccum",
+"789":"convert to decimal",
+"792":"skip leading zeroes",
+"795":"queue it for output",
+"798":"plus a SPACE character",
+"803":"print out linenum + space.",
+"806":"finally, increment auto linenum for next time",
+"817":"overflowed? -\u003e deactivate AUTO and error.",
+"836":" tokenize the line",
+"847":"point TXTPTR at tokenizeBuffer",
+"849":" so we execute from there",
 "989":"examine string length",
 "992":"zero? -\u003e just copy the length only",
 "994":"len \u003e= 32?",
@@ -787,6 +819,7 @@
 "998":"save length to variable",
 "1000":"copy str content ptr into zero-page pointers for indexing",
 "1021":"set copy dest ptr to one past zpVarData (i.e. contents, not strlen)",
+"1269":"we\u0027re about to mess with line ordering; disallow CONT",
 "1275":"get the typed line number",
 "1280":"line num = 65535?",
 "1282":"no",
@@ -798,6 +831,10 @@
 "1304":"is it a space?",
 "1306":"no -\u003e stick with this char",
 "1308":"yes: get the next char",
+"1311":"just a line number, no content?",
+"1313":"yes -\u003e just delete the line if it exists",
+"1315":"no: put line number in zpLineNum",
+"1323":"and tokenize the contents via zpTokenizePtr into tokenizeBuffer",
 "1329":"subtracting #$00... silly!",
 "1354":"delete any existing line w same #",
 "1357":"then insert ours",
@@ -811,9 +848,11 @@
 "1390":"line numbers equal -\u003e return",
 "1392":"sought line # \u003c cur line #? -\u003e also return",
 "1409":"Loop back around and check the new line",
-"1423":"-\u003e rts",
+"1420":"found line number?",
+"1423":"no -\u003e nothing to do",
 "1427":"get offset to following line",
 "1429":"record length of line to delete",
+"1432":"add to line link to get start of next line",
 "1448":"increment copy source",
 "1454":"increment copy dest",
 "1462":"have we reached the program end?",
@@ -830,12 +869,22 @@
 "2052":"put the line number at zpTXTPTR into WAccum",
 "2067":"queue up the line number to be printed",
 "2072":"and add a SPACE character afterward",
+"2078":"set up zpTokenizePtr to detokenize from the line\u0027s contents",
+"2088":"detokenize from zpTokenizePtr, into lineBuffer",
+"2091":"point zpOutputStr at lineBuffer",
+"2094":"print our queued line number plus detokenized stuff in lineBuffer",
+"2099":"(useless setting of zpTXTPTR; we throw it away a few lines below)",
+"2105":"carriage return + new line. (AUTO will have to back us back up.)",
+"2111":"zpTokenizePtr now points at null terminator at end of line",
+"2113":"set zpTXTPTR to next byte after that",
+"2115":" (the \"line offset\" byte of next line)",
 "2124":"write $05 to keyboard: reset row/col scanning",
 "2127":"stall 21 cycles (~12 ns)",
 "2135":"write $04: prep read for column 0 of a new row",
 "2140":"welect second col, first row",
 "2143":"read key column state",
 "2146":"mask out all but STOP key",
+"2155":"pull return address off of stack",
 "2159":"reset NMI sub-command",
 "2386":"-\u003e rts",
 "2407":"zpOutTxtCurPos \u003c- #$FF",
@@ -987,6 +1036,17 @@
 "4347":"yes, then advance TXTPTR",
 "4350":"and call ourselves recursively to get a (possibly re-negated) number",
 "4353":"negating afterward.",
+"4371":"start with zero in WAccum",
+"4390":"not a digit? -\u003e done",
+"4392":"push the digit",
+"4393":"multiply WAccum by 10 (will be zero the first time!)",
+"4396":"pull digit",
+"4398":"subtract value of \u00270\u0027 char, now 0-9",
+"4400":"store in WParam",
+"4402":"and perform add",
+"4405":"overflow? -\u003e error",
+"4407":"advance to next digit",
+"4410":"and loop around",
 "4437":"put 10,000 into zpWParam",
 "4445":"find digit for the ten-thousands place",
 "4448":"put 1,000 into zpWParam",
@@ -1050,6 +1110,67 @@
 "5157":"return true (zpToken has the token)",
 "5161":"did user abbreviate the keyword?",
 "5163":"yes -\u003e we matched, return true",
+"5202":"point zpTXTPTR at start of lineBuffer",
+"5205":"get the char pointed at by zpTokenizePtr",
+"5208":"null terminator? -\u003e copy that to zpTXTPTR and return",
+"5210":"possible leading byte for number token?",
+"5212":"yes -\u003e translate it",
+"5214":"non-token, low-value character?",
+"5216":"yes -\u003e handle possible situations for that",
+"5218":"no, must be keyword token. Push token byte",
+"5219":"expand the token to a keyword",
+"5226":"was it the token for REM?",
+"5228":"yes -\u003e copy all remaining chars verbatim",
+"5230":"no -\u003e continue detokenizing",
+"5233":"unnecessary: we only arrive here if A is already #$00",
+"5238":"token \u003e= 11?",
+"5240":"yes -\u003e not a single-byte token",
+"5242":"no: single-byte token; translate to decimal 0-9",
+"5244":"decrement byte to get real value",
+"5248":"expand byte to word",
+"5250":"advance past our single-byte number token",
+"5253":"and detokenize it",
+"5256":"push token byte",
+"5257":"move number contents into WAccum, and move zpTokenizePtr past them",
+"5270":"pull token byte",
+"5271":"is it for a hex number?",
+"5273":"no -\u003e detokenize as decimal",
+"5275":"yes: store \"\u0026H\"",
+"5285":"and then output the number as hex",
+"5291":"get decimal for word at WAccum",
+"5294":"skip to first non-zero digit",
+"5299":"get digit",
+"5301":"end of number? -\u003e",
+"5303":"copy out to zpTXTPTR and advance to next",
+"5307":"loop around to copy next digit",
+"5310":"double-quote char?",
+"5312":"no -\u003e maybe it\u0027s an apostrophe",
+"5314":"yes, is quote. Copy until we see another one",
+"5317":"get char",
+"5320":"is terminating double-quote?",
+"5322":"yes -\u003e copy it and continue normal detokenizing",
+"5324":"terminating null \u0027\\0\u0027?",
+"5326":"no -\u003e loop around, keep copying",
+"5328":"yes -\u003e finish up detok",
+"5337":"apostrophe (REM shorthand)?",
+"5339":"no -\u003e copy the single character and continue",
+"5341":"copy chars until \u0027\\0\u0027",
+"5349":"finish out detok",
+"5360":"set zpTokTblScan to the start of the tokens table",
+"5368":"get char from table",
+"5371":"did we reach end of tokens table?",
+"5373":"don\u0027t replace token with anything",
+"5375":"is this the token we\u0027re looking for?",
+"5377":"yes -\u003e copy the keyword out",
+"5379":"no, not our keyword",
+"5382":"skip chars until next token byte",
+"5387":"got token byte -\u003e check if it\u0027s ours",
+"5390":"move past token byte",
+"5393":"get a keyword character",
+"5396":"reached next token byte? -\u003e done",
+"5398":"copy out to zpTXTPTR",
+"5401":"move to next keyword character",
+"5404":"loop until keyword has been copied",
 "5888":"is arg designated as line number?",
 "5890":"no -\u003e error",
 "5894":"set zpLineNum = arg",
@@ -1698,6 +1819,8 @@
 "13550":"upd scr == 0?",
 "13552":"yes -\u003e clear that screen\u0027s info",
 "13554":"no -\u003e clear screen 1\u0027s info",
+"13695":"\u003c- here\u0027s the CR",
+"13699":"\u003c- and here\u0027s the LF",
 "13701":"is it a printable character?",
 "13705":"backspace (ctrl-H)",
 "13709":"insert space (ctrl-A)",
@@ -3218,6 +3341,27 @@
 
 "4520":{
 "Text":"Converts a (possibly negative) word (at WAccum) into a null-terminated string of five decimal digits in ASCII, stored at zpNumStrTmp. Will be preceded either by a space (positive), or \u0027-\u0027 (negative)",
+"IsFancy":true,
+"BoxMode":false,
+"MaxWidth":80,
+"BackgroundColor":0},
+
+"4232":{
+"Text":"stores A at zpTXTPTR, then increments zpTXTPTR.\r\nIf, after incrementing, zpTXTPTR has wraooed to next page, tehn it is decremented to point at the last byte of preceding page, and null-terminated.",
+"IsFancy":true,
+"BoxMode":false,
+"MaxWidth":80,
+"BackgroundColor":0},
+
+"5202":{
+"Text":"Detokenizes from zpTokenizePtr to lineBuffer (via zpTXTPTR)\r\nCaller must take care to save/restore previous value of zpTXTPTR",
+"IsFancy":true,
+"BoxMode":false,
+"MaxWidth":80,
+"BackgroundColor":0},
+
+"2046":{
+"Text":"Print line number and the detokenized contents of the line. Used by DirectModeLoop when AUTO is active, and by LIST, and FIND.",
 "IsFancy":true,
 "BoxMode":false,
 "MaxWidth":80,
@@ -8937,6 +9081,321 @@
 "Value":34784,
 "Source":"User",
 "Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"4679":{
+"Label":"TokGetChar",
+"Value":37431,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"4241":{
+"Label":"overfl",
+"Value":36993,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"4232":{
+"Label":"TxtPtrStoreAndAdv",
+"Value":36984,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"4712":{
+"Label":"errOverfl_9258",
+"Value":37464,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"4709":{
+"Label":"flagsRts",
+"Value":37461,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"4684":{
+"Label":"TokGetCharAndAdv",
+"Value":37436,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"4688":{
+"Label":"TokAdvance",
+"Value":37440,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"4676":{
+"Label":"TokAdvAndgetChar",
+"Value":37428,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"5299":{
+"Label":"cpyNumLp",
+"Value":38051,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"5294":{
+"Label":"CopyNumToTxtPtr",
+"Value":38046,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"5291":{
+"Label":"DetokDecimalNum",
+"Value":38043,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"5238":{
+"Label":"DetokNumber",
+"Value":37990,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"5256":{
+"Label":"DetokNumberWord",
+"Value":38008,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"5202":{
+"Label":"DetokenizeLine",
+"Value":37954,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"5205":{
+"Label":"DetokenizeLineCont",
+"Value":37957,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"5233":{
+"Label":"Detok_finish",
+"Value":37985,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"5352":{
+"Label":"Detok_copyOneChar",
+"Value":38104,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"5331":{
+"Label":"Detok_copyCharContinue",
+"Value":38083,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"5310":{
+"Label":"Detok_checkHandleDQuot",
+"Value":38062,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"5337":{
+"Label":"Detok_checkHandleApos",
+"Value":38089,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"5341":{
+"Label":"cpyLp",
+"Value":38093,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"5344":{
+"Label":"Detok_copyRemaining",
+"Value":38096,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"5314":{
+"Label":"cpy",
+"Value":38066,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"5358":{
+"Label":"Detok_keyword",
+"Value":38110,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"5407":{
+"Label":"rts_950F",
+"Value":38159,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"5393":{
+"Label":"cpyKwd",
+"Value":38145,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"5390":{
+"Label":"Detok_copyKeyword",
+"Value":38142,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"5379":{
+"Label":"notOurKwd",
+"Value":38131,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"5371":{
+"Label":"chkToken",
+"Value":38123,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"2046":{
+"Label":"PrintLineNumAndDetok",
+"Value":34798,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"732":{
+"Label":"DirectMode_handleAuto",
+"Value":33484,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"770":{
+"Label":"findLineStart",
+"Value":33522,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"778":{
+"Label":"found",
+"Value":33530,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"13905":{
+"Label":"scr0",
+"Value":46657,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"822":{
+"Label":"DeactivateAutoAndError",
+"Value":33574,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"721":{
+"Label":"DML_cancelAuto",
+"Value":33473,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"681":{
+"Label":"DML_skipOK",
+"Value":33433,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"781":{
+"Label":"DML_noSuchLine",
+"Value":33533,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"2256":{
+"Label":"ClearStoppedFlag",
+"Value":35008,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"4323":{
+"Label":"rts_90D3",
+"Value":37075,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"4375":{
+"Label":"digitsLoop",
+"Value":37127,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"1376":{
+"Label":"rts_8550",
+"Value":34128,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"1425":{
+"Label":"TxtDeleteFoundLine",
+"Value":34177,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"2157":{
+"Label":"Stop",
+"Value":34909,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"2149":{
+"Label":"StopIfStopKey",
+"Value":34901,
+"Source":"User",
+"Type":"GlobalAddr",
 "LabelAnno":"None"}},
 
 "OperandFormats":{
@@ -9197,6 +9656,26 @@
 "Format":"NumericLE",
 "SubFormat":"Ascii",
 "SymbolRef":null,
+"Extra":null},
+
+"847":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"tokenizeBuffer",
+"Part":"Low"},
+
+"Extra":null},
+
+"851":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"tokenizeBuffer",
+"Part":"High"},
+
 "Extra":null},
 
 "970":{
@@ -9544,6 +10023,26 @@
 
 "Extra":null},
 
+"3005":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"lineBuffer",
+"Part":"Low"},
+
+"Extra":null},
+
+"3009":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"lineBuffer",
+"Part":"High"},
+
+"Extra":null},
+
 "3032":{
 "Length":2,
 "Format":"NumericLE",
@@ -9677,6 +10176,13 @@
 "Label":"TYP_INT",
 "Part":"Low"},
 
+"Extra":null},
+
+"4398":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Ascii",
+"SymbolRef":null,
 "Extra":null},
 
 "4506":{
@@ -9966,6 +10472,81 @@
 "Format":"NumericLE",
 "SubFormat":"Ascii",
 "SymbolRef":null,
+"Extra":null},
+
+"5226":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"tok_REM",
+"Part":"Low"},
+
+"Extra":null},
+
+"5238":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Decimal",
+"SymbolRef":null,
+"Extra":null},
+
+"5271":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"tok_HEX_AFTER",
+"Part":"Low"},
+
+"Extra":null},
+
+"5275":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Ascii",
+"SymbolRef":null,
+"Extra":null},
+
+"5280":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Ascii",
+"SymbolRef":null,
+"Extra":null},
+
+"5310":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Ascii",
+"SymbolRef":null,
+"Extra":null},
+
+"5337":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Ascii",
+"SymbolRef":null,
+"Extra":null},
+
+"5360":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"tbl_KeywordTokens",
+"Part":"Low"},
+
+"Extra":null},
+
+"5364":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"tbl_KeywordTokens",
+"Part":"High"},
+
 "Extra":null},
 
 "5414":{

@@ -51,7 +51,7 @@ zpCH            @  $48      ; Current cursor column number
 zpCV            @  $49      ; Current cursor row number
 zpCursTileAddr  @  $4A    2 ; PPU address of tile under cursor
 zpInsertMode    @  $4C      ; Zero = overwrite, non-zero = insert
-zpTokenizeOut   @  $4D    2
+zpTokenizePtr   @  $4D    2
 zpPpuScreenBasePage     @  $4F ; The VRAM page used for the current screen we're UPDATING (may not be the one displayed)!
 zpOutputStr     @  $52    2 ; Pointer to null-term'd string to be queued for output
 zpTokTblScn     @  $54    2 ; Used to scan thru tbl_KeywordTokens
@@ -62,6 +62,8 @@ zpSavedRts      @  $5F    2 ; FOR, GOSUB, other cmds pull return from stack, sav
 zpOutTxtCurPos  @  $62
 zpNMICMD        @  $63      ; Which command the NMI handler should execute. 1 + the command's index in jtbl_NMICMD.
 zpOutTxtStartPos    @  $64
+zp66            @  $66
+zp68            @  $68
 zpSavedCH       @  $6B
 zpSavedCV       @  $6C
 zpLineBufIdx    @  $76      ; Current write position into lineBuffer ($500)
