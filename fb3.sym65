@@ -29,7 +29,12 @@ zpFRETOP        @  $03    2 ; Pointer to just past the end of free space.
 zpTXTTAB        @  $05    2 ; Pointer to the start of the BASIC program code. Always set to $6006.
 zpTXTEND        @  $07    2 ; Ponter to just past the program end (zpTXTEND - zpTXTTAB = prog len)
 zpTXTPTR        @  $09    2 ; Points at the next char of BASIC program to be processed.
-zpTxtNextLink   @  $0B    2 ; Points at the next line of BASIC program after current
+zpRunLineNum    @  $0B    2 ; When BASIC running, it's the current line number, or #$FFFF if it's direct from the command prompt. When inserting or deleting lines, this var instead points at the next line of BASIC program after the one to be ins/del
+zpRunTxtNxtLnk  @  $0D    2 ; When BASIC running, it's a pointer at the next line (starting at its "offset" byte)
+zpInsLineNum    @  $0F    2 ; Line number to give newly-inserted line
+zpContRunLineNum @ $11    2 ; Saved zpRunLineNum for CONT restore
+zpContRunTxtNxtL @ $13    2 ; Saved zpRunTxtNxtLnk for CONT restore
+zpContTxtThisCmd @ $15    2 ; Saved zpTxtThisCmd for CONT restore
 zpSavedStack    @  $17      ; Saved SP
 zpModifierKeyDn @  $18      ; Non-zero when modifier key is pressed
 zpMisc          @  $19    4 ; Used for a wide variety of things, mainly temporary pointers
@@ -46,7 +51,7 @@ zpPpuMaskVal    @  $33
 zpMulScratch    @  $34    8 ; Used for multiplication scratch space. Only the first four are ever actually used!
 zpTmp3C         @  $3C
 zpNumStrTmp     @  $3D    5 ; Holds str output from HexStrFromWord and DecStrFromWOrd
-zpLineNum       @  $44    2
+zpFindLNum       @  $44    2
 zpLineStartRow  @  $47      ; the screen row at which current typed line starts (only set AFTER typing is finished)
 zpCH            @  $48      ; Current cursor column number
 zpCV            @  $49      ; Current cursor row number
@@ -57,6 +62,7 @@ zpPpuScreenBasePage     @  $4F ; The VRAM page used for the current screen we're
 zpKanaHeld      @  $50      ; Non-zero (#$FF) if KANA key is still being held down from when it was first detected. Used to prevent rapid toggling.
 zpOutputStr     @  $52    2 ; Pointer to null-term'd string to be queued for output
 zpTokTblScn     @  $54    2 ; Used to scan thru tbl_KeywordTokens
+zpTxtThisCmd    @  $58    2 ; The start of the currently-running command. Restored to zpTXTPTR on RESUME or CONT.
 zpNewLineOffset @  $5A      ; Offset to next line for not-yet-placed, tokenized line
 zpTxtLink       @  $5B    2 ; Points to the start of the current program line (including the 3-byte preamble)
 zpNmiAnimSprCtr @  $5D      ; Counts how many sprites are not currently animated, and turns off zpNmiAnimate if it reaches zero
@@ -92,6 +98,7 @@ zpVarData       @  $8C    2 ; pointer to selected variable data (deep, if var is
 zpVARPTR        @  $8E    2 ; pointer to start of selected variable
 zpVarType       @  $90      ; Often indicates type of a found variable. Other misc uses also occur.
 zpCasCksum      @  $91    2 ; Checksum for cassette data, also used for misc counting
+zpTraceOnFlag   @  $97      ; Flag for whether to trace line numbers (TRON)
 zpSavedTxtChar  @  $98
 zpToken         @  $99
 zpSavedTXTPTR   @  $9A    2 ; Saved val of zpTXTPTR
@@ -126,6 +133,9 @@ zpHaveFNameArg  @  $EA      ; true when LOAD was given a filename arg
 zpNmiTrampoline @  $ED    3 ; Contains a JMP instruction to the real NMI handler. It's set to: JMP $8971
 zpCurScreenNum  @  $F0      ; the _displayed_ SCREEN (0 or 1). Kept in sync with zpPpuScreenBasePage
 zpGameNum       @  $F3      ; Game number (GAME cmd)
+zpRsmTxtThisCmd @  $F6    2 ; Saved zpTxtThisCmd for RESUME restore
+zpRsmRunTxtNxtL @  $F8    2 ; Saved zpRunTxtNxtLnk for RESUME restore
+zpRsmRunLineNum @  $FA    2 ; Saved zpRunLineNum for RESUME restore
 
 tokenizeBuffer  @  $300   256
 exprParseStk    @  $400   128; expression evaluation stack

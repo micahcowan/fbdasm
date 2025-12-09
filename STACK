@@ -25,14 +25,19 @@ BRANCH STACK:
 
   DirectModeLoop
   $8334 ExecuteDirectModeLine
-    $8855 (StopIfStopKey)
-    ->$885D
-     ;$8861
-        $B945
-          from some clues in Enri, seems like it's doing something with
-          function keys?
 
-          This calls ReadKeyboard. Why would that be needed in Stop?
+  CmdFn_DATAorREM
+
+  (ExecuteDirectModeLine)
+    $8855 (StopIfStopKey)
+    ->$885D (Stop)
+        $8883 
+
+  that bit below CmdFn_DATAorREM that is used to jump to next line link
+  CmdFn_RUN
+  ExecuteLine
+    MaybePrintTrace
+   ;$840B
 
 NAME/explain:
   (ExecuteDirectModeLine stuff)

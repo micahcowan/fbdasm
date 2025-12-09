@@ -784,7 +784,7 @@
 "712":"clear variables (we may have just trampled variable space)",
 "732":"AUTO active?",
 "734":"no -\u003e nothing to do; return",
-"736":"copy the next auto linenum to zpLineNum",
+"736":"copy the next auto linenum to zpFindLNum",
 "744":"and search for that line number",
 "747":"no such line? -\u003e don\u0027t need to handle it then",
 "749":"save TXTPTR",
@@ -819,6 +819,7 @@
 "998":"save length to variable",
 "1000":"copy str content ptr into zero-page pointers for indexing",
 "1021":"set copy dest ptr to one past zpVarData (i.e. contents, not strlen)",
+"1037":"return if trace is off, or if we\u0027re in direct mode",
 "1269":"we\u0027re about to mess with line ordering; disallow CONT",
 "1275":"get the typed line number",
 "1280":"line num = 65535?",
@@ -833,7 +834,7 @@
 "1308":"yes: get the next char",
 "1311":"just a line number, no content?",
 "1313":"yes -\u003e just delete the line if it exists",
-"1315":"no: put line number in zpLineNum",
+"1315":"no: put line number in zpFindLNum",
 "1323":"and tokenize the contents via zpTokenizePtr into tokenizeBuffer",
 "1329":"subtracting #$00... silly!",
 "1354":"delete any existing line w same #",
@@ -886,6 +887,7 @@
 "2146":"mask out all but STOP key",
 "2155":"pull return address off of stack",
 "2159":"reset NMI sub-command",
+"2164":"wait until no key is actively being pressed",
 "2386":"-\u003e rts",
 "2407":"zpOutTxtCurPos \u003c- #$FF",
 "2418":"-\u003e rts",
@@ -1171,9 +1173,22 @@
 "5398":"copy out to zpTXTPTR",
 "5401":"move to next keyword character",
 "5404":"loop until keyword has been copied",
+"5685":"indicate we\u0027re CLICK",
+"5689":"check arg for ON/OFF",
+"5691":"indicate we\u0027re TR--",
+"5695":"check arg for ON/OFF",
+"5697":"ON? -\u003e load #$FF",
+"5699":"OFF?",
+"5701":"neither ON nor OFF -\u003e error",
+"5703":"OFF. Load #$00",
+"5705":"skip next instr",
+"5708":"are we TR--?",
+"5710":"yes -\u003e store in the tr flag",
+"5712":"otherwise, store in the key-click flag",
+"5714":"skip next instr",
 "5888":"is arg designated as line number?",
 "5890":"no -\u003e error",
-"5894":"set zpLineNum = arg",
+"5894":"set zpFindLNum = arg",
 "5903":"and find the indicated line",
 "5906":"error if it doesn\u0027t exist",
 "6068":"got arg? -\u003e handle",
@@ -2435,7 +2450,7 @@
 "BackgroundColor":0},
 
 "1360":{
-"Text":"Find the position for the line number zpLineNum within the BASIC program, leaving zpTxttLink pointing at the closest less-than-or-equal numbered line.\r\nZ flag is set iff an exact line-number match was found.",
+"Text":"Find the position for the line number zpFindLNum within the BASIC program, leaving zpTxtLink pointing at the closest less-than-or-equal numbered line.\r\nZ flag is set iff an exact line-number match was found.",
 "IsFancy":true,
 "BoxMode":false,
 "MaxWidth":80,
@@ -2814,6 +2829,13 @@
 
 "15679":{
 "Text":"Handle CR character from input\r\nFirst: back up rows until we\u0027re not on a wrapped one (that is, we\u0027re at the first row of a possible multi-row line)",
+"IsFancy":true,
+"BoxMode":false,
+"MaxWidth":80,
+"BackgroundColor":0},
+
+"858":{
+"Text":"From here on down, this routine is used both by ExecuteDirectModeLine (directly above), and also by a running basic program (for each command)",
 "IsFancy":true,
 "BoxMode":false,
 "MaxWidth":80,
@@ -3577,6 +3599,34 @@
 
 "15408":{
 "Text":"Read a character from the keyboard.\r\n\r\nFlashes the cursor when nothing is being pressed, and handles key-repeat timings.\r\nSince it uses ReadKeyInsMacro, it will also honor F-keys.",
+"IsFancy":true,
+"BoxMode":false,
+"MaxWidth":80,
+"BackgroundColor":0},
+
+"3037":{
+"Text":"Check that we have enough stack space (20 bytes) to execute a line of BASIC. Error if we do not.",
+"IsFancy":true,
+"BoxMode":false,
+"MaxWidth":80,
+"BackgroundColor":0},
+
+"1037":{
+"Text":"Print line number trace, if active",
+"IsFancy":true,
+"BoxMode":false,
+"MaxWidth":80,
+"BackgroundColor":0},
+
+"5691":{
+"Text":"For TRON, TROFF commands. Pulls some funny tricks to let CmdFn_CLICK (above) reuse the same ON/OFF check logic",
+"IsFancy":true,
+"BoxMode":false,
+"MaxWidth":80,
+"BackgroundColor":0},
+
+"5685":{
+"Text":"Turn keyclicks on or off. Pulls some funny tricks to reuse the same ON/OFF check logic as CmdFn_TR (just below)",
 "IsFancy":true,
 "BoxMode":false,
 "MaxWidth":80,
@@ -10066,6 +10116,62 @@
 "Value":48415,
 "Source":"User",
 "Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"2195":{
+"Label":"Stop_saveContext",
+"Value":34947,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"858":{
+"Label":"ExecuteCommand",
+"Value":33610,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"3037":{
+"Label":"ExecCheckMem",
+"Value":35789,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"1037":{
+"Label":"MaybePrintTrace",
+"Value":33789,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"5695":{
+"Label":"OnOff",
+"Value":38447,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"5706":{
+"Label":"on",
+"Value":38458,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"5715":{
+"Label":"tr",
+"Value":38467,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"1051":{
+"Label":"doTrace",
+"Value":33803,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
 "LabelAnno":"None"}},
 
 "OperandFormats":{
@@ -10348,6 +10454,20 @@
 
 "Extra":null},
 
+"882":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Ascii",
+"SymbolRef":null,
+"Extra":null},
+
+"891":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Ascii",
+"SymbolRef":null,
+"Extra":null},
+
 "970":{
 "Length":2,
 "Format":"NumericLE",
@@ -10362,6 +10482,13 @@
 "Length":2,
 "Format":"NumericLE",
 "SubFormat":"Decimal",
+"SymbolRef":null,
+"Extra":null},
+
+"1051":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Ascii",
 "SymbolRef":null,
 "Extra":null},
 
@@ -11235,6 +11362,26 @@
 "SubFormat":"Symbol",
 "SymbolRef":{
 "Label":"err_NR",
+"Part":"Low"},
+
+"Extra":null},
+
+"5695":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"tok_ON",
+"Part":"Low"},
+
+"Extra":null},
+
+"5699":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"tok_OFF",
 "Part":"Low"},
 
 "Extra":null},
@@ -18770,6 +18917,30 @@
 "Extra":"↑FB3_CHRROM.bin"}},
 
 "LvTables":{
+"1360":{
+"Variables":[{
+"DataDescriptor":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Hex",
+"SymbolRef":null,
+"Extra":null},
+
+"Comment":"link to next line after the one being inserted/deleted",
+"HasWidth":true,
+"Direction":"ReadWrite",
+"MultiMask":null,
+"Label":"zpInsDelNxtLnk",
+"Value":11,
+"Source":"Variable",
+"Type":"ExternalAddr",
+"LabelAnno":"None"}],
+"ClearPrevious":false},
+
+"1728":{
+"Variables":[],
+"ClearPrevious":true},
+
 "3981":{
 "Variables":[{
 "DataDescriptor":{
