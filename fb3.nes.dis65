@@ -2279,6 +2279,25 @@
 "14528":"set X-reg to preceding row",
 "14532":"mark that preceding row wrapped to this one",
 "14536":"restore cursor position (but up one row, bc of scroll)",
+"14544":"Control-A",
+"14548":"STOP (Control-C)",
+"14550":"Control-D",
+"14552":"Control-E",
+"14556":"Control-G",
+"14558":"BACKSPACE (Control-H)",
+"14560":"TAB (Control-I)",
+"14562":"LF (Control-J)",
+"14564":"HOME (Control-K)",
+"14566":"Control-L",
+"14568":"CR (Control-M)",
+"14578":"INSERT (Control-R)",
+"14586":"Control-V",
+"14588":"Control-W",
+"14594":"Control-Z",
+"14598":"Control-\\",
+"14600":"Control-]",
+"14602":"Control-^",
+"14604":"Control-_",
 "14609":"save char code that is \u003e #$F0. Might be fn key, might be graphical tile.",
 "14611":"if it\u0027s a function key, find out which.",
 "14614":"fn key? -\u003e set up reads from macro definition",
@@ -3214,7 +3233,7 @@
 "BackgroundColor":0},
 
 "14119":{
-"Text":"Exactly the same as CursorDown, _except_ in the case when the cursor moves past the end of the screen. In that case, CursorDown will leave cursor at the start of the new line; CursorDownPreserveCol will leave cursor at the original column.\r\n",
+"Text":"Exactly the same as LineFeed, _except_ in the case when the cursor moves past the end of the screen. In that case, LineFeed will leave cursor at the start of the new line; CursorDown will leave cursor at the original column.\r\n",
 "IsFancy":true,
 "BoxMode":false,
 "MaxWidth":80,
@@ -4156,6 +4175,13 @@
 "IsFancy":true,
 "BoxMode":false,
 "MaxWidth":80,
+"BackgroundColor":0},
+
+"13944":{
+"Text":"Invoked by Control-D",
+"IsFancy":true,
+"BoxMode":false,
+"MaxWidth":80,
 "BackgroundColor":0}},
 
 "Notes":{
@@ -4373,11 +4399,11 @@
 "LabelAnno":"None"},
 
 "13944":{
-"Label":"TB668",
+"Label":"ResetGraphicSettings",
 "Value":46696,
 "Source":"User",
 "Type":"GlobalAddr",
-"LabelAnno":"Generated"},
+"LabelAnno":"None"},
 
 "13983":{
 "Label":"ClearToEndOfLine",
@@ -4408,7 +4434,7 @@
 "LabelAnno":"None"},
 
 "14177":{
-"Label":"CursorDown",
+"Label":"LineFeed",
 "Value":46929,
 "Source":"User",
 "Type":"GlobalAddr",
@@ -4429,7 +4455,7 @@
 "LabelAnno":"None"},
 
 "14172":{
-"Label":"CursorToRowStart",
+"Label":"CarriageReturn",
 "Value":46924,
 "Source":"User",
 "Type":"GlobalAddr",
@@ -5549,7 +5575,7 @@
 "LabelAnno":"None"},
 
 "14119":{
-"Label":"CursorDownPreserveCol",
+"Label":"CursorDown",
 "Value":46871,
 "Source":"User",
 "Type":"GlobalAddr",
@@ -14794,7 +14820,7 @@
 "Format":"NumericLE",
 "SubFormat":"Symbol",
 "SymbolRef":{
-"Label":"TB668",
+"Label":"ResetGraphicSettings",
 "Part":"Low"},
 
 "Extra":null},
@@ -14854,7 +14880,7 @@
 "Format":"NumericLE",
 "SubFormat":"Symbol",
 "SymbolRef":{
-"Label":"CursorDown",
+"Label":"LineFeed",
 "Part":"Low"},
 
 "Extra":null},
@@ -14884,7 +14910,7 @@
 "Format":"NumericLE",
 "SubFormat":"Symbol",
 "SymbolRef":{
-"Label":"CursorToRowStart",
+"Label":"CarriageReturn",
 "Part":"Low"},
 
 "Extra":null},
@@ -15064,7 +15090,7 @@
 "Format":"NumericLE",
 "SubFormat":"Symbol",
 "SymbolRef":{
-"Label":"CursorDownPreserveCol",
+"Label":"CursorDown",
 "Part":"Low"},
 
 "Extra":null},

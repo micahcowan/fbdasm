@@ -20,6 +20,10 @@ BRANCH STACK:
 
   Any remaining fns in jtbl_CtrlCharInputHandlers
 
+  ResetGraphicSettings
+ ;$B681
+    $B436
+
 NAME/explain:
 .
 
