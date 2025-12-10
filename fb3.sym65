@@ -177,11 +177,15 @@ defMovSPosX     @  $6C6      ; Sprite MOVE, current X position
 defMovSPosY     @  $6C7      ; Sprite MOVE, current Y position
 genPurposeBuf   @  $700   256; user directive messages (at least) get writen out to here
 
+COLS = 28
+ROWS = 24
+
 basicProgram    @  $6006  ; The start of the BASIC program in memory
 
 NC_NoCmd            = 0
 NC_FlushOutp        = 1
 NC_BufferCurLine    = 2
+NC_CopyCharsLeft    = 3
 NC_ClearToEndOfRow  = 4
 NC_ShowCursor       = 8
 NC_HideCursor       = 9

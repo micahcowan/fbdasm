@@ -979,6 +979,9 @@
 "2456":"active command?",
 "2458":"yes -\u003e go handle it",
 "2466":"NC constants are one greater than cmd index",
+"2468":"mul by 2 for jtbl index",
+"2473":"store handler pointer",
+"2480":"and jump to it",
 "2596":"grab a char from out buf",
 "2599":"NUL -\u003e buf is done",
 "2601":"not NUL; copy char to screen ",
@@ -988,10 +991,17 @@
 "2614":"are we at 15th column?",
 "2616":"yes -\u003e print rest next NMI",
 "2619":"(always) loop back to output next char",
+"2681":"SPACE character",
 "2749":"line doesn\u0027t wrap -\u003e done; terminate active NMICMD",
 "2751":"line wraps: copy next row on next NMI",
 "2753":"(always)",
 "2757":"(NOOP: disabled LDA #$00, but nothing jumps to it.)",
+"2771":"go to (one past) current location in VRAM",
+"2774":"initial, fake read",
+"2781":"copy from cursor to end of row, to lineBuffer",
+"2793":"go to (true) current position",
+"2804":"copy the lineBuffer back out to PPUDATA.",
+"2816":"done!",
 "3017":"subtract 4 from end of free space",
 "3027":"and compare what\u0027s in WAccum to that",
 "3030":"less than zpFRETOP - 4? -\u003e we\u0027re fine. Return.",
@@ -1264,9 +1274,9 @@
 "5454":"now skip the original offending command (skip to the NEXT one)",
 "5457":"no -\u003e done",
 "5459":"skip the arg, whatever it is",
-"5465":"this counts as \"resume\", so no longer resumable",
+"5465":"we\u0027re exiting the handler, so go back to \"installed\" state",
 "5470":"and go to the asked-for line",
-"5475":"we\u0027re resuming, no longer resumable until next error",
+"5475":"we\u0027re exiting the handler, so go back to \"installed\" state",
 "5685":"indicate we\u0027re CLICK",
 "5689":"check arg for ON/OFF",
 "5691":"indicate we\u0027re TR--",
@@ -2102,6 +2112,9 @@
 "13550":"upd scr == 0?",
 "13552":"yes -\u003e clear that screen\u0027s info",
 "13554":"no -\u003e clear screen 1\u0027s info",
+"13647":"which screen is active?",
+"13649":"screen 0? -\u003e update scroll for that",
+"13651":"otherwise, update scroll for scr 1",
 "13695":"\u003c- here\u0027s the CR",
 "13699":"\u003c- and here\u0027s the LF",
 "13701":"is it a printable character?",
@@ -2128,6 +2141,52 @@
 "14180":"past last row?",
 "14182":"no -\u003e store new row and exit",
 "14184":"yes",
+"14216":"backspacing from start of line",
+"14218":"backspacing from home position? -\u003e can\u0027t back up higher",
+"14221":"check preceding row\u0027s wrap status",
+"14224":"doesn\u0027t wrap -\u003e not same line; not backing up",
+"14226":"wraps.",
+"14228":"back up to last column of preceding row.",
+"14232":"save cursor pos",
+"14237":"on last char of row?",
+"14239":"yes -\u003e skip",
+"14244":"pass backspaced position",
+"14246":" as parameter to upcoming NMI subcmd",
+"14252":"go forward a char",
+"14254":"recalc CalcCursorTilemapPos",
+"14257":"go back to our backspaced position",
+"14261":"copy this row back one char",
+"14270":"does the present row wrap to the next?",
+"14273":"yes -\u003e give next row same treatment",
+"14275":"calculate position of last character of last row we moved",
+"14278":"wait for PPU ops to be safe",
+"14281":"go to that location",
+"14284":"overwrite character at this position with SPACE",
+"14289":"restore cursor position",
+"14292":"incr row",
+"14294":"set x pos to last column",
+"14298":"move first char of next row to here (last char of preceding row)",
+"14301":"CV just got dec\u0027d; re-increment",
+"14303":"move cursor to start of the row",
+"14306":"shift this forward row back one",
+"14309":"bump cursor x",
+"14311":"calc position",
+"14314":"wait until it\u0027s safe for PPU ops",
+"14317":"go to bumped cursor position",
+"14320":"fake first PPU read",
+"14323":"get the char value at bumped loc",
+"14326":"push it",
+"14327":"make sure vert scroll is up-to-date",
+"14330":"back up one char (back to original)",
+"14334":"did we wrap to prev line?",
+"14336":"(NEVER) no -\u003e skip adjust",
+"14338":"yes: fix #$ff to #COLS-1",
+"14342":"and decrement row",
+"14344":"calc new position",
+"14347":"wait again for safe PPU ops",
+"14350":"and go there",
+"14353":"pull char we got from start",
+"14354":"and put it on last char of prev line",
 "14609":"save char code that is \u003e #$F0. Might be fn key, might be graphical tile.",
 "14611":"if it\u0027s a function key, find out which.",
 "14614":"fn key? -\u003e set up reads from macro definition",
@@ -3963,6 +4022,27 @@
 "IsFancy":true,
 "BoxMode":false,
 "MaxWidth":80,
+"BackgroundColor":0},
+
+"14309":{
+"Text":"This routine has some generalized handling, but is only used in very specific conditions (always grabs first char on next line). Special setup before calling is also performed to make it do that. It\u0027s all pretty silly.",
+"IsFancy":true,
+"BoxMode":false,
+"MaxWidth":80,
+"BackgroundColor":0},
+
+"2771":{
+"Text":"Shifts the contents of a row on screen, left.\r\n\r\nParameters:\r\n  zpCursTileAddr ($4a) {addr/2}: start of copy region (end is end of the row)\r\n  zpMisc         ($19) {addr/2}: destination to copy to\r\n\r\nOnly ever used by Backspace, to shift line contents past the cursor over to the left by one column. Thus zpMisc will hold the address of the current cursor position, and zpCursTileAddr will hold the address of one past that.",
+"IsFancy":true,
+"BoxMode":false,
+"MaxWidth":80,
+"BackgroundColor":0},
+
+"14207":{
+"Text":"Move cursor left one (unless at start of line), and shift all chars forward from the cursor, back by one, across all screen rows occupied by the (possibly wrapped) line.\r\n\r\nIf cursor is at start of the line, still shifts all chars forward, performing a forward-delete instead of backspace.",
+"IsFancy":true,
+"BoxMode":false,
+"MaxWidth":80,
 "BackgroundColor":0}},
 
 "Notes":{
@@ -4054,11 +4134,11 @@
 "LabelAnno":"None"},
 
 "2771":{
-"Label":"T8AC3",
+"Label":"NMICMD_CopyCharsLeft",
 "Value":35523,
 "Source":"User",
 "Type":"GlobalAddr",
-"LabelAnno":"Generated"},
+"LabelAnno":"None"},
 
 "2570":{
 "Label":"NMICMD_ClearToEndOfRow",
@@ -10904,6 +10984,90 @@
 "Value":45689,
 "Source":"User",
 "Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"2462":{
+"Label":"animAndTog_898E",
+"Value":35214,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"2781":{
+"Label":"cpyLp",
+"Value":35533,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"13771":{
+"Label":"findStart",
+"Value":46523,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"14216":{
+"Label":"bsFromSol",
+"Value":46968,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"14232":{
+"Label":"dontGoUpRow",
+"Value":46984,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"14268":{
+"Label":"skip",
+"Value":47020,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"2804":{
+"Label":"cpyBackLp",
+"Value":35556,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"14235":{
+"Label":"BS_ShiftRowLeftOneCol",
+"Value":46987,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"13662":{
+"Label":"scr0",
+"Value":46414,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"14344":{
+"Label":"notEndOfPrev",
+"Value":47096,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"14292":{
+"Label":"backshiftNextRow",
+"Value":47044,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"14309":{
+"Label":"BS_moveStartCharBack",
+"Value":47061,
+"Source":"User",
+"Type":"GlobalAddr",
 "LabelAnno":"None"}},
 
 "OperandFormats":{
@@ -11388,6 +11552,26 @@
 
 "Extra":null},
 
+"2434":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"oamBuffer",
+"Part":"Low"},
+
+"Extra":null},
+
+"2439":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"oamBuffer",
+"Part":"High"},
+
+"Extra":null},
+
 "2483":{
 "Length":2,
 "Format":"NumericLE",
@@ -11413,7 +11597,7 @@
 "Format":"NumericLE",
 "SubFormat":"Symbol",
 "SymbolRef":{
-"Label":"T8AC3",
+"Label":"NMICMD_CopyCharsLeft",
 "Part":"Low"},
 
 "Extra":null},
@@ -11545,12 +11729,62 @@
 "SymbolRef":null,
 "Extra":null},
 
+"2581":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"COLS",
+"Part":"Low"},
+
+"Extra":null},
+
+"2606":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"COLS",
+"Part":"Low"},
+
+"Extra":null},
+
+"2644":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"ROWS",
+"Part":"Low"},
+
+"Extra":null},
+
+"2679":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"COLS",
+"Part":"Low"},
+
+"Extra":null},
+
 "2697":{
 "Length":2,
 "Format":"NumericLE",
 "SubFormat":"Symbol",
 "SymbolRef":{
 "Label":"NC_FlushOutp",
+"Part":"Low"},
+
+"Extra":null},
+
+"2721":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"COLS",
 "Part":"Low"},
 
 "Extra":null},
@@ -11568,6 +11802,66 @@
 "SubFormat":"Symbol",
 "SymbolRef":{
 "Label":"NC_NoCmd",
+"Part":"Low"},
+
+"Extra":null},
+
+"2789":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"COLS",
+"Part":"Low"},
+
+"Extra":null},
+
+"2812":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"COLS",
+"Part":"Low"},
+
+"Extra":null},
+
+"2917":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"COLS",
+"Part":"Low"},
+
+"Extra":null},
+
+"2938":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"COLS",
+"Part":"Low"},
+
+"Extra":null},
+
+"2963":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"COLS",
+"Part":"Low"},
+
+"Extra":null},
+
+"2989":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"COLS",
 "Part":"Low"},
 
 "Extra":null},
@@ -12251,6 +12545,26 @@
 "SubFormat":"Symbol",
 "SymbolRef":{
 "Label":"err_UL",
+"Part":"Low"},
+
+"Extra":null},
+
+"5979":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"COLS",
+"Part":"Low"},
+
+"Extra":null},
+
+"5988":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"ROWS",
 "Part":"Low"},
 
 "Extra":null},
@@ -13091,6 +13405,26 @@
 
 "Extra":null},
 
+"10835":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"COLS",
+"Part":"Low"},
+
+"Extra":null},
+
+"10849":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"ROWS",
+"Part":"Low"},
+
+"Extra":null},
+
 "11073":{
 "Length":2,
 "Format":"NumericLE",
@@ -13774,6 +14108,16 @@
 
 "Extra":null},
 
+"13761":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"ROWS",
+"Part":"Low"},
+
+"Extra":null},
+
 "13791":{
 "Length":2,
 "Format":"NumericLE",
@@ -13791,6 +14135,16 @@
 "SymbolRef":{
 "Label":"VRAM_screen0",
 "Part":"High"},
+
+"Extra":null},
+
+"13839":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"ROWS",
+"Part":"Low"},
 
 "Extra":null},
 
@@ -13831,6 +14185,66 @@
 "SymbolRef":{
 "Label":"VRAM_screen0",
 "Part":"High"},
+
+"Extra":null},
+
+"14040":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"ROWS",
+"Part":"Low"},
+
+"Extra":null},
+
+"14180":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"ROWS",
+"Part":"Low"},
+
+"Extra":null},
+
+"14228":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"COLS",
+"Part":"Low"},
+
+"Extra":null},
+
+"14237":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"COLS",
+"Part":"Low"},
+
+"Extra":null},
+
+"14264":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"COLS",
+"Part":"Low"},
+
+"Extra":null},
+
+"14338":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"COLS",
+"Part":"Low"},
 
 "Extra":null},
 
@@ -14892,6 +15306,26 @@
 "SymbolRef":{
 "Label":"VRAM_screen0",
 "Part":"High"},
+
+"Extra":null},
+
+"17635":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"COLS",
+"Part":"Low"},
+
+"Extra":null},
+
+"17646":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"ROWS",
+"Part":"Low"},
 
 "Extra":null},
 

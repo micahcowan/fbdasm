@@ -12,16 +12,12 @@ SEARCH STACK:
     Something interesting at $D000, too. a game background map, probably?
   Any other st* to NMICMD
   WaitForNmiSubcommand
-  MarkWrappedLine
-  PrintString
-  QueueStringForOutput
-  QueueCharForOutput
-  QueueNullForOutput
   All routines in tbl_Commands and tbl_Functions
   Any remaining fns in CtrlCharInputHandlersTbl
 
 BRANCH STACK:
-  DefaultNmiHandler
+
+  jtbl_NMICMD
 
 NAME/explain:
 .
