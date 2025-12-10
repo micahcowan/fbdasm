@@ -131,7 +131,7 @@ zpAutoEnabled   @  $E2      ; non-zero (=10) when AUTO active; zero means inacti
 zpKeyClickFlg   @  $E3      ; non-zero = key clicks on
 zpVScroll0      @  $E4      ; Vertical scroll used when SCREEN 0 is displayed
 zpVScroll1      @  $E5      ; Vertical scroll used when SCREEN 1 is displayed; updated when $F0 is set
-zpCanResumeSt   @  $E7      ; #$00 - no error, #$01 - error, not resumable, #$02 - error, resumable
+zpErrHandStat   @  $E7      ; #$00 - no error, #$01 - error, not resumable, #$02 - error, resumable
 zpErrHandLNum   @  $E8    2 ; line number to jump to when error occurs
 zpHaveFNameArg  @  $EA      ; true when LOAD was given a filename arg
 zpNmiTrampoline @  $ED    3 ; Contains a JMP instruction to the real NMI handler. It's set to: JMP $8971
@@ -207,10 +207,10 @@ TYP_ARRAY_FLAG  =  $80      ; Flag bit indicating array type.
 CAS_HDR_PROG    = $02       ; Identity byte in header for prog saves to cassette tape.
 CAS_HDR_SCREEN  = $03       ; Identity byte in header for screen saves to cassette tape.
 
-; Flags for zpCanResumeSt
-RES_NO_HANDLER  = $00
-RES_NO_ERROR    = $01
-RES_CAN_RESUME  = $02
+; Flags for zpErrHandStat
+EH_NO_HANDLER       = $00
+EH_HANDLER_DEFINED  = $01
+EH_IN_HANDLER       = $02
 
 err_NF          = $00       ; "NF" - NEXT without FOR
 err_SN          = $01       ; "SN" - Syntax Error

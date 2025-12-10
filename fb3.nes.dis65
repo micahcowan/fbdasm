@@ -766,7 +766,7 @@
 "594":"Falls thru to next string start",
 "598":"Falls thru to next string start",
 "634":"clear \"stopped\" flag",
-"637":"store zero (RES_NO_HANDLER)",
+"637":"store zero (EH_NO_HANDLER)",
 "641":"turn off auto-increment and erase its data",
 "647":"clear the CPU stack",
 "650":"and push #$FFFF (as a limit to NEXT/RETURN stack searches?)",
@@ -1250,9 +1250,9 @@
 "5401":"move to next keyword character",
 "5404":"loop until keyword has been copied",
 "5431":"push CPU flags",
-"5432":"get err resume status",
-"5434":"no errors? -\u003e error about that",
-"5436":"error, but can\u0027t resume?",
+"5432":"get err handler status",
+"5434":"no error handler installed? -\u003e error about that",
+"5436":"handler installed, but not called?",
 "5438":"yes -\u003e error about that",
 "5440":"else, pull flags. Did we get an arg?",
 "5441":"no -\u003e restore and exit",
@@ -1317,7 +1317,7 @@
 "6888":"get lnum high byte",
 "6890":"save as handler addr",
 "6892":"lnum high byte zero? no -\u003e handle line num",
-"6894":"storing 0 (RES_NO_HANDLER)",
+"6894":"storing 0 (EH_NO_HANDLER)",
 "6897":"skip spaces",
 "6900":"find the designated line number (or error)",
 "6905":"store the line num arg as error handler line num",
@@ -2035,7 +2035,7 @@
 "12899":"else: we should call the error handler instead of erroring",
 "12901":"save away all the resumable context",
 "12923":"find error-handler line",
-"12926":"from 1 (RES_NO_ERROR) to 2 (RES_CAN_RESUME)",
+"12926":"from 1 (EH_NO_HANDLER) to 2 (EH_IN_HANDLER)",
 "12928":"restore the saved stack",
 "12931":"-\u003e go to the erorr handler and execute",
 "12938":"move cursor to start of new line (if it isn\u0027t already)",
@@ -8401,7 +8401,7 @@
 "LabelAnno":"None"},
 
 "5414":{
-"Label":"ErrorResumeWithoutError",
+"Label":"ErrorResumeWithoutErrHandl",
 "Value":38166,
 "Source":"User",
 "Type":"GlobalAddr",
@@ -10564,7 +10564,7 @@
 "LabelAnno":"None"},
 
 "1121":{
-"Label":"cfmNotDirect",
+"Label":"errHandNeverResmd",
 "Value":33873,
 "Source":"User",
 "Type":"NonUniqueLocalAddr",
@@ -11259,7 +11259,7 @@
 "Format":"NumericLE",
 "SubFormat":"Symbol",
 "SymbolRef":{
-"Label":"RES_CAN_RESUME",
+"Label":"EH_IN_HANDLER",
 "Part":"Low"},
 
 "Extra":null},
@@ -12133,7 +12133,7 @@
 "Format":"NumericLE",
 "SubFormat":"Symbol",
 "SymbolRef":{
-"Label":"RES_NO_HANDLER",
+"Label":"EH_NO_HANDLER",
 "Part":"Low"},
 
 "Extra":null},
@@ -12153,7 +12153,7 @@
 "Format":"NumericLE",
 "SubFormat":"Symbol",
 "SymbolRef":{
-"Label":"RES_NO_ERROR",
+"Label":"EH_HANDLER_DEFINED",
 "Part":"Low"},
 
 "Extra":null},
@@ -12183,7 +12183,7 @@
 "Format":"NumericLE",
 "SubFormat":"Symbol",
 "SymbolRef":{
-"Label":"RES_NO_ERROR",
+"Label":"EH_HANDLER_DEFINED",
 "Part":"Low"},
 
 "Extra":null},
@@ -12193,7 +12193,7 @@
 "Format":"NumericLE",
 "SubFormat":"Symbol",
 "SymbolRef":{
-"Label":"RES_NO_ERROR",
+"Label":"EH_HANDLER_DEFINED",
 "Part":"Low"},
 
 "Extra":null},
@@ -12270,7 +12270,7 @@
 "Format":"NumericLE",
 "SubFormat":"Symbol",
 "SymbolRef":{
-"Label":"RES_NO_ERROR",
+"Label":"EH_HANDLER_DEFINED",
 "Part":"Low"},
 
 "Extra":null},
@@ -13332,7 +13332,7 @@
 "Format":"NumericLE",
 "SubFormat":"Symbol",
 "SymbolRef":{
-"Label":"RES_CAN_RESUME",
+"Label":"EH_IN_HANDLER",
 "Part":"Low"},
 
 "Extra":null},
