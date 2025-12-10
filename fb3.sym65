@@ -132,6 +132,7 @@ zpKeyClickFlg   @  $E3      ; non-zero = key clicks on
 zpVScroll0      @  $E4      ; Vertical scroll used when SCREEN 0 is displayed
 zpVScroll1      @  $E5      ; Vertical scroll used when SCREEN 1 is displayed; updated when $F0 is set
 zpCanResumeSt   @  $E7      ; #$00 - no error, #$01 - error, not resumable, #$02 - error, resumable
+zpErrHandLNum   @  $E8    2 ; line number to jump to when error occurs
 zpHaveFNameArg  @  $EA      ; true when LOAD was given a filename arg
 zpNmiTrampoline @  $ED    3 ; Contains a JMP instruction to the real NMI handler. It's set to: JMP $8971
 zpCurScreenNum  @  $F0      ; the _displayed_ SCREEN (0 or 1). Kept in sync with zpPpuScreenBasePage
@@ -207,8 +208,8 @@ CAS_HDR_PROG    = $02       ; Identity byte in header for prog saves to cassette
 CAS_HDR_SCREEN  = $03       ; Identity byte in header for screen saves to cassette tape.
 
 ; Flags for zpCanResumeSt
-RES_NO_ERROR    = $00
-RES_NO_RESUME   = $01
+RES_NO_HANDLER  = $00
+RES_NO_ERROR    = $01
 RES_CAN_RESUME  = $02
 
 err_NF          = $00       ; "NF" - NEXT without FOR
@@ -243,7 +244,7 @@ tok_GOSUB       = $81
 tok_RUN         = $82
 tok_RETURN      = $83
 tok_RESTORE     = $84
-tok_THEN        = $85
+tok_THEr        = $85
 tok_LIST        = $86
 tok_SYSTEM      = $87
 tok_TO          = $88

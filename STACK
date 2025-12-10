@@ -23,22 +23,7 @@ SEARCH STACK:
 BRANCH STACK:
   DefaultNmiHandler
 
-  DEF SPRITE
-
-  PrintErrorAndStop
-
-  CmdFn_RESUME
-
-  CmdFn_END
-
 NAME/explain:
-  (ExecuteDirectModeLine stuff)
-  LBB89 (table)
-  L8855
-   $55 ($B945)
-   $66 "
-
-  (RUN)
 .
 
   BUG: DEF SPRITE uses $20 (SPACE) as the id for an "empty" sprite tile, but for sprites that actually maps to Lady's face! Can't leave any sprite tiles undef'd.

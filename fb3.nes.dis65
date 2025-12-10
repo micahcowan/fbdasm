@@ -765,7 +765,12 @@
 "216":"JMP opcode",
 "594":"Falls thru to next string start",
 "598":"Falls thru to next string start",
-"637":"store zero (RES_NO_ERROR)",
+"634":"clear \"stopped\" flag",
+"637":"store zero (RES_NO_HANDLER)",
+"641":"turn off auto-increment and erase its data",
+"647":"clear the CPU stack",
+"650":"and push #$FFFF (as a limit to NEXT/RETURN stack searches?)",
+"653":"ensure we\u0027re in ASCII typing mode",
 "660":"restore stack ptr from zpSavedStack",
 "669":"STOPped?",
 "671":"no -\u003e skip period",
@@ -864,7 +869,8 @@
 "1106":"execute the command",
 "1109":"continue executing successive commands",
 "1121":"are we in direct mode (no line num)?",
-"1126":"yes: error",
+"1124":"yes -\u003e just go to direct mode prompt",
+"1126":"no: error, bc we handled an error but didn\u0027t resume after",
 "1145":"replace zpTXTPTR with ptr to start of next line",
 "1153":"get offset from here to start of next line",
 "1156":"zero (last line of prog)? -\u003e completed execution",
@@ -1243,6 +1249,24 @@
 "5398":"copy out to zpTXTPTR",
 "5401":"move to next keyword character",
 "5404":"loop until keyword has been copied",
+"5431":"push CPU flags",
+"5432":"get err resume status",
+"5434":"no errors? -\u003e error about that",
+"5436":"error, but can\u0027t resume?",
+"5438":"yes -\u003e error about that",
+"5440":"else, pull flags. Did we get an arg?",
+"5441":"no -\u003e restore and exit",
+"5443":"else, is arg a line num?",
+"5445":"yes -\u003e handle",
+"5447":"is it the NEXT token?",
+"5449":"no -\u003e no supported args given: ERROR",
+"5451":"yes: restore context (and return to next instr)",
+"5454":"now skip the original offending command (skip to the NEXT one)",
+"5457":"no -\u003e done",
+"5459":"skip the arg, whatever it is",
+"5465":"this counts as \"resume\", so no longer resumable",
+"5470":"and go to the asked-for line",
+"5475":"we\u0027re resuming, no longer resumable until next error",
 "5685":"indicate we\u0027re CLICK",
 "5689":"check arg for ON/OFF",
 "5691":"indicate we\u0027re TR--",
@@ -1283,7 +1307,24 @@
 "6132":"check low bytes",
 "6134":"arg \u003c zpVAREND? -\u003e error. Below already-used space",
 "6136":"we\u0027re good: set the end of BASIC \"Free space\" to the arg.",
-"6894":"storing 0 (RES_NO_ERROR)",
+"6867":"followed by GOTO token?",
+"6869":"no -\u003e syntax error",
+"6871":"skip past GOTO, and any spaces",
+"6876":"do we have a line number?",
+"6880":"no -\u003e syntax error",
+"6883":"is line num low byte zero?",
+"6885":"no -\u003e handle line num",
+"6888":"get lnum high byte",
+"6890":"save as handler addr",
+"6892":"lnum high byte zero? no -\u003e handle line num",
+"6894":"storing 0 (RES_NO_HANDLER)",
+"6897":"skip spaces",
+"6900":"find the designated line number (or error)",
+"6905":"store the line num arg as error handler line num",
+"6917":"indicate we\u0027ve got an error handler installed",
+"6921":"and done!",
+"6925":"followed by an ERROR token?",
+"6927":"yes -\u003e do ON ERROR",
 "7011":"we know we\u0027re at line num arg: skip it",
 "7014":"check for more line num args",
 "7017":"end of cmd? -\u003e rts",
@@ -1983,7 +2024,28 @@
 "12712":"clear sprites\u0027 2x2 vs 1x1 data",
 "12722":"set all actor tilemaps to empty tile",
 "12726":"8 actors * 4 tiles",
-"12926":"from 1 (RES_NO_RESUME) to 2 (RES_CAN_RESUME)",
+"12871":"if the error code \u003e= ",
+"12877":"save error code for BASIC",
+"12881":"save cur line # as error line",
+"12883":"and also resume line",
+"12891":"is an error handler installed?",
+"12893":"no -\u003e print error and exit",
+"12895":"are we currently in error handler?",
+"12897":"yes -\u003e print new error and exit",
+"12899":"else: we should call the error handler instead of erroring",
+"12901":"save away all the resumable context",
+"12923":"find error-handler line",
+"12926":"from 1 (RES_NO_ERROR) to 2 (RES_CAN_RESUME)",
+"12928":"restore the saved stack",
+"12931":"-\u003e go to the erorr handler and execute",
+"12938":"move cursor to start of new line (if it isn\u0027t already)",
+"12942":"clear the stack",
+"12945":"multiply error code by 2 for indexing",
+"12949":"queue a \u0027?\u0027",
+"12955":"get the two-char code",
+"12961":"and queue that",
+"12972":"queue \" ERROR\"",
+"12975":"clear stopped flag",
 "12978":"are we in direct mode?",
 "12982":"low byte doesn\u0027t match -\u003e not direct",
 "12986":"yes -\u003e skip \"IN [line #]\" message",
@@ -2019,8 +2081,8 @@
 "13229":"Undefined Function",
 "13231":"Missing Operand",
 "13233":"Tape read error",
-"13235":"No Resume",
-"13237":"RESUME without ERROR",
+"13235":"No Resume. Given on RESUME without error handler being called, or on program exit when error handled without resume.",
+"13237":"RESUME without ERROR. RESUME called but no ON ERROR installed.",
 "13239":"No BG Data",
 "13241":"Unprintable Error",
 "13463":"#$c0 first iteration, #$00 (256) iters 2-4.",
@@ -2169,6 +2231,8 @@
 "15009":"no: mark that we\u0027ve proceesed it",
 "15011":"and deactivate kana mode",
 "15014":"then return null",
+"15257":"\u003c- this location used as a fake \"next line\"",
+"15265":" when executing in direct mode",
 "15410":"clear the STOP flag that is never set to anything else",
 "15412":"read keyboard",
 "15415":"no key? -\u003e await with cursor flash",
@@ -3889,6 +3953,13 @@
 
 "12978":{
 "Text":"Code below this line is also used by STOP",
+"IsFancy":true,
+"BoxMode":false,
+"MaxWidth":80,
+"BackgroundColor":0},
+
+"6864":{
+"Text":"Not actually a CmdFn. This is just CmdFn_ON followed by an ERROR token.",
 "IsFancy":true,
 "BoxMode":false,
 "MaxWidth":80,
@@ -10500,7 +10571,7 @@
 "LabelAnno":"None"},
 
 "656":{
-"Label":"ResetStackAndDirectMode",
+"Label":"SaveStackAndDirectMode",
 "Value":33408,
 "Source":"User",
 "Type":"GlobalAddr",
@@ -10754,6 +10825,83 @@
 "13032":{
 "Label":"Stop_PrintBreakBeepExit",
 "Value":45784,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"15257":{
+"Label":"dmFakeNextLine",
+"Value":48009,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"5475":{
+"Label":"RESUME_restoreContext",
+"Value":38227,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"5503":{
+"Label":"rts_956F",
+"Value":38255,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"5428":{
+"Label":"errSyntax_9524",
+"Value":38180,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"5465":{
+"Label":"RESUME_goToLineArg",
+"Value":38217,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"5454":{
+"Label":"skipCmd",
+"Value":38206,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"12877":{
+"Label":"errCodeGood",
+"Value":45629,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"6864":{
+"Label":"CmdFn_ON_ERROR",
+"Value":39616,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"6922":{
+"Label":"errSyntax_9AFA",
+"Value":39674,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"6897":{
+"Label":"handleLNum",
+"Value":39649,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"12937":{
+"Label":"PrintError_print",
+"Value":45689,
 "Source":"User",
 "Type":"GlobalAddr",
 "LabelAnno":"None"}},
@@ -11016,6 +11164,26 @@
 "Format":"NumericLE",
 "SubFormat":"Ascii",
 "SymbolRef":null,
+"Extra":null},
+
+"839":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"dmFakeNextLine",
+"Part":"Low"},
+
+"Extra":null},
+
+"843":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"dmFakeNextLine",
+"Part":"High"},
+
 "Extra":null},
 
 "847":{
@@ -11965,7 +12133,7 @@
 "Format":"NumericLE",
 "SubFormat":"Symbol",
 "SymbolRef":{
-"Label":"RES_NO_ERROR",
+"Label":"RES_NO_HANDLER",
 "Part":"Low"},
 
 "Extra":null},
@@ -11980,12 +12148,42 @@
 
 "Extra":null},
 
+"5436":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"RES_NO_ERROR",
+"Part":"Low"},
+
+"Extra":null},
+
+"5443":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"tok_LNUM_AFTER",
+"Part":"Low"},
+
+"Extra":null},
+
+"5447":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"tok_NEXT",
+"Part":"Low"},
+
+"Extra":null},
+
 "5468":{
 "Length":2,
 "Format":"NumericLE",
 "SubFormat":"Symbol",
 "SymbolRef":{
-"Label":"RES_NO_RESUME",
+"Label":"RES_NO_ERROR",
 "Part":"Low"},
 
 "Extra":null},
@@ -11995,7 +12193,7 @@
 "Format":"NumericLE",
 "SubFormat":"Symbol",
 "SymbolRef":{
-"Label":"RES_NO_RESUME",
+"Label":"RES_NO_ERROR",
 "Part":"Low"},
 
 "Extra":null},
@@ -12072,7 +12270,7 @@
 "Format":"NumericLE",
 "SubFormat":"Symbol",
 "SymbolRef":{
-"Label":"RES_NO_RESUME",
+"Label":"RES_NO_ERROR",
 "Part":"Low"},
 
 "Extra":null},
@@ -13112,11 +13310,58 @@
 
 "Extra":null},
 
+"12871":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Decimal",
+"SymbolRef":null,
+"Extra":null},
+
+"12875":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"err_UP",
+"Part":"Low"},
+
+"Extra":null},
+
+"12895":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"RES_CAN_RESUME",
+"Part":"Low"},
+
+"Extra":null},
+
 "12947":{
 "Length":2,
 "Format":"NumericLE",
 "SubFormat":"Ascii",
 "SymbolRef":null,
+"Extra":null},
+
+"12964":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"strERROR",
+"Part":"Low"},
+
+"Extra":null},
+
+"12968":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"strERROR",
+"Part":"High"},
+
 "Extra":null},
 
 "12988":{
