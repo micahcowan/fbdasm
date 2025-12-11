@@ -76,7 +76,8 @@ zpSavedRts      @  $5F    2 ; FOR, GOSUB, other cmds pull return from stack, sav
 zpCursorChar    @  $61      ; The character code of the current cursor
 zpOutTxtCurPos  @  $62
 zpNMICMD        @  $63      ; Which command the NMI handler should execute. 1 + the command's index in jtbl_NMICMD.
-zpOutTxtStartPos    @  $64
+zpOutTxtStartPos @ $64
+zpPaletBgOrSpr  @  $65      ; #$00 when we're setting bg palette colors, #$01 when setting sprite palette
 zpRkimMidMacro  @  $66      ; Non-zero (#$FF) if ReaKeyInsMacros ($B945) should insert next char from a fkey definition (next char is at $480 + ($67)) rather than read from keyboard.
 zpFnKeyDfnOff   @  $67      ; Offset from $480 into cur fn key definition string
 zpFnKeyHeld     @  $68      ; Non-zero ($FF) if a function key is still being held down from when it was first detected. Used to prevent continuous handling while pressed.

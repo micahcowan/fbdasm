@@ -1963,7 +1963,38 @@
 "11928":"SCREEN 0. Save base addr high byte.",
 "11934":"Tell PPU to switch active screen to 0",
 "12111":"-\u003e #NC_SetSprPalette",
-"12231":"-\u003e #NC_SetSprPalette",
+"12127":"got comma?",
+"12129":"skip arg one, go to arg two",
+"12131":"evaluate arg one",
+"12134":"error unless it\u0027s zero or one",
+"12140":"multiply by two, for index into table",
+"12142":"get the pallet-set pointer from table",
+"12154":"indicate we\u0027re doing background palette set",
+"12156":"and set it",
+"12168":"evaluate 2nd arg",
+"12171":"error unless 0, 1, or 2",
+"12175":"multiply by two, for index into table",
+"12177":"get the pallet pointer from table",
+"12189":"indicate we\u0027re doing sprite palette set",
+"12191":"and set it",
+"12194":"done",
+"12197":"PPU palette number (start at zero)",
+"12200":"index for copying from palette set",
+"12204":"just after the PPU palette number we saved for the NMI handler",
+"12206":"set to count of 4 colors to copy",
+"12210":"load color from palette",
+"12212":"save color to genPurposeBuf",
+"12219":"repeat until total of 4 colors copied",
+"12221":"save index into palette set (we\u0027re at start of next palette to copy)",
+"12225":"default to setting bg palette set; might change before use",
+"12227":"was bg palettes correct?",
+"12229":"yes -\u003e leave NMI cmd alone",
+"12231":"no -\u003e use #NC_SetSprPalette instead",
+"12235":"invoke/wait for NMI palette-setting handler",
+"12238":"increment which palette num we\u0027re on",
+"12244":"did we copy 4 palettes?",
+"12246":"no -\u003e loop around to set next palette",
+"12248":"that\u0027s the full set - we\u0027re done",
 "12251":"add \"sprites enabled\" flag to PPUMASK",
 "12258":"advance TXTPTR past ON/OFF token",
 "12263":"mask out \"sprites enabled\" flag from PPUMASK",
@@ -2136,6 +2167,11 @@
 "13237":"RESUME without ERROR. RESUME called but no ON ERROR installed.",
 "13239":"No BG Data",
 "13241":"Unprintable Error",
+"13386":"setup bg palette set no. 1",
+"13392":"select writing bg palette set",
+"13394":"set the palette set",
+"13397":"select writing spr palette set",
+"13399":"set the palette set (using the bg set for both bg and spr)",
 "13463":"#$c0 first iteration, #$00 (256) iters 2-4.",
 "13465":"SPC char",
 "13471":"end of inner loop",
@@ -2166,6 +2202,22 @@
 "13721":"all other controls disable insert mode",
 "13745":"control-R",
 "13866":"always branches",
+"13944":"clear PPU mask",
+"13949":"set SCREEN 0 in zp vars",
+"13959":"and switch to it",
+"13964":"reasonable PPUMASK default settings",
+"13969":"set bg and spr palettes from bg palette set 1",
+"13975":"turn off auto-insert",
+"13977":"make sure vert scroll is up to date",
+"14017":"save cursor pos",
+"14020":"calc VRAM addr for cursor pos",
+"14025":"clear from cursor to end of row",
+"14032":"mark this row doesn\u0027t wrap to next",
+"14037":"set cursor to start of next row",
+"14040":"did we just move past the last row of screen?",
+"14042":"yes -\u003e restore cursor pos and return",
+"14044":"no -\u003e calc VRAM addr for new pos",
+"14047":"and loop \u0027round to clear this row",
 "14129":"already at leftmost column?",
 "14131":"yes -\u003e check if we can go up a row",
 "14133":"no, so just back up a column.",
@@ -2823,7 +2875,9 @@
 "20031":"all keywords below this line are built-in functions",
 "20293":"tok_BACKUP",
 "20321":"SPC, only allowed in PRINT",
-"20323":"TAB, only allowed in PRINT"},
+"20323":"TAB, only allowed in PRINT",
+"20430":"defailt set",
+"20462":"default set"},
 
 "LongComments":{
 "-2147483647":{
@@ -4179,6 +4233,20 @@
 
 "13944":{
 "Text":"Invoked by Control-D",
+"IsFancy":true,
+"BoxMode":false,
+"MaxWidth":80,
+"BackgroundColor":0},
+
+"12127":{
+"Text":"Selects a preset set-of-four-pallets, to save as current pallet.\r\nFirst arg is bg pallet set (0 or 1), 2nd is sprite pallet set (0, 1 or 2).",
+"IsFancy":true,
+"BoxMode":false,
+"MaxWidth":80,
+"BackgroundColor":0},
+
+"14017":{
+"Text":"Control-Z",
 "IsFancy":true,
 "BoxMode":false,
 "MaxWidth":80,
@@ -5547,11 +5615,11 @@
 "LabelAnno":"None"},
 
 "14017":{
-"Label":"TB6B1",
+"Label":"ClearToEndOfScreen",
 "Value":46769,
 "Source":"User",
 "Type":"GlobalAddr",
-"LabelAnno":"Generated"},
+"LabelAnno":"None"},
 
 "14147":{
 "Label":"CursorRight",
@@ -11305,6 +11373,125 @@
 "Value":47172,
 "Source":"User",
 "Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"12168":{
+"Label":"arg2",
+"Value":44920,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"12140":{
+"Label":"argGood",
+"Value":44892,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"20462":{
+"Label":"cgsetSprPalSet1",
+"Value":53214,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"20446":{
+"Label":"cgsetSprPalSet0",
+"Value":53198,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"20478":{
+"Label":"cgsetSprPalSet2",
+"Value":53230,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"20414":{
+"Label":"cgsetBgPalSet0",
+"Value":53166,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"20430":{
+"Label":"cgsetBgPalSet1",
+"Value":53182,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"20404":{
+"Label":"tbl_CgsetBgPaletteSets",
+"Value":53156,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"20408":{
+"Label":"tbl_CgsetSprPaletteSets",
+"Value":53160,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"12194":{
+"Label":"rts",
+"Value":44946,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"12202":{
+"Label":"palSetLp",
+"Value":44954,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"12210":{
+"Label":"palCpyLp",
+"Value":44962,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"12233":{
+"Label":"doBg",
+"Value":44985,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"12195":{
+"Label":"CGSET_SetPaletteSet",
+"Value":44947,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"13382":{
+"Label":"ResetPaletteSets",
+"Value":46134,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"14014":{
+"Label":"restoreCursPos_B6AE",
+"Value":46766,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"14023":{
+"Label":"clrLp",
+"Value":46775,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
 "LabelAnno":"None"}},
 
 "OperandFormats":{
@@ -13897,6 +14084,13 @@
 
 "Extra":null},
 
+"12127":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Ascii",
+"SymbolRef":null,
+"Extra":null},
+
 "12223":{
 "Length":2,
 "Format":"NumericLE",
@@ -14375,6 +14569,26 @@
 "SubFormat":"Symbol",
 "SymbolRef":{
 "Label":"VRAM_screen0",
+"Part":"High"},
+
+"Extra":null},
+
+"13382":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"cgsetBgPalSet1",
+"Part":"Low"},
+
+"Extra":null},
+
+"13386":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"cgsetBgPalSet1",
 "Part":"High"},
 
 "Extra":null},
@@ -15040,7 +15254,7 @@
 "Format":"NumericLE",
 "SubFormat":"Symbol",
 "SymbolRef":{
-"Label":"TB6B1",
+"Label":"ClearToEndOfScreen",
 "Part":"Low"},
 
 "Extra":null},
@@ -20882,14 +21096,197 @@
 "Extra":null},
 
 "20404":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"cgsetBgPalSet0",
+"Part":"Low"},
+
+"Extra":null},
+
+"20406":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"cgsetBgPalSet1",
+"Part":"Low"},
+
+"Extra":null},
+
+"20408":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"cgsetSprPalSet0",
+"Part":"Low"},
+
+"Extra":null},
+
+"20410":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"cgsetSprPalSet1",
+"Part":"Low"},
+
+"Extra":null},
+
+"20412":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"cgsetSprPalSet2",
+"Part":"Low"},
+
+"Extra":null},
+
+"20414":{
 "Length":4,
 "Format":"Dense",
 "SubFormat":"None",
 "SymbolRef":null,
 "Extra":null},
 
-"20408":{
-"Length":1112,
+"20418":{
+"Length":4,
+"Format":"Dense",
+"SubFormat":"None",
+"SymbolRef":null,
+"Extra":null},
+
+"20422":{
+"Length":4,
+"Format":"Dense",
+"SubFormat":"None",
+"SymbolRef":null,
+"Extra":null},
+
+"20426":{
+"Length":4,
+"Format":"Dense",
+"SubFormat":"None",
+"SymbolRef":null,
+"Extra":null},
+
+"20430":{
+"Length":4,
+"Format":"Dense",
+"SubFormat":"None",
+"SymbolRef":null,
+"Extra":null},
+
+"20434":{
+"Length":4,
+"Format":"Dense",
+"SubFormat":"None",
+"SymbolRef":null,
+"Extra":null},
+
+"20438":{
+"Length":4,
+"Format":"Dense",
+"SubFormat":"None",
+"SymbolRef":null,
+"Extra":null},
+
+"20442":{
+"Length":4,
+"Format":"Dense",
+"SubFormat":"None",
+"SymbolRef":null,
+"Extra":null},
+
+"20446":{
+"Length":4,
+"Format":"Dense",
+"SubFormat":"None",
+"SymbolRef":null,
+"Extra":null},
+
+"20450":{
+"Length":4,
+"Format":"Dense",
+"SubFormat":"None",
+"SymbolRef":null,
+"Extra":null},
+
+"20454":{
+"Length":4,
+"Format":"Dense",
+"SubFormat":"None",
+"SymbolRef":null,
+"Extra":null},
+
+"20458":{
+"Length":4,
+"Format":"Dense",
+"SubFormat":"None",
+"SymbolRef":null,
+"Extra":null},
+
+"20462":{
+"Length":4,
+"Format":"Dense",
+"SubFormat":"None",
+"SymbolRef":null,
+"Extra":null},
+
+"20466":{
+"Length":4,
+"Format":"Dense",
+"SubFormat":"None",
+"SymbolRef":null,
+"Extra":null},
+
+"20470":{
+"Length":4,
+"Format":"Dense",
+"SubFormat":"None",
+"SymbolRef":null,
+"Extra":null},
+
+"20474":{
+"Length":4,
+"Format":"Dense",
+"SubFormat":"None",
+"SymbolRef":null,
+"Extra":null},
+
+"20478":{
+"Length":4,
+"Format":"Dense",
+"SubFormat":"None",
+"SymbolRef":null,
+"Extra":null},
+
+"20482":{
+"Length":4,
+"Format":"Dense",
+"SubFormat":"None",
+"SymbolRef":null,
+"Extra":null},
+
+"20486":{
+"Length":4,
+"Format":"Dense",
+"SubFormat":"None",
+"SymbolRef":null,
+"Extra":null},
+
+"20490":{
+"Length":4,
+"Format":"Dense",
+"SubFormat":"None",
+"SymbolRef":null,
+"Extra":null},
+
+"20494":{
+"Length":1026,
 "Format":"Dense",
 "SubFormat":"None",
 "SymbolRef":null,
@@ -21354,6 +21751,84 @@
 "ClearPrevious":false},
 
 "10188":{
+"Variables":[],
+"ClearPrevious":true},
+
+"12127":{
+"Variables":[{
+"DataDescriptor":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Hex",
+"SymbolRef":null,
+"Extra":null},
+
+"Comment":"",
+"HasWidth":true,
+"Direction":"ReadWrite",
+"MultiMask":null,
+"Label":"vZpPaletteSetPtr",
+"Value":82,
+"Source":"Variable",
+"Type":"ExternalAddr",
+"LabelAnno":"None"},
+
+{
+"DataDescriptor":{
+"Length":1,
+"Format":"NumericLE",
+"SubFormat":"Hex",
+"SymbolRef":null,
+"Extra":null},
+
+"Comment":"which palette-setting NMI subcmd we\u0027ll use",
+"HasWidth":true,
+"Direction":"ReadWrite",
+"MultiMask":null,
+"Label":"vZpNmiCmd",
+"Value":115,
+"Source":"Variable",
+"Type":"ExternalAddr",
+"LabelAnno":"None"},
+
+{
+"DataDescriptor":{
+"Length":1,
+"Format":"NumericLE",
+"SubFormat":"Hex",
+"SymbolRef":null,
+"Extra":null},
+
+"Comment":"",
+"HasWidth":true,
+"Direction":"ReadWrite",
+"MultiMask":null,
+"Label":"vZpColorCpyCtr",
+"Value":116,
+"Source":"Variable",
+"Type":"ExternalAddr",
+"LabelAnno":"None"},
+
+{
+"DataDescriptor":{
+"Length":1,
+"Format":"NumericLE",
+"SubFormat":"Hex",
+"SymbolRef":null,
+"Extra":null},
+
+"Comment":"iterates the selected palette set as copy source",
+"HasWidth":true,
+"Direction":"ReadWrite",
+"MultiMask":null,
+"Label":"vZpPaletteCpyIdx",
+"Value":117,
+"Source":"Variable",
+"Type":"ExternalAddr",
+"LabelAnno":"None"}],
+"ClearPrevious":false},
+
+"12249":{
 "Variables":[],
 "ClearPrevious":true},
 
