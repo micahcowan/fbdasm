@@ -17,10 +17,19 @@ BRANCH STACK:
 
   All routines in tbl_Commands and tbl_Functions
     start with low-hanging fruit, then work back through
+    (tbl_Functions will tend to be all low-hanging)
+
     punted:
       LIST
-
-    PRINT
+      PRINT
+      FOR
+      NEXT
+      INPUT
+      LINPUT
+      IF
+      ON
+    next:
+      CUT
 
   Done:
 

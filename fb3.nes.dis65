@@ -902,6 +902,7 @@
 "1121":"are we in direct mode (no line num)?",
 "1124":"yes -\u003e just go to direct mode prompt",
 "1126":"no: error, bc we handled an error but didn\u0027t resume after",
+"1143":"pull return addr (we\u0027ll jump directly)",
 "1145":"replace zpTXTPTR with ptr to start of next line",
 "1153":"get offset from here to start of next line",
 "1156":"zero (last line of prog)? -\u003e completed execution",
@@ -1399,6 +1400,21 @@
 "5894":"set zpFindLNum = arg",
 "5903":"and find the indicated line",
 "5906":"error if it doesn\u0027t exist",
+"5926":"no arg? -\u003e just pause until char press",
+"5932":"eval integer argument",
+"5941":"negative number? -\u003e error",
+"5943":"do pause",
+"5945":"zero. Is low byte also zero?",
+"5948":"yes -\u003e no pause then",
+"5950":"incr high byte",
+"5953":"check for and handle STOP key during PAUSE",
+"5958":"loop around STOP check 256 times",
+"5960":"decrement low byte user arg,",
+"5963":"loop for another 256",
+"5965":"low byte zero",
+"5968":"(NEVER) all zero -\u003e exit PAUSE",
+"5970":"high byte not zero, decrement and do 65k more iterations",
+"5973":" unless dec went to zero, in which case return",
 "6068":"got arg? -\u003e handle",
 "6070":"set zpVARTAB = zpTXTEND + 1",
 "6083":"set zpVAREND = zpVARTAB + 1",
@@ -11607,6 +11623,41 @@
 "Value":33250,
 "Source":"User",
 "Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"5923":{
+"Label":"readChar_9713",
+"Value":38675,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"5920":{
+"Label":"errIll_9710",
+"Value":38672,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"5950":{
+"Label":"notZero",
+"Value":38702,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"5953":{
+"Label":"pauseLp",
+"Value":38705,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"5975":{
+"Label":"rts",
+"Value":38727,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
 "LabelAnno":"None"}},
 
 "OperandFormats":{
@@ -21676,6 +21727,30 @@
 "ClearPrevious":true},
 
 "4552":{
+"Variables":[],
+"ClearPrevious":true},
+
+"5926":{
+"Variables":[{
+"DataDescriptor":{
+"Length":1,
+"Format":"NumericLE",
+"SubFormat":"Hex",
+"SymbolRef":null,
+"Extra":null},
+
+"Comment":"",
+"HasWidth":true,
+"Direction":"ReadWrite",
+"MultiMask":null,
+"Label":"vZpPauseCtr",
+"Value":116,
+"Source":"Variable",
+"Type":"ExternalAddr",
+"LabelAnno":"None"}],
+"ClearPrevious":false},
+
+"5976":{
 "Variables":[],
 "ClearPrevious":true},
 
