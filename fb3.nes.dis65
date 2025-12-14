@@ -1409,6 +1409,8 @@
 "5894":"set zpFindLNum = arg",
 "5903":"and find the indicated line",
 "5906":"error if it doesn\u0027t exist",
+"5914":"evaluate argument",
+"5917":"then, just jump thru the zp ptr to the expr parse stack!",
 "5926":"no arg? -\u003e just pause until char press",
 "5932":"eval integer argument",
 "5941":"negative number? -\u003e error",
@@ -1424,6 +1426,15 @@
 "5968":"(NEVER) all zero -\u003e exit PAUSE",
 "5970":"high byte not zero, decrement and do 65k more iterations",
 "5973":" unless dec went to zero, in which case return",
+"5976":"eval first arg",
+"5979":" \u003e= num cols?",
+"5981":"yes -\u003e too big",
+"5983":"save",
+"5985":"comma, then second arg",
+"5988":" \u003e= num rows",
+"5990":"yes -\u003e too big",
+"5992":"save",
+"5994":"\"restore\" saved pos to actual cursor pos",
 "5997":"eval arg (addr)",
 "6003":"and save it to zero page",
 "6012":"init write index to 0",
@@ -1449,6 +1460,28 @@
 "6132":"check low bytes",
 "6134":"arg \u003c zpVAREND? -\u003e error. Below already-used space",
 "6136":"we\u0027re good: set the end of BASIC \"Free space\" to the arg.",
+"6686":"evaluate variable name",
+"6691":"push base type of var",
+"6694":"push pointer to variable data",
+"6700":"comma comes next",
+"6706":"parse second var name",
+"6710":"save first var\u0027s data ptr to zpMisc",
+"6719":"strip off any \"array\" bit on 2nd var\u0027s type",
+"6721":"pull first var type",
+"6722":"compare to 2nd. Match?",
+"6724":"no -\u003e error",
+"6727":"int? use \"2\" as size of data to swap",
+"6731":"else use 33 as str data length",
+"6735":"get a byte from var 2",
+"6737":"push",
+"6738":"get a byte from var 1",
+"6740":"copy to var 2",
+"6742":"pull byte from var 1",
+"6743":"write to var 2",
+"6745":"next byte",
+"6746":"done copying?",
+"6747":"no -\u003e copy next byte",
+"6749":"yes. Done!",
 "6867":"followed by GOTO token?",
 "6869":"no -\u003e syntax error",
 "6871":"skip past GOTO, and any spaces",
@@ -2108,7 +2141,43 @@
 "11923":"send updates, only, to scr 0.",
 "11928":"SCREEN 0. Save base addr high byte.",
 "11934":"Tell PPU to switch active screen to 0",
-"12111":"-\u003e #NC_SetSprPalette",
+"12001":"get argument",
+"12004":" \u003e= 4?",
+"12006":"yes -\u003e error",
+"12008":"shift the value left 3 places:",
+"12009":" from bits 0 and 1 to bits 3 and 4.",
+"12011":"save away for a tick",
+"12013":"get the PPUCTRL value",
+"12015":"mask away everything but bits 3 and 4",
+"12017":"now combine with the value we got form user arg",
+"12019":"save",
+"12021":"and update",
+"12037":"start with assumption: bg sprite",
+"12039":"first arg \u0027B\u0027?",
+"12041":"yes -\u003e user said bg palette, our guess was right!",
+"12043":"first arg \u0027S\u0027?",
+"12045":"no -\u003e err",
+"12047":"set sprite palette offset",
+"12051":"which palette num?",
+"12054":" \u003e= 4?",
+"12056":"yes -\u003e error",
+"12058":"push palette num",
+"12061":"four colors in a palette",
+"12065":"start with color #0",
+"12067":"read comma, then user\u0027s color arg",
+"12072":"write color into arbitrary buf",
+"12075":"incr color #",
+"12077":"did we do 4?",
+"12079":"no -\u003e loop to next color",
+"12081":"pull the palette num",
+"12085":"copy color choices into genPurposeBuf",
+"12087":" (why didn\u0027t we just write there",
+"12090":" in the first place?!)",
+"12105":"select \"set bg palette\" cmd",
+"12107":"what did user actually ask for?",
+"12109":"bg? -\u003e good call then",
+"12111":"spr -\u003e #NC_SetSprPalette it is",
+"12113":"set the palette",
 "12127":"got comma?",
 "12129":"skip arg one, go to arg two",
 "12131":"evaluate arg one",
@@ -4523,6 +4592,13 @@
 
 "17506":{
 "Text":"Given a screen tile position in CH, CV, and a palette num in zpPaletteNum ($9C), returns the byte value that holds palette nums for the 4x4 tiles holding that location, and an inverted mask for the palette num of the sekected 2x2 tile quad within that byte in zpMisc+1 ($1A). Also bit-shifts zpPaletteNum to align with that bit position.\r\n\r\nSee https://www.nesdev.org/wiki/PPU_attribute_tables for how palette selection for a tile quad works in the PPU.",
+"IsFancy":true,
+"BoxMode":false,
+"MaxWidth":80,
+"BackgroundColor":0},
+
+"9606":{
+"Text":"Given a var name at zpTXTPTR, looks it up and points zpVarData at its contents.",
 "IsFancy":true,
 "BoxMode":false,
 "MaxWidth":80,
@@ -11992,6 +12068,48 @@
 "Value":50431,
 "Source":"User",
 "Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"6750":{
+"Label":"errTypeMismatch_9A4E",
+"Value":39502,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"6733":{
+"Label":"int",
+"Value":39485,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"6735":{
+"Label":"cpyLp",
+"Value":39487,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"12051":{
+"Label":"bgPal",
+"Value":44803,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"12067":{
+"Label":"colorLp",
+"Value":44819,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"12112":{
+"Label":"bg",
+"Value":44864,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
 "LabelAnno":"None"}},
 
 "OperandFormats":{
@@ -13613,6 +13731,23 @@
 
 "Extra":null},
 
+"6727":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"TYP_INT",
+"Part":"Low"},
+
+"Extra":null},
+
+"6731":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Decimal",
+"SymbolRef":null,
+"Extra":null},
+
 "6917":{
 "Length":2,
 "Format":"NumericLE",
@@ -14650,6 +14785,20 @@
 "Label":"oamBuffer",
 "Part":"Low"},
 
+"Extra":null},
+
+"12039":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Ascii",
+"SymbolRef":null,
+"Extra":null},
+
+"12043":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Ascii",
+"SymbolRef":null,
 "Extra":null},
 
 "12105":{
@@ -22449,6 +22598,44 @@
 "10188":{
 "Variables":[],
 "ClearPrevious":true},
+
+"12035":{
+"Variables":[{
+"DataDescriptor":{
+"Length":1,
+"Format":"NumericLE",
+"SubFormat":"Hex",
+"SymbolRef":null,
+"Extra":null},
+
+"Comment":"count down to write palette colors",
+"HasWidth":true,
+"Direction":"ReadWrite",
+"MultiMask":null,
+"Label":"vZpColorCntUp",
+"Value":2,
+"Source":"Variable",
+"Type":"ExternalAddr",
+"LabelAnno":"None"},
+
+{
+"DataDescriptor":{
+"Length":1,
+"Format":"NumericLE",
+"SubFormat":"Hex",
+"SymbolRef":null,
+"Extra":null},
+
+"Comment":"count up, the actual color num to set",
+"HasWidth":true,
+"Direction":"ReadWrite",
+"MultiMask":null,
+"Label":"vZpColorCntDown",
+"Value":124,
+"Source":"Variable",
+"Type":"ExternalAddr",
+"LabelAnno":"None"}],
+"ClearPrevious":false},
 
 "12127":{
 "Variables":[{

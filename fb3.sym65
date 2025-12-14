@@ -30,6 +30,7 @@
 PPU_PALETTE_RAM = $3F00
 
 ; Zero-page vars
+zp02            @  $02
 zpFRETOP        @  $03    2 ; Pointer to just past the end of free space.
 zpTXTTAB        @  $05    2 ; Pointer to the start of the BASIC program code. Always set to $6006.
 zpTXTEND        @  $07    2 ; Ponter to just past the program end (zpTXTEND - zpTXTTAB = prog len)
@@ -80,7 +81,7 @@ zpCursorChar    @  $61      ; The character code of the current cursor
 zpOutTxtCurPos  @  $62
 zpNMICMD        @  $63      ; Which command the NMI handler should execute. 1 + the command's index in jtbl_NMICMD.
 zpOutTxtStartPos @ $64
-zpPaletBgOrSpr  @  $65      ; #$00 when we're setting bg palette colors, #$01 when setting sprite palette
+zpPaletBgOrSpr  @  $65      ; zero when we're setting bg palette colors, non-zero when setting sprite palette
 zpRkimMidMacro  @  $66      ; Non-zero (#$FF) if ReaKeyInsMacros ($B945) should insert next char from a fkey definition (next char is at $480 + ($67)) rather than read from keyboard.
 zpFnKeyDfnOff   @  $67      ; Offset from $480 into cur fn key definition string
 zpFnKeyHeld     @  $68      ; Non-zero ($FF) if a function key is still being held down from when it was first detected. Used to prevent continuous handling while pressed.
@@ -101,6 +102,7 @@ zpKyRptLongCtr  @  $77      ; Key-repeat: delay count-down to first key repeat o
 zpKyNotRpt      @  $78      ; Key-repeat: #$01 = waiting on first key repeat, #$00 = on subsequent repeats
 zpKyRptShtCtr   @  $79      ; Key-repeat: delay count-down for repeating key past the first, longer pause.
 zpKeyRepeating  @  $7B      ; Key-repeat: #$FF = key is actively repeating, #$00 = key not repeating
+zp7C            @  $7C
 zp80            @  $80
 zpVarName       @  $8A    2 ; Two-letter variable name
 zpVarData       @  $8C    2 ; pointer to selected variable data (deep, if var is array)

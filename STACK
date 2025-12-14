@@ -11,6 +11,8 @@ SEARCH STACK:
 
 BRANCH STACK:
 
+  CmdFn_BGTOOL
+
   CmdFn_PLAY
   NMICMD_PlayMusic
     $A0A3 - after synching APU frame counter
@@ -29,7 +31,7 @@ BRANCH STACK:
       IF
       ON
     next:
-      CGEN
+      ERA
 
     done:
 
