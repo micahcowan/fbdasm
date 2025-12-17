@@ -69,8 +69,10 @@ zpInsertMode    @  $4C      ; Zero = overwrite, non-zero = insert
 zpTokenizePtr   @  $4D    2
 zpPpuScreenBasePage     @  $4F ; The VRAM page used for the current screen we're UPDATING (may not be the one displayed)!
 zpKanaHeld      @  $50      ; Non-zero (#$FF) if KANA key is still being held down from when it was first detected. Used to prevent rapid toggling.
+zpListOrDelete  @  $51      ; Non-zero (#$FF) if we're in DELETE; zero if we're in LIST
 zpOutputStr     @  $52    2 ; Pointer to null-term'd string to be queued for output
 zpTokTblScn     @  $54    2 ; Used to scan thru tbl_KeywordTokens
+zpRandom        @  $56    2 ; Used for RAND
 zpTxtThisCmd    @  $58    2 ; The start of the currently-running command. Restored to zpTXTPTR on RESUME or CONT.
 zpNewLineOffset @  $5A      ; Offset to next line for not-yet-placed, tokenized line
 zpTxtLink       @  $5B    2 ; Points to the start of the current program line (including the 3-byte preamble)
@@ -132,6 +134,24 @@ zpNextDataIdx   @  $B4      ; Char index into line at zpNextDataPtr to start fro
 zpErrCode       @  $B5
 zpUnusedErrVar  @  $B6      ; This var is only ever used in one place, where it's set to zero.
 zpErrLineNum    @  $B7    2 ; Line number where an error happened
+zpB9            @  $B9
+zpBA            @  $BA
+zpBB            @  $BB
+zpBC            @  $BC
+zpBD            @  $BD
+zpBE            @  $BE
+zpBF            @  $BF
+zpC0            @  $C0
+zpC1            @  $C1
+zpC3            @  $C3
+zpC4            @  $C4
+zpC5            @  $C5
+zpCF            @  $CF
+zpD0            @  $D0
+zpD1            @  $D1
+zpD2            @  $D2
+zpD3            @  $D3
+zpD4            @  $D4
 zpNmiCurFrCnts  @  $D5    2 ; (NMI) Pointer to vector being used for current actor's anim frame counts, for each facing
 zpNmiNumFrames  @  $D7      ; (NMI) Holds the number of anim frames for the actor's cur facing (in high nybble)
 zpNmiCurSprSht  @  $D9    2 ; (NMI) Pointer to sheet of sprites for each facing
@@ -193,6 +213,7 @@ COLS = 28
 ROWS = 24
 
 basicProgram    @  $6006  ; The start of the BASIC program in memory
+memoryTop       @  $6FFF  ; What FRETOP is set to by default
 
 NC_NoCmd                    = 0
 NC_FlushOutp                = 1
@@ -276,7 +297,7 @@ tok_GOSUB       = $81
 tok_RUN         = $82
 tok_RETURN      = $83
 tok_RESTORE     = $84
-tok_THEr        = $85
+tok_THEN        = $85
 tok_LIST        = $86
 tok_SYSTEM      = $87
 tok_TO          = $88

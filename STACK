@@ -13,6 +13,9 @@ BRANCH STACK:
 
   CmdFn_BGTOOL
 
+  Update InitVars and InitPpuApu with zp vars now that PLAY vars are
+   (hopefull) known
+  .
   CmdFn_PLAY
   NMICMD_PlayMusic
     $A0A3 - after synching APU frame counter
@@ -22,6 +25,7 @@ BRANCH STACK:
     (tbl_Functions will tend to be all low-hanging)
 
     punted:
+      BGTOOL
       LIST
       PRINT
       FOR
@@ -30,13 +34,11 @@ BRANCH STACK:
       LINPUT
       IF
       ON
+      FIND
     next:
-      ERA
+      DELETE
 
     done:
-
-NAME/explain:
-.
 
   BAD CODE: stupid constant-space strings
 

@@ -964,6 +964,11 @@
 "1470":"not the end-\u003e copy next byte",
 "1472":"source ptr reached end; move end back to dest ptr",
 "1475":"subtract length of deleted line from prog end",
+"1698":"clear stop/trace/error flags",
+"1701":"clear auto-insert mode",
+"1707":"reset FRETOP",
+"1711":"reset RAND PRNG to start at #$0003",
+"1713":"turn keyclicks on",
 "1728":"flush away any variables",
 "1731":"clear various flags",
 "1743":"do we have an arg?",
@@ -972,6 +977,7 @@
 "1753":"indicate limit of NEXT, RETURN stack searches?",
 "1755":"set TXTPTR to start of program",
 "1763":"-\u003e and execute first line",
+"1896":"no arg? -\u003e error",
 "2032":"point zpOutputStr at zpNumStrTmp, as source",
 "2034":" for output queuing",
 "2035":"add index to start position",
@@ -1080,12 +1086,32 @@
 "3027":"and compare what\u0027s in WAccum to that",
 "3030":"less than zpFRETOP - 4? -\u003e we\u0027re fine. Return.",
 "3032":"ERROR: insufficient memory!",
+"3050":"push processor flags",
+"3051":"push accum",
+"3054":"enable auto-increment",
+"3056":"set next linenum to auto-prefix as 10, by default",
+"3058":"increment by 10 by default",
+"3062":"set high bytes line num, increment",
+"3066":"pull original accum",
+"3067":"pull proc flags (from arg test)",
+"3068":"no args? Done! (defaults above were enough)",
 "3070":"is next char a comma?",
 "3072":"yes -\u003e skip first arg, handle next",
 "3074":"got line-number arg indicator byte?",
 "3076":"no -\u003e error out",
+"3078":"move past line-number prefix token",
+"3081":"get first byte of line num",
+"3084":"set it as first line num to prefix",
+"3086":"get 2nd byte",
+"3089":"set as high byte for next line num",
+"3091":"any more args?",
+"3094":"no -\u003e done!",
+"3096":"yes: skip expected comma",
+"3099":"and any spaces",
 "3102":"got line-number arg indicator byte?",
 "3104":"no -\u003e error out",
+"3106":"copy \"line number\" as auto-increment amount",
+"3119":"done!",
 "3621":"zpWAccum = -32768? -\u003e ensure zpWParam is 0",
 "3666":"BUG: produces OV ERROR even if WParam is zero lol",
 "3694":"strlen == 0?",
@@ -2106,6 +2132,46 @@
 "11088":"and therefore, if we get 32768, it\u0027s an overflow",
 "11091":"(overflow? -\u003e error)",
 "11104":"skip optional \u0027H\u0027, and parse a hex number",
+"11627":"start with comma (2nd arg)?",
+"11629":"yes -\u003e go handle",
+"11631":"else parse first arg",
+"11634":" \u003e= 4?",
+"11636":"yes -\u003e error",
+"11638":"save arg as \"game number\"",
+"11640":"clear SCREEN 1",
+"11643":"no more args?",
+"11646":"correct -\u003e skip handling arg 2",
+"11648":"read expected comma",
+"11651":"parse arg 2. Des it equal zero?",
+"11654":"yes -\u003e same as no 2nd arg",
+"11660":"load up the background map",
+"11674":"skip over comma (can\u0027t fail: we know it\u0027s there)",
+"11677":"parse \"second\" arg",
+"11680":"\"GAME ,0\"? -\u003e done (nothing to do).",
+"11682":"just load the background map",
+"11685":" then exit (no game)",
+"11688":"init write pointer to start of TXTTAB",
+"11694":"recall game num",
+"11696":"multiply by 2 for indexing",
+"11698":"load TXTEND value for this game",
+"11701":"and store it as the current one",
+"11708":"init read ptr to start of the selected game",
+"11720":"load a byte from in-ROM game",
+"11722":"store it in TXTTAB",
+"11724":"increment source ptr",
+"11730":"increment dest ptr",
+"11738":"copy to end of RAM at $7000 (not to TXTEND!)",
+"11745":"prep background map for reading",
+"11753":"wait until safe to do PPU ops. Disable rendering.",
+"11768":"read a byte from built-in map",
+"11770":"write byte to screen 1",
+"11773":"advance read idx. Finished reading one page?",
+"11774":"no -\u003e loop around copy next byte",
+"11776":"increment source page num",
+"11780":"are we at RAM page $D4?",
+"11782":"no -\u003e copy another page to VRAM",
+"11784":"yes: ensure NMI enabled",
+"11787":"and re-enable rendering. Return",
 "11802":"no args -\u003e",
 "11804":"get int arg",
 "11807":" \u003c 2?",
@@ -4599,6 +4665,13 @@
 
 "9606":{
 "Text":"Given a var name at zpTXTPTR, looks it up and points zpVarData at its contents.",
+"IsFancy":true,
+"BoxMode":false,
+"MaxWidth":80,
+"BackgroundColor":0},
+
+"20496":{
+"Text":"The built-in background map for use with \"GAME n,1\"",
 "IsFancy":true,
 "BoxMode":false,
 "MaxWidth":80,
@@ -12110,6 +12183,97 @@
 "Value":44864,
 "Source":"User",
 "Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"11685":{
+"Label":"rts",
+"Value":44437,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"11624":{
+"Label":"errIllVal_AD58",
+"Value":44376,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"11663":{
+"Label":"oneArg",
+"Value":44415,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"11745":{
+"Label":"GAME_loadBgMap",
+"Value":44497,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"20496":{
+"Label":"gameBackgroundMap",
+"Value":53248,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"11768":{
+"Label":"cpyLp",
+"Value":44520,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"1650":{
+"Label":"InitVars",
+"Value":34402,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"13243":{
+"Label":"InitPpuApu",
+"Value":45995,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"11686":{
+"Label":"GAME_loadGame",
+"Value":44438,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"11730":{
+"Label":"noHiSrc",
+"Value":44482,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"11736":{
+"Label":"noHiDst",
+"Value":44488,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"11720":{
+"Label":"cpyLp",
+"Value":44472,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"11674":{
+"Label":"GAME_mapOnly",
+"Value":44426,
+"Source":"User",
+"Type":"GlobalAddr",
 "LabelAnno":"None"}},
 
 "OperandFormats":{
@@ -12594,6 +12758,26 @@
 
 "Extra":null},
 
+"1705":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"memoryTop",
+"Part":"Low"},
+
+"Extra":null},
+
+"1715":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"memoryTop",
+"Part":"High"},
+
+"Extra":null},
+
 "1772":{
 "Length":2,
 "Format":"NumericLE",
@@ -13066,6 +13250,13 @@
 "Label":"err_OM",
 "Part":"Low"},
 
+"Extra":null},
+
+"3052":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Decimal",
+"SymbolRef":null,
 "Extra":null},
 
 "3070":{
@@ -14695,6 +14886,53 @@
 "Format":"NumericLE",
 "SubFormat":"Ascii",
 "SymbolRef":null,
+"Extra":null},
+
+"11627":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Ascii",
+"SymbolRef":null,
+"Extra":null},
+
+"11745":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"gameBackgroundMap",
+"Part":"Low"},
+
+"Extra":null},
+
+"11749":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"gameBackgroundMap",
+"Part":"High"},
+
+"Extra":null},
+
+"11756":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"VRAM_screen1",
+"Part":"High"},
+
+"Extra":null},
+
+"11761":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"VRAM_screen1",
+"Part":"Low"},
+
 "Extra":null},
 
 "11821":{
@@ -22027,7 +22265,14 @@
 "Extra":null},
 
 "20494":{
-"Length":1026,
+"Length":2,
+"Format":"Dense",
+"SubFormat":"None",
+"SymbolRef":null,
+"Extra":null},
+
+"20496":{
+"Length":1024,
 "Format":"Dense",
 "SubFormat":"None",
 "SymbolRef":null,
@@ -22709,7 +22954,7 @@
 "Source":"Variable",
 "Type":"ExternalAddr",
 "LabelAnno":"None"}],
-"ClearPrevious":false},
+"ClearPrevious":true},
 
 "12249":{
 "Variables":[],
