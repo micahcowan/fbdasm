@@ -26,7 +26,6 @@ BRANCH STACK:
 
     punted:
       BGTOOL
-      LIST
       PRINT
       FOR
       NEXT
@@ -36,7 +35,7 @@ BRANCH STACK:
       ON
       FIND
     next:
-      DELETE
+      RENUM
 
     done:
 

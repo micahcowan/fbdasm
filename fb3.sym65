@@ -106,6 +106,8 @@ zpKyRptShtCtr   @  $79      ; Key-repeat: delay count-down for repeating key pas
 zpKeyRepeating  @  $7B      ; Key-repeat: #$FF = key is actively repeating, #$00 = key not repeating
 zp7C            @  $7C
 zp80            @  $80
+zpLNumStart     @  $86    2 ; Starting line number of a line-number range
+zpLNumEnd       @  $88    2 ; Ending line number of a line-number range
 zpVarName       @  $8A    2 ; Two-letter variable name
 zpVarData       @  $8C    2 ; pointer to selected variable data (deep, if var is array)
 zpVARPTR        @  $8E    2 ; pointer to start of selected variable

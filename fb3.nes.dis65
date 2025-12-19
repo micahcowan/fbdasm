@@ -977,7 +977,74 @@
 "1753":"indicate limit of NEXT, RETURN stack searches?",
 "1755":"set TXTPTR to start of program",
 "1763":"-\u003e and execute first line",
+"1782":"push processor flags",
+"1794":"pop processor flags",
+"1795":"no args? -\u003e nothing to do, exit",
+"1803":"comma or dash? -\u003e handle second arg",
+"1805":"period?",
+"1807":"no -\u003e handle first arg",
+"1809":"period found: use STOPped line",
+"1811":" as the start",
+"1813":" and end (for now), of the range",
+"1815":"high byte",
+"1817":"-\u003e set high bytes, and accept possible 2nd arg",
+"1820":"line num prefix token?",
+"1822":"no -\u003e error",
+"1824":"read first byte of line number",
+"1827":"use as both start and end of line range",
+"1831":"get high byte of line-num first argument",
+"1834":"and set start+end high bytes too",
+"1838":"get next byte. Is it the end of the command?",
+"1841":"yes -\u003e done parsing args",
+"1843":"else, got a comma or dash?",
+"1845":"yes -\u003e process 2nd arg",
+"1849":"else -\u003e error",
+"1851":"end of cmd after comma-or-dash?",
+"1854":"yes -\u003e set end of range to end of program",
+"1856":"else, got a period as 2nd arg?",
+"1858":"no -\u003e expect line number",
+"1860":"got a period. Set CONT line as end of range.",
+"1866":"-\u003e and finish up args processing",
+"1869":"got the line-num token prefix?",
+"1871":"no -\u003e error",
+"1873":"get line-number 2nd arg",
+"1876":"and set as end-of-range",
+"1886":"done processing args",
+"1889":"set end of line-num range to maximum value (end of program)",
+"1895":"done processing args",
 "1896":"no arg? -\u003e error",
+"1900":"set DELETE mode",
+"1905":"Perform the DELETE",
+"1908":"-\u003e Clear variables, and end command.",
+"1916":"set LIST mode",
+"1918":"save the original TXTPTR away",
+"1921":"save \"start\" line num as line to find",
+"1929":"...and then find it.",
+"1934":"read offset to next line num. Are we at end of prog?",
+"1936":"yes -\u003e restore TXTPTR and exit LIST or DELETE.",
+"1940":"set TXTPTR start of found line linkage;",
+"1942":" we\u0027ll use it to scan through the range",
+"1948":"end of program?",
+"1950":"yes -\u003e restore TXTPTR and exit LIST or DELETE.",
+"1953":"read current line num",
+"1955":"save in WAccum",
+"1962":"set WParam to end-of-range line num",
+"1970":"compare current line num, with range\u0027s end line num",
+"1973":"cur \u003e end?",
+"1975":"yes -\u003e restore TXTPTR and exit LIST or DELETE.",
+"1977":"are we doing LIST?",
+"1979":"yes -\u003e LIST the current line",
+"1981":"no: we\u0027ll DELETE it",
+"1983":"Copy current line linkage to zpTxtLink",
+"1989":"and delete the line",
+"1992":"iterate again for next line in range",
+"2001":"iterate again for next line in range",
+"2004":"read from keyboard",
+"2007":"no key pressed? -\u003e return to list next line",
+"2009":"ESCAPE key?",
+"2011":"no -\u003e return to list next line",
+"2013":"pause LISTing until some key other than ESCAPE is pressed",
+"2022":"return to iterating over lines to LIST",
 "2032":"point zpOutputStr at zpNumStrTmp, as source",
 "2034":" for output queuing",
 "2035":"add index to start position",
@@ -4672,6 +4739,27 @@
 
 "20496":{
 "Text":"The built-in background map for use with \"GAME n,1\"",
+"IsFancy":true,
+"BoxMode":false,
+"MaxWidth":80,
+"BackgroundColor":0},
+
+"1782":{
+"Text":"The two BASIC commands that accept line number ranges as arguments - LIST, and DELETE - use this routine to read their parameters",
+"IsFancy":true,
+"BoxMode":false,
+"MaxWidth":80,
+"BackgroundColor":0},
+
+"1918":{
+"Text":"The two commands that both operate on line-number ranges - LIST, and DELETE - both use this routine to perform their actions. The value of the variable zpListOrDelete ($51) is used to determine what actual action to perform on each line within the range.",
+"IsFancy":true,
+"BoxMode":false,
+"MaxWidth":80,
+"BackgroundColor":0},
+
+"1981":{
+"Text":"Delete one line of the range",
 "IsFancy":true,
 "BoxMode":false,
 "MaxWidth":80,
@@ -12274,6 +12362,125 @@
 "Value":44426,
 "Source":"User",
 "Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"1895":{
+"Label":"rts_8757",
+"Value":34647,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"1782":{
+"Label":"ReadLineNumRange",
+"Value":34534,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"1820":{
+"Label":"RdLNRng_firstArg",
+"Value":34572,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"1834":{
+"Label":"RdLNRng_period",
+"Value":34586,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"1851":{
+"Label":"RdLNRng_secondArg",
+"Value":34603,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"1881":{
+"Label":"hiByt",
+"Value":34633,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"1869":{
+"Label":"lnum",
+"Value":34621,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"1889":{
+"Label":"RdLNRng_progEndIsEnd",
+"Value":34641,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"1918":{
+"Label":"DoListOrDelete",
+"Value":34670,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"2029":{
+"Label":"LoD_RestoreTxtPtrAndReturn",
+"Value":34781,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"1946":{
+"Label":"LoD_mainLp",
+"Value":34698,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"1977":{
+"Label":"notPastEnd",
+"Value":34729,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"1995":{
+"Label":"ListCurLine",
+"Value":34747,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"2022":{
+"Label":"rts",
+"Value":34774,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"2023":{
+"Label":"LIST_readKeyMaybeStop",
+"Value":34775,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"2013":{
+"Label":"escPause",
+"Value":34765,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"2004":{
+"Label":"LIST_PauseOnEsc",
+"Value":34756,
+"Source":"User",
+"Type":"GlobalAddr",
 "LabelAnno":"None"}},
 
 "OperandFormats":{
@@ -12784,6 +12991,68 @@
 "SubFormat":"Symbol",
 "SymbolRef":{
 "Label":"tok_OP_EQ",
+"Part":"Low"},
+
+"Extra":null},
+
+"1797":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Ascii",
+"SymbolRef":null,
+"Extra":null},
+
+"1801":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Ascii",
+"SymbolRef":null,
+"Extra":null},
+
+"1805":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Ascii",
+"SymbolRef":null,
+"Extra":null},
+
+"1820":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"tok_LNUM_AFTER",
+"Part":"Low"},
+
+"Extra":null},
+
+"1843":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Ascii",
+"SymbolRef":null,
+"Extra":null},
+
+"1847":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Ascii",
+"SymbolRef":null,
+"Extra":null},
+
+"1856":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Ascii",
+"SymbolRef":null,
+"Extra":null},
+
+"1869":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"tok_LNUM_AFTER",
 "Part":"Low"},
 
 "Extra":null},
