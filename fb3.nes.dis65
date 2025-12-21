@@ -2299,6 +2299,47 @@
 "10417":"non-zero, convert to value (-1)",
 "10419":"save that value to WAccum (as word)",
 "10423":"and push to parse stack",
+"10543":"get the amount of free memory into WAccum",
+"10546":"and push that to parse stack",
+"10550":"save (FRETOP - VAREND) to WAccum",
+"10627":"eval parenthesized int arg",
+"10632":"peek at specified addr",
+"10636":"save result to WAccum",
+"10644":"eval parenthesized arg",
+"10647":"is the value -32,768?",
+"10650":"yes -\u003e can\u0027t negate, won\u0027t fit",
+"10654":"negative? -\u003e negate it to positive",
+"10656":"-\u003e else just push the value as-is",
+"10659":"negate",
+"10662":"-\u003e then push",
+"10797":"get parenthesized string",
+"10802":"clear WAccum bytes except lowest",
+"10805":"-\u003e finish up",
+"10808":"get parenthesized string arg",
+"10811":"empty string?",
+"10813":"yes -\u003e return zero",
+"10817":"read first char of string",
+"10819":"save its value in zpWAccum",
+"10821":"-\u003e clear other bytes of WAccum and read closing paren. Done!",
+"10934":"eval parenthesized int",
+"10937":"convert int to decimal string",
+"10940":"skip leading zeroes",
+"10945":"start with strlen of 0",
+"10949":"get the position of first non-zero digit into X",
+"10951":"get char from decimal str",
+"10953":"null terminator? -\u003e done copying",
+"10955":"else write char to genPurposeBuf",
+"10960":"increment strlen",
+"10962":"-\u003e copy next character",
+"10965":"load original index into genPurposeBuf (str start)",
+"10967":"save new index",
+"10969":"save str start low byte",
+"10973":"save str start high byte (genPurposeBuf)",
+"10977":"save strlen",
+"10979":"-\u003e wrap things up",
+"10982":"eval parenthesized int",
+"10985":"convert int to hex string",
+"10988":"proceed as for STR$",
 "11043":"advance txtptr",
 "11046":"and skip any spaces",
 "11049":"cur char a digit?",
@@ -4933,6 +4974,13 @@
 
 "1981":{
 "Text":"Delete one line of the range",
+"IsFancy":true,
+"BoxMode":false,
+"MaxWidth":80,
+"BackgroundColor":0},
+
+"10433":{
+"Text":"(Only \"truncates\" bc caller always sets A-reg to zero)",
 "IsFancy":true,
 "BoxMode":false,
 "MaxWidth":80,
@@ -8884,14 +8932,14 @@
 "LabelAnno":"None"},
 
 "10504":{
-"Label":"PushWAccToParseStk",
+"Label":"SetParseStkTopToWAcc",
 "Value":43256,
 "Source":"User",
 "Type":"GlobalAddr",
 "LabelAnno":"None"},
 
 "10500":{
-"Label":"PushWAccIntToParseStk",
+"Label":"SetParseStkTopToWAccInt",
 "Value":43252,
 "Source":"User",
 "Type":"GlobalAddr",
@@ -8919,7 +8967,7 @@
 "LabelAnno":"None"},
 
 "20305":{
-"Label":"tbl_Functions",
+"Label":"jtbl_Functions",
 "Value":53057,
 "Source":"User",
 "Type":"GlobalAddr",
@@ -12878,6 +12926,97 @@
 "Value":52331,
 "Source":"User",
 "Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"10665":{
+"Label":"errOverfl_A999",
+"Value":43417,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"10659":{
+"Label":"neg",
+"Value":43411,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"10791":{
+"Label":"EvalParenStrOrError",
+"Value":43543,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"10429":{
+"Label":"ZeroWAccum",
+"Value":43181,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"10433":{
+"Label":"TruncWAccumToByte",
+"Value":43185,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"10800":{
+"Label":"TruncWAccumParseRParen",
+"Value":43552,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"10965":{
+"Label":"copyDone",
+"Value":43717,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"10951":{
+"Label":"cpyLp",
+"Value":43703,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"10940":{
+"Label":"CopyDecOrHexStr",
+"Value":43692,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"10906":{
+"Label":"PushStrCloseParen",
+"Value":43658,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"10494":{
+"Label":"PushWAccIntToParseStk",
+"Value":43246,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"10490":{
+"Label":"PushWAccByteToParseStk",
+"Value":43242,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"10549":{
+"Label":"AmtFreeMemToWAccum",
+"Value":43301,
+"Source":"User",
+"Type":"GlobalAddr",
 "LabelAnno":"None"}},
 
 "OperandFormats":{
@@ -15607,6 +15746,26 @@
 "SymbolRef":{
 "Label":"NC_GetCharUnderCursor",
 "Part":"Low"},
+
+"Extra":null},
+
+"10906":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"TYP_STR",
+"Part":"Low"},
+
+"Extra":null},
+
+"10971":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"genPurposeBuf",
+"Part":"High"},
 
 "Extra":null},
 
@@ -23766,6 +23925,30 @@
 "ClearPrevious":false},
 
 "10188":{
+"Variables":[],
+"ClearPrevious":true},
+
+"10934":{
+"Variables":[{
+"DataDescriptor":{
+"Length":1,
+"Format":"NumericLE",
+"SubFormat":"Hex",
+"SymbolRef":null,
+"Extra":null},
+
+"Comment":"",
+"HasWidth":true,
+"Direction":"ReadWrite",
+"MultiMask":null,
+"Label":"vZpStrLen",
+"Value":144,
+"Source":"Variable",
+"Type":"ExternalAddr",
+"LabelAnno":"None"}],
+"ClearPrevious":false},
+
+"10991":{
 "Variables":[],
 "ClearPrevious":true},
 
