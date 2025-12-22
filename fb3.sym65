@@ -212,6 +212,8 @@ genPurposeBuf   @  $700   256; user directive messages (at least) get writen out
 COLS = 28
 ROWS = 24
 
+STRLEN_MAX = 32
+
 bgGotFlag       @  $6004  ; non-zero if bg data is saved at $6C00
 bgGetVScroll    @  $6005  ; saved vscroll for saved screen data
 basicProgram    @  $6006  ; The start of the BASIC program in memory

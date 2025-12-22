@@ -2091,7 +2091,12 @@
 "9376":"is this the end of the command (\u0027\\0\u0027 or \u0027:\u0027)?",
 "9379":"yes -\u003e syntax error (we\u0027re expecting an op or atom!)",
 "9381":"have a single-digit number?",
-"9403":"no effect - just incr zpTXTPTR!",
+"9385":"unary \u0027-\u0027?",
+"9389":"NOT unary op",
+"9393":"decimal number?",
+"9397":"hex number?",
+"9401":"unary \u0027+\u0027?",
+"9403":"yes -\u003e (no effect - just incr zpTXTPTR!)",
 "9413":"punctuation or raw digits?",
 "9415":"matched -\u003e syntax error",
 "9417":"\u0027A\u0027 thru \u0027Z\u0027?",
@@ -2103,8 +2108,10 @@
 "9434":"subtract value of tok_ABS",
 "9436":"and double for pointer index",
 "9438":"lookup the function, evaluate it, and return",
+"9448":"move TXTPTR past function token",
 "9484":"move numeric literal directly onto parse stack",
 "9487":"(not including leading token byte)",
+"9494":"increment index (\"push\" the literal onto the expr stack)",
 "9498":"advance zpTXTPTR past the literal",
 "9510":"store the digit into the parse buffer",
 "9513":"and decrement to the true number value",
@@ -2302,6 +2309,20 @@
 "10543":"get the amount of free memory into WAccum",
 "10546":"and push that to parse stack",
 "10550":"save (FRETOP - VAREND) to WAccum",
+"10577":"get actor # arg into WAccum (as byte)",
+"10580":"read actor # from WAccum (byte)",
+"10582":"ensure it\u0027s a value \u003c 8",
+"10585":"multiply by 8, for MOVE dfn indexing",
+"10589":"and return in X-reg",
+"10600":"get index from actor-num arg",
+"10603":"grab X pos",
+"10606":"-\u003e and return it",
+"10609":"get index from actor-num arg",
+"10612":"grab Y pos",
+"10615":"-\u003e and return it",
+"10618":"get index from actor-num arg",
+"10621":"grab facing",
+"10624":"-\u003e and return it",
 "10627":"eval parenthesized int arg",
 "10632":"peek at specified addr",
 "10636":"save result to WAccum",
@@ -2379,6 +2400,85 @@
 "11088":"and therefore, if we get 32768, it\u0027s an overflow",
 "11091":"(overflow? -\u003e error)",
 "11104":"skip optional \u0027H\u0027, and parse a hex number",
+"11310":"demand a comma here",
+"11313":"parse an expression",
+"11316":"pull the expression value, and",
+"11318":" save it to zpWAccum",
+"11336":"save new reduced index (effecting the \"pull\" from expr stack)",
+"11338":"done",
+"11409":"read paren, string arg",
+"11414":"push the string info",
+"11421":"next read start index arg",
+"11424":"ensure it\u0027s \u003c 256",
+"11427":" == 0?",
+"11429":"yes -\u003e invalid index",
+"11431":" \u003e= 32? also invalid index",
+"11435":"sub 1 (cvt from 1-based index to 0-based)",
+"11437":"push the index",
+"11438":"read substr length arg",
+"11441":"ensure \u003c 256",
+"11444":" == 0?",
+"11446":"yes -\u003e pull up args, return empty string",
+"11448":"ensure substr len \u003c max strlen",
+"11451":"save the substr len",
+"11453":"pull the start index",
+"11454":"and save that too",
+"11456":"also the original string\u0027s ptr",
+"11462":"pull orig str\u0027s len",
+"11463":" \u003c= start index?",
+"11465":"yes -\u003e return empty string",
+"11470":"orig str len - substr start idx",
+"11472":" \u003c substr len?",
+"11474":"yes -\u003e set remaining len as the new substr len",
+"11476":" (and return back here)",
+"11479":"add start idx to str ptr",
+"11481":" and save",
+"11485":"(high byte, too)",
+"11491":"save substr len to WAccum",
+"11493":"and use as # chars to copy",
+"11499":"get a byte from str",
+"11501":"copy to gen-purpose str buf",
+"11504":"incr X-reg (genPurpose idx)",
+"11505":"incr Y-reg (source str idx)",
+"11506":"decrement chars-to-copy. Done copying?",
+"11508":"not yet -\u003e iterate over remaining chars",
+"11510":"done copying.",
+"11512":"save ptr into genPurposeBuf as str ptr, to WAccum",
+"11514":"update index to free space in genPurposeBuf",
+"11520":"-\u003e return new substr on expression stack",
+"11525":"-\u003e \"return\"",
+"11528":"pull args off stack",
+"11532":"zero the WAccum",
+"11535":"-\u003e return empty string",
+"11541":"read left paren, then byte-size int arg",
+"11544":"get byte-size val from WAccum",
+"11546":" == 0? -\u003e skip ahead a bit",
+"11548":"else, eq 1?",
+"11550":"neither 0 nor 1 -\u003e error",
+"11552":"we\u0027ll read from JOY2",
+"11554":"(skip next instr)",
+"11555":"we\u0027ll read from JOY1",
+"11565":"tell controllers to load shfit registers",
+"11568":"wait a bit",
+"11572":"lock shift registers",
+"11575":"wait a bit",
+"11577":"set X-reg as counter for 8 single-bit reads",
+"11581":"read from gamepad",
+"11583":"shift into carry",
+"11584":"shift from carry onto gamepad buttons-state var",
+"11586":"wait a bit before next gamepad read",
+"11588":"decr bit counter. Did we record 8 bits/buttons?",
+"11589":"no -\u003e loop around for next button state",
+"11591":"yes: done",
+"11592":"parse gamepad-num arg, and get buttons state for it",
+"11595":"re-read the buttons (why?!)",
+"11600":"mask out everything but d-pad buttons",
+"11602":"save this val to WAccum",
+"11604":"-\u003e and return as our result",
+"11607":"parse gamepad-num arg, and get buttons state for it",
+"11612":"shift off the d-pad state, leaving",
+"11613":" other buttons in the lower four bits",
+"11616":"-\u003e and return the result",
 "11627":"start with comma (2nd arg)?",
 "11629":"yes -\u003e go handle",
 "11631":"else parse first arg",
@@ -5005,6 +5105,13 @@
 
 "10433":{
 "Text":"(Only \"truncates\" bc caller always sets A-reg to zero)",
+"IsFancy":true,
+"BoxMode":false,
+"MaxWidth":80,
+"BackgroundColor":0},
+
+"11544":{
+"Text":"Get the state of buttons (including d-pad) as a set of 8 boolean bits, into $90. WAccum indicates which gamepad to read.",
 "IsFancy":true,
 "BoxMode":false,
 "MaxWidth":80,
@@ -13062,6 +13169,146 @@
 "Value":43440,
 "Source":"User",
 "Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"11310":{
+"Label":"CommaThenExprToWAccum",
+"Value":44062,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"11339":{
+"Label":"CommaThenIntExprToWAccum",
+"Value":44091,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"11162":{
+"Label":"errIllVal_AB8A",
+"Value":43914,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"11406":{
+"Label":"errIllVal_AC7E",
+"Value":44158,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"11157":{
+"Label":"EnsureLtStrLenMax",
+"Value":43909,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"11532":{
+"Label":"MID_retEmptyStr",
+"Value":44284,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"11528":{
+"Label":"MID_pullArgsRetEmptyStr",
+"Value":44280,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"11523":{
+"Label":"MID_setSubStrLen",
+"Value":44275,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"11476":{
+"Label":"MID_setLenJmpBack",
+"Value":44228,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"11499":{
+"Label":"cpyLp",
+"Value":44251,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"11538":{
+"Label":"errIllVal_AD02",
+"Value":44290,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"11555":{
+"Label":"zero",
+"Value":44307,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"11581":{
+"Label":"joyRdLp",
+"Value":44333,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"11544":{
+"Label":"GetButtons",
+"Value":44296,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"11541":{
+"Label":"EvalLParenPadNumAndGetBtns",
+"Value":44293,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"11602":{
+"Label":"ST_setWAccumAndSaveExpr",
+"Value":44354,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"10580":{
+"Label":"GetActorDefMoveIdx",
+"Value":43332,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"10577":{
+"Label":"GetActorDefMoveIdxFromArg",
+"Value":43329,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"4322":{
+"Label":"secRts",
+"Value":37074,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"10568":{
+"Label":"SetWacByteSkipRPSetParseStkInt",
+"Value":43320,
+"Source":"User",
+"Type":"GlobalAddr",
 "LabelAnno":"None"}},
 
 "OperandFormats":{
@@ -15842,11 +16089,61 @@
 "SymbolRef":null,
 "Extra":null},
 
+"11157":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"STRLEN_MAX",
+"Part":"Low"},
+
+"Extra":null},
+
 "11303":{
 "Length":2,
 "Format":"NumericLE",
 "SubFormat":"Ascii",
 "SymbolRef":null,
+"Extra":null},
+
+"11516":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"genPurposeBuf",
+"Part":"High"},
+
+"Extra":null},
+
+"11552":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"JOY2",
+"Part":"Low"},
+
+"Extra":null},
+
+"11555":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"JOY1",
+"Part":"Low"},
+
+"Extra":null},
+
+"11559":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"JOY1",
+"Part":"High"},
+
 "Extra":null},
 
 "11627":{
@@ -23994,6 +24291,104 @@
 "ClearPrevious":false},
 
 "10991":{
+"Variables":[],
+"ClearPrevious":true},
+
+"11409":{
+"Variables":[{
+"DataDescriptor":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Hex",
+"SymbolRef":null,
+"Extra":null},
+
+"Comment":"",
+"HasWidth":true,
+"Direction":"ReadWrite",
+"MultiMask":null,
+"Label":"vZpStrPtr",
+"Value":25,
+"Source":"Variable",
+"Type":"ExternalAddr",
+"LabelAnno":"None"},
+
+{
+"DataDescriptor":{
+"Length":1,
+"Format":"NumericLE",
+"SubFormat":"Hex",
+"SymbolRef":null,
+"Extra":null},
+
+"Comment":"",
+"HasWidth":true,
+"Direction":"ReadWrite",
+"MultiMask":null,
+"Label":"vZpSubStrStartIdx",
+"Value":27,
+"Source":"Variable",
+"Type":"ExternalAddr",
+"LabelAnno":"None"},
+
+{
+"DataDescriptor":{
+"Length":1,
+"Format":"NumericLE",
+"SubFormat":"Hex",
+"SymbolRef":null,
+"Extra":null},
+
+"Comment":"",
+"HasWidth":true,
+"Direction":"ReadWrite",
+"MultiMask":null,
+"Label":"vZpSubStrLen",
+"Value":28,
+"Source":"Variable",
+"Type":"ExternalAddr",
+"LabelAnno":"None"},
+
+{
+"DataDescriptor":{
+"Length":1,
+"Format":"NumericLE",
+"SubFormat":"Hex",
+"SymbolRef":null,
+"Extra":null},
+
+"Comment":"",
+"HasWidth":true,
+"Direction":"ReadWrite",
+"MultiMask":null,
+"Label":"vZpCpyCountDwn",
+"Value":144,
+"Source":"Variable",
+"Type":"ExternalAddr",
+"LabelAnno":"None"}],
+"ClearPrevious":false},
+
+"11538":{
+"Variables":[{
+"DataDescriptor":{
+"Length":1,
+"Format":"NumericLE",
+"SubFormat":"Hex",
+"SymbolRef":null,
+"Extra":null},
+
+"Comment":"Holds state of gamepad buttons",
+"HasWidth":true,
+"Direction":"ReadWrite",
+"MultiMask":null,
+"Label":"vZpPadBtns",
+"Value":144,
+"Source":"Variable",
+"Type":"ExternalAddr",
+"LabelAnno":"None"}],
+"ClearPrevious":true},
+
+"11619":{
 "Variables":[],
 "ClearPrevious":true},
 

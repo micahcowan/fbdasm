@@ -35,9 +35,15 @@ BRANCH STACK:
       ON
       FIND
     next:
-      MID$
+      VAL
 
     done:
+      MID$
+      STICK
+      STRIG
+      XPOS
+      YPOS
+      VCT
 
   BUG: RENUM: if it "finds" a #$0B or #$0C within a numeric constant, will it "replace" the next two bytes inappropriately?
 
