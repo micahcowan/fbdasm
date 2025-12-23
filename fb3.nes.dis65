@@ -2306,9 +2306,20 @@
 "10417":"non-zero, convert to value (-1)",
 "10419":"save that value to WAccum (as word)",
 "10423":"and save it as the parse stack top",
+"10488":"load cursor y pos into low byte of WAccum",
+"10492":"zero out high byte of WAccum",
+"10494":"create space on parse stack for a \"pushed\" return value",
+"10502":"set current type as int",
+"10509":"copy 3 bytes from WAcccum over the top item of the parse stack",
+"10524":"done",
 "10543":"get the amount of free memory into WAccum",
 "10546":"and push that to parse stack",
 "10550":"save (FRETOP - VAREND) to WAccum",
+"10563":"read (and discard) dummy integer argument",
+"10566":"copy cursor x pos to low byte of WAccum",
+"10568":"set Waccum low byte to what\u0027s in A reg",
+"10572":"zero out the high byte of WAccum",
+"10574":"skip right paren, and return WAccum in expr stack",
 "10577":"get actor # arg into WAccum (as byte)",
 "10580":"read actor # from WAccum (byte)",
 "10582":"ensure it\u0027s a value \u003c 8",
@@ -2366,6 +2377,17 @@
 "10817":"read first char of string",
 "10819":"save its value in zpWAccum",
 "10821":"-\u003e clear other bytes of WAccum and read closing paren. Done!",
+"10898":"get parenthesized byte-sized int arg",
+"10901":"get its value into A reg",
+"10908":"set var type = string",
+"10910":"read closing paren",
+"10913":"return our value by setting the top value of the expression stack",
+"10918":"store value in A-reg to genPurposeBuf",
+"10921":"increment index to reflect our consumption of a single byte",
+"10925":"set first byte of WAccum to 1 (string length)",
+"10927":"point the next two bytes at the space",
+"10929":" in genPurposeBuf we just wrote to",
+"10933":"return",
 "10934":"eval parenthesized int",
 "10937":"convert int to decimal string",
 "10940":"skip leading zeroes",
@@ -2385,6 +2407,19 @@
 "10982":"eval parenthesized int",
 "10985":"convert int to hex string",
 "10988":"proceed as for STR$",
+"10991":"parse parenthesized string arg",
+"10994":"empty string?",
+"10996":"yes -\u003e return as zero",
+"10998":"save TXTPTR",
+"11003":"use string length as a copy countdown",
+"11009":"copy string contents into LineBuffer",
+"11016":"decr chars to copy. == 0?",
+"11018":"no -\u003e loop and copy next character",
+"11022":"null-terminate the string",
+"11025":"point TXTPTR at LineBuffer",
+"11028":"parse a number from the string into WAccum",
+"11031":"restore TXTPTR to past the argument",
+"11034":"skip past right-paren, and return the value in WAccum onto parse stack",
 "11043":"advance txtptr",
 "11046":"and skip any spaces",
 "11049":"cur char a digit?",
@@ -2400,12 +2435,65 @@
 "11088":"and therefore, if we get 32768, it\u0027s an overflow",
 "11091":"(overflow? -\u003e error)",
 "11104":"skip optional \u0027H\u0027, and parse a hex number",
+"11112":"any chars after INKEY$?",
+"11115":"no -\u003e omitted arg, return active keyboard char",
+"11117":"have a left paren?",
+"11119":"no -\u003e omitted arg, return active keyboard char",
+"11121":"yes, it\u0027s a left parenthesis. Move past it, and a dummy expression.",
+"11124":"read char from keyboard, waiting for keypress",
+"11127":"return that value as (single-char) string",
+"11130":"read any curently-pressed keys",
+"11133":"nothing pressed? -\u003e return empty string",
+"11135":"else make single-char string from the keypress",
+"11138":"push the string in WAccum to expr parse stack",
+"11141":"and set the type accordingly",
+"11165":"eval left paren, string argument",
+"11170":"push strlen",
+"11173":"and two pointer bytes (to the string data)",
+"11177":"eval comma, integer substr len",
+"11180":"ensure it\u0027s byte-sized",
+"11185":"and also \u003c max strlen",
+"11189":"pull the str ptr bytes,",
+"11191":" and stuff them into zpMisc",
+"11194":"pull orig string length (leaving in A-reg)",
+"11195":"return (strptr in zpMisc, strlen in A-reg, and substr len in WAccum)",
+"11261":"read args",
+"11264":"save orig str len",
+"11266":"substr len == 0?",
+"11268":"yes -\u003e return empty str",
+"11270":"substr len \u003e= orig str len?",
+"11272":"yes -\u003e just return orig str",
+"11276":"just set return string pointer to orig:",
+"11278":" this is LEFT$ so we can just adjust the returned string\u0027s length",
+"11280":" (conveniently already correct, and at the right addr)",
+"11282":"return WAccum via expr parse stack",
+"11287":"set orig str len as substr len",
+"11289":"just return orig str, substr with same len is just orig str",
+"11292":"clear WAccum+1 (+2 will clear after jmp below)",
+"11294":"clear WAccum+2 and return on expr parse stack",
 "11310":"demand a comma here",
 "11313":"parse an expression",
 "11316":"pull the expression value, and",
 "11318":" save it to zpWAccum",
 "11336":"save new reduced index (effecting the \"pull\" from expr stack)",
 "11338":"done",
+"11345":"read args",
+"11348":"save str arg\u0027s length",
+"11350":"get substr length",
+"11352":" == 0? -\u003e return empty str",
+"11354":" substr len \u003e= orig str len?",
+"11356":"yes -\u003e just return the contents of original string",
+"11359":"else, subtract substr len from full str len",
+"11364":"add to str ptr",
+"11370":"ptr high byte, too",
+"11376":"copy substr len to countdown var",
+"11382":"read char from orig str (at shifted position)",
+"11384":"copy into general-purpose buffer",
+"11389":"decrement # chars to copy. == 0?",
+"11391":"no -\u003e loop around, copy next char",
+"11393":"point WAccum at general-purpose buffer",
+"11395":" location we copied to",
+"11403":"-\u003e return the copied string via expr parse stack",
 "11409":"read paren, string arg",
 "11414":"push the string info",
 "11421":"next read start index arg",
@@ -13309,6 +13397,111 @@
 "Value":43320,
 "Source":"User",
 "Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"11037":{
+"Label":"VAL_returnZero",
+"Value":43789,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"11060":{
+"Label":"recurse",
+"Value":43812,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"11009":{
+"Label":"cpyLp",
+"Value":43761,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"10901":{
+"Label":"MakeSingleCharStrFromWAcc",
+"Value":43653,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"10903":{
+"Label":"ReturnNewSingleCharStrFromAReg",
+"Value":43655,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"10916":{
+"Label":"MakeSingleCharStrFromAReg",
+"Value":43668,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"11130":{
+"Label":"argOmitted",
+"Value":43882,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"11146":{
+"Label":"retEmpty",
+"Value":43898,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"11138":{
+"Label":"pushStr",
+"Value":43890,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"11165":{
+"Label":"ReadLEFTorRIGHTstrArgs",
+"Value":43917,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"11292":{
+"Label":"LEFT_RIGHT_returnEmptyStr",
+"Value":44044,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"11280":{
+"Label":"LEFT_RIGHT_finishUp",
+"Value":44032,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"11285":{
+"Label":"LEFT_RIGHT_returnOrigStr",
+"Value":44037,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"11274":{
+"Label":"retFromSetOrigStr",
+"Value":44026,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"11382":{
+"Label":"cpyLp",
+"Value":44134,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
 "LabelAnno":"None"}},
 
 "OperandFormats":{
@@ -15967,6 +16160,16 @@
 "SymbolRef":null,
 "Extra":null},
 
+"10500":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"TYP_INT",
+"Part":"Low"},
+
+"Extra":null},
+
 "10683":{
 "Length":3,
 "Format":"NumericLE",
@@ -16051,6 +16254,16 @@
 
 "Extra":null},
 
+"10929":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"genPurposeBuf",
+"Part":"High"},
+
+"Extra":null},
+
 "10971":{
 "Length":2,
 "Format":"NumericLE",
@@ -16089,6 +16302,23 @@
 "SymbolRef":null,
 "Extra":null},
 
+"11117":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Ascii",
+"SymbolRef":null,
+"Extra":null},
+
+"11141":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"TYP_STR",
+"Part":"Low"},
+
+"Extra":null},
+
 "11157":{
 "Length":2,
 "Format":"NumericLE",
@@ -16104,6 +16334,16 @@
 "Format":"NumericLE",
 "SubFormat":"Ascii",
 "SymbolRef":null,
+"Extra":null},
+
+"11399":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"genPurposeBuf",
+"Part":"High"},
+
 "Extra":null},
 
 "11516":{
@@ -24291,7 +24531,65 @@
 "ClearPrevious":false},
 
 "10991":{
+"Variables":[{
+"DataDescriptor":{
+"Length":1,
+"Format":"NumericLE",
+"SubFormat":"Hex",
+"SymbolRef":null,
+"Extra":null},
+
+"Comment":"",
+"HasWidth":true,
+"Direction":"ReadWrite",
+"MultiMask":null,
+"Label":"vZpStrLen",
+"Value":116,
+"Source":"Variable",
+"Type":"ExternalAddr",
+"LabelAnno":"None"}],
+"ClearPrevious":true},
+
+"11043":{
 "Variables":[],
+"ClearPrevious":true},
+
+"11261":{
+"Variables":[{
+"DataDescriptor":{
+"Length":1,
+"Format":"NumericLE",
+"SubFormat":"Hex",
+"SymbolRef":null,
+"Extra":null},
+
+"Comment":"",
+"HasWidth":true,
+"Direction":"ReadWrite",
+"MultiMask":null,
+"Label":"vZpStrLen",
+"Value":74,
+"Source":"Variable",
+"Type":"ExternalAddr",
+"LabelAnno":"None"},
+
+{
+"DataDescriptor":{
+"Length":1,
+"Format":"NumericLE",
+"SubFormat":"Hex",
+"SymbolRef":null,
+"Extra":null},
+
+"Comment":"",
+"HasWidth":true,
+"Direction":"ReadWrite",
+"MultiMask":null,
+"Label":"vZpCpyCountDwn",
+"Value":144,
+"Source":"Variable",
+"Type":"ExternalAddr",
+"LabelAnno":"None"}],
 "ClearPrevious":true},
 
 "11409":{
@@ -24366,7 +24664,7 @@
 "Source":"Variable",
 "Type":"ExternalAddr",
 "LabelAnno":"None"}],
-"ClearPrevious":false},
+"ClearPrevious":true},
 
 "11538":{
 "Variables":[{

@@ -35,21 +35,13 @@ BRANCH STACK:
       ON
       FIND
     next:
-      VAL
+      SCR$
 
     done:
-      MID$
-      STICK
-      STRIG
-      XPOS
-      YPOS
-      VCT
 
   BUG: RENUM: if it "finds" a #$0B or #$0C within a numeric constant, will it "replace" the next two bytes inappropriately?
 
   BAD CODE: stupid constant-space strings
-
-  BUG: DEF SPRITE uses $20 (SPACE) as the id for an "empty" sprite tile, but for sprites that actually maps to Lady's face! Can't leave any sprite tiles undef'd.
 
   BUG: RENUM verifies that new line num (1st arg) is greater than or equal to the old line number... but permits the high byte to be lower, provided low byte is higher. RENUM 15,20 is disallowed, but RENUM 257,20 is accepted! (Categorize verification bugs) (RENUM is a v3-only command)
 
