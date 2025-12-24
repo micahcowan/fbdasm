@@ -1559,6 +1559,32 @@
 "5465":"we\u0027re exiting the handler, so go back to \"installed\" state",
 "5470":"and go to the asked-for line",
 "5475":"we\u0027re exiting the handler, so go back to \"installed\" state",
+"5624":"initialize indices into haystack and needle strings",
+"5628":"get haystack string length",
+"5630":"save as how many characters left in haystack, to match",
+"5632":"are there fewer chars remaining to haystack than are in needle?",
+"5634":"yes -\u003e search failed, match impossible now",
+"5636":"get needle string length",
+"5638":"save as how many chars left in needle, to compare",
+"5640":"get current index into needle",
+"5642":" and push to CPU stack",
+"5645":"get char from haystack",
+"5649":"does it match char in needle?",
+"5651":"no -\u003e reset search at next haystack char",
+"5653":"decrement # chars remaining in check in needle",
+"5655":"out of needle chars? -\u003e return the index!",
+"5657":"increment the character indices",
+"5661":"loop back around to check next needle/haystack chars",
+"5664":"pull index to start of match within haystack",
+"5666":"add one to it (cvt from 0-based to 1-based indexing)",
+"5668":"return",
+"5669":"pull (aborted) start of match in haystack",
+"5670":"set as haystack index again",
+"5672":"and increment to start searching again at next char",
+"5676":"reset needle index to zero",
+"5678":"one less haystack char remaining to be checked",
+"5680":" == 0? -\u003e no more matches possible; indicate match failure",
+"5682":"else, restart matching at the new haystack position",
 "5685":"indicate we\u0027re CLICK",
 "5689":"check arg for ON/OFF",
 "5691":"indicate we\u0027re TR--",
@@ -2377,6 +2403,29 @@
 "10817":"read first char of string",
 "10819":"save its value in zpWAccum",
 "10821":"-\u003e clear other bytes of WAccum and read closing paren. Done!",
+"10827":"save CH/CV",
+"10830":"read first arg; x pos",
+"10835":" \u003e= # columns?",
+"10837":"yes -\u003e error",
+"10839":"else, save as cursor x pos (for now)",
+"10841":"read 2nd arg; y pos",
+"10844":"ensure only uses one byte",
+"10849":" \u003e= # rows?",
+"10851":"yes -\u003e error",
+"10853":"else, save as cursor y pos (for now)",
+"10858":"do we have closing paren?",
+"10860":"yes -\u003e we\u0027re getting the tile ID/character at that pos",
+"10862":"else get 3rd arg",
+"10865":" == 0?",
+"10867":"yes -\u003e same as omitted. We\u0027re getting tile ID/character",
+"10869":"if it\u0027s not zero, ensure it\u0027s one",
+"10872":"go and fetch the palette number for this location",
+"10877":"-\u003e restore cursor pos and return the value",
+"10880":"calculate address in VRAM of tile at x, y",
+"10885":"get the char/tile ID for that",
+"10890":"save value to WAccum",
+"10892":"restore original CH/CV",
+"10895":"make a string out of the char found, and return that via expr parse stack",
 "10898":"get parenthesized byte-sized int arg",
 "10901":"get its value into A reg",
 "10908":"set var type = string",
@@ -2457,6 +2506,23 @@
 "11191":" and stuff them into zpMisc",
 "11194":"pull orig string length (leaving in A-reg)",
 "11195":"return (strptr in zpMisc, strlen in A-reg, and substr len in WAccum)",
+"11199":"parse first string arg (haystack)",
+"11202":"load strlen into X reg",
+"11206":"get a char from string",
+"11208":"copy into lineBuffer",
+"11212":"copied whole string?",
+"11213":"no -\u003e loop back, copy next char",
+"11217":"push the string length",
+"11218":"parse comma, then 2nd string arg (needle)",
+"11226":"copy string info from WAccum to WParam",
+"11236":"pull string length",
+"11237":"store in WAccum byte 0",
+"11241":"copy ptr to lineBuffer (holding haystack string) into WAccum+1,2",
+"11247":"perform the matching",
+"11250":"save index result into zpWAccum",
+"11252":"(clearing high byte)",
+"11254":"(and ancilliary bytes)",
+"11258":"skip closing paren, and return our value via expr parse stack",
 "11261":"read args",
 "11264":"save orig str len",
 "11266":"substr len == 0?",
@@ -3412,6 +3478,12 @@
 "17592":"zpPaletteNum aligned with its palette nun, and zpMisc holds aligned mask",
 "17594":"get the palettes byte at the VRAM loc we calc\u0027d",
 "17599":"and return it",
+"17600":"get the palette number for this tile quad",
+"17607":"invert bitmask for palette num",
+"17609":"mask out everything but our palette num",
+"17617":"shift palette number right until it\u0027s",
+"17619":" in the appropriate range",
+"17622":"and return it",
 "17628":"push cursor position to stack",
 "17632":"get 1st arg (x pos)",
 "17635":"\u003e= num screen cols?",
@@ -5200,6 +5272,20 @@
 
 "11544":{
 "Text":"Get the state of buttons (including d-pad) as a set of 8 boolean bits, into $90. WAccum indicates which gamepad to read.",
+"IsFancy":true,
+"BoxMode":false,
+"MaxWidth":80,
+"BackgroundColor":0},
+
+"17600":{
+"Text":"Calls GetTileQuadPaletteVal, and then shifts the value over to the right as needed, so we have the actual number value.",
+"IsFancy":true,
+"BoxMode":false,
+"MaxWidth":80,
+"BackgroundColor":0},
+
+"5622":{
+"Text":"Checks if the string identified by WParam is contained within the string identified by WAccum. Returns the index to the first occurrance, if found, or zero if not found.",
 "IsFancy":true,
 "BoxMode":false,
 "MaxWidth":80,
@@ -13502,6 +13588,104 @@
 "Value":44134,
 "Source":"User",
 "Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"10824":{
+"Label":"errIllVal_AA38",
+"Value":43576,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"17584":{
+"Label":"shLftLp",
+"Value":50336,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"17622":{
+"Label":"rts",
+"Value":50374,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"17617":{
+"Label":"shftPalLp",
+"Value":50369,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"17600":{
+"Label":"GetTileQuadPaletteNum",
+"Value":50352,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"10890":{
+"Label":"finish",
+"Value":43642,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"10880":{
+"Label":"getTileId",
+"Value":43632,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"11206":{
+"Label":"cpyLp",
+"Value":43958,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"5622":{
+"Label":"CheckInStr",
+"Value":38374,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"5619":{
+"Label":"CIS_matchFailedRetZero",
+"Value":38371,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"5643":{
+"Label":"matchLp",
+"Value":38395,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"5664":{
+"Label":"matchSucc",
+"Value":38416,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"5669":{
+"Label":"restartNextHayStkChar",
+"Value":38421,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"5636":{
+"Label":"CIS_tryNextHayStkChar",
+"Value":38388,
+"Source":"User",
+"Type":"GlobalAddr",
 "LabelAnno":"None"}},
 
 "OperandFormats":{
@@ -16234,6 +16418,13 @@
 
 "Extra":null},
 
+"10858":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Ascii",
+"SymbolRef":null,
+"Extra":null},
+
 "10883":{
 "Length":2,
 "Format":"NumericLE",
@@ -16326,6 +16517,26 @@
 "SymbolRef":{
 "Label":"STRLEN_MAX",
 "Part":"Low"},
+
+"Extra":null},
+
+"11239":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"lineBuffer",
+"Part":"Low"},
+
+"Extra":null},
+
+"11243":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"lineBuffer",
+"Part":"High"},
 
 "Extra":null},
 
@@ -24163,6 +24374,84 @@
 "ClearPrevious":true},
 
 "4552":{
+"Variables":[],
+"ClearPrevious":true},
+
+"5622":{
+"Variables":[{
+"DataDescriptor":{
+"Length":1,
+"Format":"NumericLE",
+"SubFormat":"Hex",
+"SymbolRef":null,
+"Extra":null},
+
+"Comment":"",
+"HasWidth":true,
+"Direction":"ReadWrite",
+"MultiMask":null,
+"Label":"vZpHayStkRemn",
+"Value":25,
+"Source":"Variable",
+"Type":"ExternalAddr",
+"LabelAnno":"None"},
+
+{
+"DataDescriptor":{
+"Length":1,
+"Format":"NumericLE",
+"SubFormat":"Hex",
+"SymbolRef":null,
+"Extra":null},
+
+"Comment":"how many chars left to haystack we can index",
+"HasWidth":true,
+"Direction":"ReadWrite",
+"MultiMask":null,
+"Label":"vZpNeedleRemn",
+"Value":27,
+"Source":"Variable",
+"Type":"ExternalAddr",
+"LabelAnno":"None"},
+
+{
+"DataDescriptor":{
+"Length":1,
+"Format":"NumericLE",
+"SubFormat":"Hex",
+"SymbolRef":null,
+"Extra":null},
+
+"Comment":"",
+"HasWidth":true,
+"Direction":"ReadWrite",
+"MultiMask":null,
+"Label":"vZpHayStkIdx",
+"Value":107,
+"Source":"Variable",
+"Type":"ExternalAddr",
+"LabelAnno":"None"},
+
+{
+"DataDescriptor":{
+"Length":1,
+"Format":"NumericLE",
+"SubFormat":"Hex",
+"SymbolRef":null,
+"Extra":null},
+
+"Comment":"",
+"HasWidth":true,
+"Direction":"ReadWrite",
+"MultiMask":null,
+"Label":"vZpNeedleIdx",
+"Value":108,
+"Source":"Variable",
+"Type":"ExternalAddr",
+"LabelAnno":"None"}],
+"ClearPrevious":false},
+
+"5685":{
 "Variables":[],
 "ClearPrevious":true},
 
