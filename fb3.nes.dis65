@@ -1559,6 +1559,32 @@
 "5465":"we\u0027re exiting the handler, so go back to \"installed\" state",
 "5470":"and go to the asked-for line",
 "5475":"we\u0027re exiting the handler, so go back to \"installed\" state",
+"5507":"evaluate string argument (to expr parse stack)",
+"5510":"save away current TXTPTR",
+"5515":"reset TXTPTR to start of program",
+"5521":"are we at program end?",
+"5524":"restore original TXTPTR and exit",
+"5529":"set zpTokenizePtr to TXTPTR + 3 (skipping next-line offset, line num bytes)",
+"5541":"push value of TXTPTR to CPU stack",
+"5545":"detokenize this line into lineBuffer",
+"5548":" (wouldn\u0027t it be more efficient to tokenize FIND contents and search for that instead?)",
+"5549":"pull TXTPTR back off stack (detokenize probably overwrote)",
+"5554":"put FIND arg string info into WParam",
+"5569":"put detokenized current line info into WAccum+1",
+"5577":"init Y reg",
+"5579":"determine length of detokenized line,",
+"5581":" by counting chars in Y reg, until we reach a terminating null",
+"5583":"increment Y",
+"5584":"(always) -\u003e loop, keep counting chars",
+"5586":"save Y-reg (character count) as strlen for WAccum",
+"5588":"check whether user str is contained within detokenized line",
+"5591":"no match? -\u003e advance and check next line",
+"5593":"match; print the line # and (re-)detokenized contents",
+"5596":"pause if Esc is being pressed",
+"5599":"-\u003e check for matches in next line",
+"5602":"get offset to next line of BASIC",
+"5606":"add to TXTPTR (point it at next line)",
+"5616":"-\u003e and loop back around to check for matches",
 "5624":"initialize indices into haystack and needle strings",
 "5628":"get haystack string length",
 "5630":"save as how many characters left in haystack, to match",
@@ -5333,6 +5359,13 @@
 
 "10590":{
 "Text":"Parses an open paren (or errors), then parses an integer and errors unless its value is in the range 0 thru 7 (inclusive - sprite actor number). The parsed value is in both A reg and X reg upon (successful) exit.",
+"IsFancy":true,
+"BoxMode":false,
+"MaxWidth":80,
+"BackgroundColor":0},
+
+"2004":{
+"Text":"Pause listing (within LIST or FIND) if the Escape key is pressed.\r\nHonor STOP key if that\u0027s pressed.",
 "IsFancy":true,
 "BoxMode":false,
 "MaxWidth":80,
@@ -13036,7 +13069,7 @@
 "LabelAnno":"None"},
 
 "2023":{
-"Label":"LIST_readKeyMaybeStop",
+"Label":"ReadKeyMaybeStop",
 "Value":34775,
 "Source":"User",
 "Type":"GlobalAddr",
@@ -13050,7 +13083,7 @@
 "LabelAnno":"None"},
 
 "2004":{
-"Label":"LIST_PauseOnEsc",
+"Label":"PauseOnEsc",
 "Value":34756,
 "Source":"User",
 "Type":"GlobalAddr",
@@ -13780,6 +13813,41 @@
 "19577":{
 "Label":"pos",
 "Value":52329,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"5504":{
+"Label":"restoreTxtPtr_9570",
+"Value":38256,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"5521":{
+"Label":"FIND_linesLoop",
+"Value":38273,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"5579":{
+"Label":"countLp",
+"Value":38331,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"5586":{
+"Label":"lineEnd",
+"Value":38338,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"5602":{
+"Label":"nextLine",
+"Value":38354,
 "Source":"User",
 "Type":"NonUniqueLocalAddr",
 "LabelAnno":"None"}},
@@ -15493,6 +15561,26 @@
 "SymbolRef":{
 "Label":"EH_HANDLER_DEFINED",
 "Part":"Low"},
+
+"Extra":null},
+
+"5569":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"lineBuffer",
+"Part":"Low"},
+
+"Extra":null},
+
+"5573":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"lineBuffer",
+"Part":"High"},
 
 "Extra":null},
 

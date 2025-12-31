@@ -33,7 +33,6 @@ BRANCH STACK:
       LINPUT
       IF
       ON
-      FIND
 
   BUG: RENUM: if it "finds" a #$0B or #$0C within a numeric constant, will it "replace" the next two bytes inappropriately?
 
