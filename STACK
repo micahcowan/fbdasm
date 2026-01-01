@@ -33,26 +33,4 @@ BRANCH STACK:
 
     done:
 
-  BUG: RENUM: if it "finds" a #$0B or #$0C within a numeric constant, will it "replace" the next two bytes inappropriately?
-
-  BAD CODE: stupid constant-space strings
-
-  BUG: RENUM verifies that new line num (1st arg) is greater than or equal to the old line number... but permits the high byte to be lower, provided low byte is higher. RENUM 15,20 is disallowed, but RENUM 257,20 is accepted! (Categorize verification bugs) (RENUM is a v3-only command)
-
-  BUG: document that DATA token (small e) within comments is detected as DATA and handled accordingly. This is because it loops over SkipToken until it sees the DATA token, but SkipToken doesn't skip comments, just the REM or ' and each individual char after until it hits the token! (confirmed for both v2 and v3!) (categorize tokenization bugs)
-
-  Document that NMI toggles between bg updates and sprite updates, when
-   anims active, and how animation works
-  Document how vars are stored in VARTAB, in DETAILS.md (and BUGS.md)
   Document keyboard mapping, and how fn keys work with ReadChar
-
-Arrays: DIM A$(10)
-
-  var name     max idx dim1
-     +--\         |
-     |   |        |
-Var type |  n.dimens   max idx dim2
-|    |   |     |  |     |
-$83 $41 $00 | $00 $0A [$04]   <-- (first byte of first element...)
-|    |   |     |  |     |
-$02 $49 $00 | $01 $03 $03
