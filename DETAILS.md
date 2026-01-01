@@ -107,6 +107,12 @@ Offset 5 through 12 are the four pairs of bytes that comprise the 16-bit values 
 
 If we had declared an array of strings, then instead of 4 * 2 = 8 bytes starting at offset 5 for the elements' content, we'd see 4 * 33 = 132 bytes, where each string element gets a byte for length, a byte for a null terminator, and space for up to 31 characters. Whether it's an int or a string, the representation will always be the same as when it's a single, simple var, except 3 bytes less since it doesn't need to separately record a type, nor a name.
 
+#### Two-Dimension Array Variable Representation
+
+The representation of a two-dimensional array is the same as that of a one-dimensional array, except that the value at offset 3 will be `$01` instead of `$00` (to indicate its two-dimensionality), and it will be followed by two "max index" bytes instead of one (in the same order you specify them in the `DIM` statement. This of course means that, for array variables, if the dimensionality value is `$01`, the preamble will be one byte longer than if it's `$00` (6 bytes instead of 5).
+
+The elements of the array will be stored in the order of the first index incrementing first: the contents of `A(0,0)` will be followed by `A(1,0)` (and *not* `A(0,1)`), and then by `A(2,0)`, until the max index is reached for the *first* index. Only then do you get the contents for `A(0,1)`, which will of course be followed by the contents of `A(1,1)`. Note that this differs from, e.g., an "array of arrays" C, where `array[0][0]` will be followed consecutively by `array[0][1]`.
+
 ## The NMI Dispatch
 
 The NMI vector at `#$FFFA` has the value `#$00ED`, an in-memory location in the Zero Page. Family BASIC sets RAM locations `$ED` through `$EF` to: `#$4C`, `#$71`, and `#$89`, very early on in [_Reset](https://famibe.addictivecode.org/disassembly/fb3.nes.html#Sym_Reset), before enabling NMI for vertical blanking. These byte values correspond to `jmp $8971`, which transfers execution to [NMI_DefaultHandler](https://famibe.addictivecode.org/disassembly/fb3.nes.html#SymNMI_DefaultHandler). Family BASIC never touches those bytes again, but there's nothing stopping a BASIC program author with solid 6502 programming skills, from installing a custom machine-code handler in memory, and poking its adress in place of the default handler's address. Presumably, that's why a RAM trampoline was used for NMI in the first place.
