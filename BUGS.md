@@ -47,6 +47,22 @@ But due to a bug in that check, it only winds up refusing to proceed if the low 
 
 So, while it will refuse a command like `RENUM 20, 30` (meaning, renumber from line 30, to start as line 20), it will accept `RENUM 20, 260`. If you had lines 10, 20, 260, and 270 before running that command, you'd wind up with line numbers 10, 20, 10, and 20&mdash;the check failed to do its job!
 
+### FOR Doesn't Check Expression Types
+
+While the `FOR` command does type-check the indexing variable, it does *not* check the type of the initializer or comparison expressions. It will therefore accept and execute a command like `FOR I="HELLO" to 10`. `I` will then be initialized with a 16-bit value whose low byte is the length of the string (5, in this example), and whose high byte is an index into the general-purpose buffer (likely, `$80`).
+
+Example:
+
+```
+FOR I="HELLO" TO 10:PRINT I:NEXT
+-32763
+-32752
+-32761
+...
+```
+
+It will keep going until I reaches 10, which is liable to take a while, counting up from -32,763.
+
 ## Comment Parse Bugs
 
 ### REM Comments Corrupted by Katakana Small Yo (ョ)
