@@ -14,24 +14,16 @@ BRANCH STACK:
   CmdFn_BGTOOL
 
   Update InitVars and InitPpuApu with zp vars now that PLAY vars are
-   (hopefull) known
+   (hopefully) known
   .
   CmdFn_PLAY
   NMICMD_PlayMusic
     $A0A3 - after synching APU frame counter
 
-  All routines in tbl_Commands and tbl_Functions
-    start with low-hanging fruit, then work back through
-    (tbl_Functions will tend to be all low-hanging)
 
-    punted:
-      BGTOOL
-      PRINT
-      FOR
-      NEXT
 
-    done:
-
+  The scroll adjustment that happens in INPUT at @adjForScrlLp - is that a bug?
+    Doesn't seem right to me.
   Separate DETAILS.md into separate documents, and stick 'em all in a
     docs/ directory, along with BUGS.md.
   Document keyboard mapping, and how fn keys work with ReadChar

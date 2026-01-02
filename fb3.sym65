@@ -104,8 +104,12 @@ zpKyRptLongCtr  @  $77      ; Key-repeat: delay count-down to first key repeat o
 zpKyNotRpt      @  $78      ; Key-repeat: #$01 = waiting on first key repeat, #$00 = on subsequent repeats
 zpKyRptShtCtr   @  $79      ; Key-repeat: delay count-down for repeating key past the first, longer pause.
 zpKeyRepeating  @  $7B      ; Key-repeat: #$FF = key is actively repeating, #$00 = key not repeating
+zp7C            @  $7C
+zp7D            @  $7D
 zp7E            @  $7E
-zp80            @  $80
+zpForLimitVal   @  $80    2 ; the limiting value that will cause an exit from FOR statement
+zpForStepVal    @  $82    2 ; the step value by which to increment the index variable for a FOR statement
+zpForNxtLnLnk   @  $84    2 ; link to the line of BASIC after the current FOR loop
 zpLNumStart     @  $86    2 ; Starting line number of a line-number range
 zpLNumEnd       @  $88    2 ; Ending line number of a line-number range
 zpVarName       @  $8A    2 ; Two-letter variable name
@@ -214,6 +218,9 @@ genPurposeBuf   @  $700   256; user directive messages (at least) get writen out
 COLS = 28
 ROWS = 24
 NUM_ACTORS = 8  ; number of animated characters ("actors") in Family BASIC
+
+FOR_STK_MARKER   = $00FD  ; special CPU stack marker for FOR-loop data
+GOSUB_STK_MARKER = $00FF  ; special CPU stack marker for RETURN data
 
 STRLEN_MAX = 32
 

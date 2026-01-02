@@ -1078,6 +1078,40 @@
 "2182":"no, high byte doesn\u0027t match -\u003e skip flag clear",
 "2184":"nevermind, re-clear the stopped flag",
 "2195":"save current running context for later restoration via CONT cmd",
+"2261":"no args? -\u003e CRLF and return",
+"2263":"evaluate argument",
+"2268":"is it string?",
+"2270":"yes -\u003e handle string arg",
+"2275":"else, copy integer value to WAccum",
+"2282":"convert to decimal string",
+"2285":"queue it for output",
+"2288":"tell NMI handler to output the buffer",
+"2291":"-\u003e and handle any more args",
+"2294":"get string length",
+"2297":"empty string? -\u003e already done with string then!",
+"2301":"point zpMisc at string",
+"2311":"get a char from string",
+"2313":"is it a printable character?",
+"2317":"if not, replace with null char",
+"2319":"copy the char into lineBuffer",
+"2322":"move to next character",
+"2323":"decrement string length",
+"2326":"strlen != 0? -\u003e loop around to copy next character",
+"2330":"null-terminate lineBuffer",
+"2336":"queue contents of lineBuffer to be printed",
+"2339":"-\u003e print queued output, handle next arg",
+"2345":"no args remain?",
+"2348":"yes -\u003e CRLF then return",
+"2350":"else, got semicolon?",
+"2352":"yes -\u003e",
+"2354":"else, got comma?",
+"2356":"no -\u003e just print as another arg (if any)",
+"2358":"(TAB)",
+"2360":"print TAB",
+"2363":"move past semicolon",
+"2366":"out of args? just end (no CRLF on semicolon or comma)",
+"2368":"else -\u003e handle whatever else there is",
+"2374":"(always) -\u003e handle more args",
 "2386":"-\u003e rts",
 "2407":"zpOutTxtCurPos \u003c- #$FF",
 "2418":"-\u003e rts",
@@ -1733,6 +1767,70 @@
 "6132":"check low bytes",
 "6134":"arg \u003c zpVAREND? -\u003e error. Below already-used space",
 "6136":"we\u0027re good: set the end of BASIC \"Free space\" to the arg.",
+"6160":"pull up return address, save it aside",
+"6165":"evaluate index var",
+"6170":"index var is int?",
+"6172":"no -\u003e error! type mismatch",
+"6176":"save pointer to index var data",
+"6178":"and push it (two bytes) onto CPU stack",
+"6184":"skip \u0027=\u0027 that follows index var",
+"6187":"evaluate initial value for index (BUG: not type checked!)",
+"6190":"pull index var data poiner from stack, restore it",
+"6198":"copy initializer value to index var",
+"6212":"do we have TO token next?",
+"6214":"no -\u003e syntax error",
+"6219":"evaluate limiting expression (BUG: not type checked!)",
+"6225":"save the limiting value",
+"6232":"store default STEP value (1) at expr stack top",
+"6242":"end of FOR command?",
+"6245":"yes -\u003e stick with default STEP value",
+"6247":"got a STEP token?",
+"6249":"no -\u003e syntax error",
+"6254":"evaluate STEP value",
+"6260":"save STEP value (whether given or default)",
+"6267":"save TXTPTR for pushing to stack",
+"6277":"push link to next line of BASIC (2 bytes)",
+"6281":"push current line number (2 bytes)",
+"6287":"push more context, restore return value, and return to it",
+"6295":"pull up caller routine\u0027s return address and save it aside",
+"6301":"pull up next byte",
+"6302":"is it a FOR marker byte?",
+"6304":"no -\u003e error",
+"6306":"pull up second marker byte",
+"6307":"not match? -\u003e error",
+"6310":"pull up TXTPTR value for just-after the FOR statement",
+"6316":"pull up STEP increment value",
+"6322":"pull up FOR limit expression value",
+"6328":"pull up pointer to the index var\u0027s value",
+"6334":"pull line number",
+"6340":"pull link to the next line of BASIC after FOR statement",
+"6347":"copy index var\u0027s value into WAccum",
+"6359":"limit expr less than index var?",
+"6361":"yes -\u003e FOR loop is done!",
+"6363":"push link to line of BASIC after current FOR statement",
+"6366":"and set it as current next line",
+"6373":"push line number of FOR statement",
+"6376":"and set as current line number",
+"6383":"push the pointer to the contents of the index variable (2 bytes)",
+"6389":"push the FOR limitnig value (2 bytes)",
+"6395":"push the STEP increment value (2 bytes)",
+"6401":"push the TXTPTR value for just-after the FOR statement (2 bytes)",
+"6404":"and also restore it as current TXTPTR value",
+"6411":"push the FOR marker bytes (2)",
+"6417":"-\u003e now restore the saved return address, and return to it",
+"6420":"is the STEP value negative?",
+"6422":"yes -\u003e handle negative STEP (no reversal)",
+"6424":"evaluate STEP",
+"6427":"compare updated index var to limit",
+"6430":"reverse the carry bit/result of comparison",
+"6433":"and return",
+"6436":"advance index var by STEP val",
+"6439":"-\u003e compare new index var to limit value, and return",
+"6442":"copy step value to WParam",
+"6450":"add step to index var",
+"6457":"set that as new value for index var (I += STEP)",
+"6464":"load limit value into WParam (for Compare)",
+"6472":"-\u003e return (Compare will be next)",
 "6476":"end of cmd? -\u003e error",
 "6478":"got a double-quote?",
 "6480":"no -\u003e skip handling it then",
@@ -2280,11 +2378,13 @@
 "9379":"yes -\u003e syntax error (we\u0027re expecting an op or atom!)",
 "9381":"have a single-digit number?",
 "9385":"unary \u0027-\u0027?",
-"9389":"NOT unary op",
+"9389":"NOT unary op?",
 "9393":"decimal number?",
 "9397":"hex number?",
 "9401":"unary \u0027+\u0027?",
 "9403":"yes -\u003e (no effect - just incr zpTXTPTR!)",
+"9405":"parenthesized expression?",
+"9409":"string literal?",
 "9413":"punctuation or raw digits?",
 "9415":"matched -\u003e syntax error",
 "9417":"\u0027A\u0027 thru \u0027Z\u0027?",
@@ -14270,6 +14370,132 @@
 "Value":39390,
 "Source":"User",
 "Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"2377":{
+"Label":"doCRLF_8939",
+"Value":35129,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"2294":{
+"Label":"strArg",
+"Value":35046,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"2363":{
+"Label":"semicolon",
+"Value":35115,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"2345":{
+"Label":"PRINT_afterArg",
+"Value":35097,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"2371":{
+"Label":"notComma",
+"Value":35123,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"2319":{
+"Label":"prAble",
+"Value":35071,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"2311":{
+"Label":"strCpyLp",
+"Value":35063,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"2288":{
+"Label":"PRINT_outputThenNextArg",
+"Value":35040,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"6153":{
+"Label":"errTypeMism_97F9",
+"Value":38905,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"6257":{
+"Label":"noStep",
+"Value":39009,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"5804":{
+"Label":"RestoreReturnAddrAndRts",
+"Value":38556,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"6417":{
+"Label":"restoreRtnAddrAndRts_9901",
+"Value":39169,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"6383":{
+"Label":"FOR_NEXT_PushStuffAndRts",
+"Value":39135,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"6363":{
+"Label":"eq",
+"Value":39115,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"6420":{
+"Label":"NEXT_doStep",
+"Value":39172,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"6434":{
+"Label":"clcRts",
+"Value":39186,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"6436":{
+"Label":"negStep",
+"Value":39188,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"6442":{
+"Label":"doStep",
+"Value":39194,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
 "LabelAnno":"None"}},
 
 "OperandFormats":{
@@ -14884,6 +15110,20 @@
 "Label":"err_CC",
 "Part":"Low"},
 
+"Extra":null},
+
+"2350":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Ascii",
+"SymbolRef":null,
+"Extra":null},
+
+"2354":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Ascii",
+"SymbolRef":null,
 "Extra":null},
 
 "2420":{
@@ -16031,12 +16271,42 @@
 "SymbolRef":null,
 "Extra":null},
 
+"5752":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"GOSUB_STK_MARKER",
+"Part":"High"},
+
+"Extra":null},
+
+"5755":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"GOSUB_STK_MARKER",
+"Part":"Low"},
+
+"Extra":null},
+
 "5767":{
 "Length":2,
 "Format":"NumericLE",
 "SubFormat":"Symbol",
 "SymbolRef":{
 "Label":"err_RG",
+"Part":"Low"},
+
+"Extra":null},
+
+"5779":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"GOSUB_STK_MARKER",
 "Part":"Low"},
 
 "Extra":null},
@@ -16091,12 +16361,72 @@
 
 "Extra":null},
 
+"6170":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"TYP_INT",
+"Part":"Low"},
+
+"Extra":null},
+
+"6212":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"tok_TO",
+"Part":"Low"},
+
+"Extra":null},
+
+"6247":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"tok_STEP",
+"Part":"Low"},
+
+"Extra":null},
+
 "6290":{
 "Length":2,
 "Format":"NumericLE",
 "SubFormat":"Symbol",
 "SymbolRef":{
 "Label":"err_NF",
+"Part":"Low"},
+
+"Extra":null},
+
+"6302":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"FOR_STK_MARKER",
+"Part":"Low"},
+
+"Extra":null},
+
+"6411":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"FOR_STK_MARKER",
+"Part":"High"},
+
+"Extra":null},
+
+"6414":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"FOR_STK_MARKER",
 "Part":"Low"},
 
 "Extra":null},
@@ -25327,6 +25657,62 @@
 "Variables":[],
 "ClearPrevious":true},
 
+"6156":{
+"Variables":[{
+"DataDescriptor":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Hex",
+"SymbolRef":null,
+"Extra":null},
+
+"Comment":"pointer to the value of the index variable",
+"HasWidth":true,
+"Direction":"ReadWrite",
+"MultiMask":null,
+"Label":"vZpForIdxVarPtr",
+"Value":124,
+"Source":"Variable",
+"Type":"ExternalAddr",
+"LabelAnno":"None"},
+
+{
+"DataDescriptor":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Hex",
+"SymbolRef":null,
+"Extra":null},
+
+"Comment":"",
+"HasWidth":true,
+"Direction":"ReadWrite",
+"MultiMask":null,
+"Label":"vZpForLineNum",
+"Value":134,
+"Source":"Variable",
+"Type":"ExternalAddr",
+"LabelAnno":"None"},
+
+{
+"DataDescriptor":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Hex",
+"SymbolRef":null,
+"Extra":null},
+
+"Comment":"",
+"HasWidth":true,
+"Direction":"ReadWrite",
+"MultiMask":null,
+"Label":"vZpForSvTXTPTR",
+"Value":136,
+"Source":"Variable",
+"Type":"ExternalAddr",
+"LabelAnno":"None"}],
+"ClearPrevious":false},
+
 "6476":{
 "Variables":[{
 "DataDescriptor":{
@@ -25399,7 +25785,7 @@
 "Source":"Variable",
 "Type":"ExternalAddr",
 "LabelAnno":"None"}],
-"ClearPrevious":false},
+"ClearPrevious":true},
 
 "6683":{
 "Variables":[],
