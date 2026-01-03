@@ -140,24 +140,18 @@ zpNextDataIdx   @  $B4      ; Char index into line at zpNextDataPtr to start fro
 zpErrCode       @  $B5
 zpUnusedErrVar  @  $B6      ; This var is only ever used in one place, where it's set to zero.
 zpErrLineNum    @  $B7    2 ; Line number where an error happened
-zpB9            @  $B9
-zpBA            @  $BA
-zpBB            @  $BB
-zpBC            @  $BC
-zpBD            @  $BD
-zpBE            @  $BE
-zpBF            @  $BF
-zpC0            @  $C0
-zpC1            @  $C1
-zpC3            @  $C3
-zpC4            @  $C4
-zpC5            @  $C5
-zpCF            @  $CF
-zpD0            @  $D0
-zpD1            @  $D1
-zpD2            @  $D2
-zpD3            @  $D3
-zpD4            @  $D4
+zpTempo         @  $B9    3 ; tempo setting for each of the three voices
+zpVolume        @  $BC    3 ; volume level for each of the three voices
+zpOctave        @  $BF    3 ; octave # for each of the three voices
+zpSharpVal      @  $C2      ; whether to sharp next note. 2 = yes, 0 = no
+zpNoteLen       @  $C3    3 ; note length for each voice
+zpPlayVoxIdx    @  $C6    3 ; start index into genPurposeBuf for each voice
+zpPlayStatus    @  $C9      ; <0: error. >0: active voices mask. ==0: done playing.
+zpCurVoice      @  $CA      ; the voice the NMI music player is working on
+zpNoteRealLen   @  $CB    3 ; tempo-adjusted note length for each of the three voices
+zpCurVoxMask    @  $CE      ; SND_CHN mask for the current sound channel
+zpEnvelope      @  $CF    3 ; envelope setting for each voice. ENV_UNUSED (#$30) when no envelope, zero when using volume as envelope
+zpDuty          @  $D2    3 ; cycle duty for each voice.
 zpNmiCurFrCnts  @  $D5    2 ; (NMI) Pointer to vector being used for current actor's anim frame counts, for each facing
 zpNmiNumFrames  @  $D7      ; (NMI) Holds the number of anim frames for the actor's cur facing (in high nybble)
 zpNmiCurSprSht  @  $D9    2 ; (NMI) Pointer to sheet of sprites for each facing
@@ -215,20 +209,38 @@ defMovSPosX     @  $6C6      ; Actor MOVE, current X position
 defMovSPosY     @  $6C7      ; Actor MOVE, current Y position
 genPurposeBuf   @  $700   256; user directive messages (at least) get writen out to here
 
-COLS = 28
-ROWS = 24
-NUM_ACTORS = 8  ; number of animated characters ("actors") in Family BASIC
-
-FOR_STK_MARKER   = $00FD  ; special CPU stack marker for FOR-loop data
-GOSUB_STK_MARKER = $00FF  ; special CPU stack marker for RETURN data
-
-STRLEN_MAX = 32
-
 bgGotFlag       @  $6004  ; non-zero if bg data is saved at $6C00
 bgGetVScroll    @  $6005  ; saved vscroll for saved screen data
 basicProgram    @  $6006  ; The start of the BASIC program in memory
 bgGetRam        @  $6C00 1024; region to save bg data with BGGET
 memoryTop       @  $6FFF  ; What FRETOP is set to by default
+
+COLS = 28
+ROWS = 24
+
+STRLEN_MAX = 32
+
+NUM_ACTORS = 8  ; number of animated characters ("actors") in Family BASIC
+
+FOR_STK_MARKER   = $00FD  ; special CPU stack marker for FOR-loop data
+GOSUB_STK_MARKER = $00FF  ; special CPU stack marker for RETURN data
+
+PLAY_INDEX_V0 = 0
+PLAY_INDEX_V1 = 33
+PLAY_INDEX_V2 = 66
+
+; mask values for SND_CHN ($4015)
+CHAN_MASK_TRI  = 4
+CHAN_MASK_SQR1 = 2
+CHAN_MASK_SQR0 = 1
+
+ENV_USED   = $00    ; value used with zpEnvelope to indicate envelope in use for given voice
+ENV_UNUSED = $30    ; value used with zpEnvelope to indicate envelope not used for given voice
+
+SHARP_UNUSED = $00
+SHARP_USED   = $02
+
+NOTE_VAL_OCTAVE = 24
 
 NC_NoCmd                    = 0
 NC_FlushOutp                = 1

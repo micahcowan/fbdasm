@@ -13,13 +13,7 @@ BRANCH STACK:
 
   CmdFn_BGTOOL
 
-  Update InitVars and InitPpuApu with zp vars now that PLAY vars are
-   (hopefully) known
-  .
-  CmdFn_PLAY
-  NMICMD_PlayMusic
-    $A0A3 - after synching APU frame counter
-
+  Add comments to InitPpuApu
 
 
   The scroll adjustment that happens in INPUT at @adjForScrlLp - is that a bug?

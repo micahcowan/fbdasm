@@ -964,6 +964,13 @@
 "1470":"not the end-\u003e copy next byte",
 "1472":"source ptr reached end; move end back to dest ptr",
 "1475":"subtract length of deleted line from prog end",
+"1652":"initialize tempo for each musical voice",
+"1660":"set a default note length for each musical voice",
+"1668":"set a default octave for each musical voice",
+"1670":" (dotted half-note, according to manual)",
+"1676":"set default volume (max) for each musical voice",
+"1684":"turn off envelope for each musical voice",
+"1690":"set duty cycle (50%) for each musical voice",
 "1698":"clear stop/trace/error flags",
 "1701":"clear auto-insert mode",
 "1707":"reset FRETOP",
@@ -2233,12 +2240,204 @@
 "8213":"mark that we\u0027re not in the middle of a line for next READ",
 "8217":"move str info onto expression stack",
 "8232":"and call the fn that will copy that to the var",
+"8238":"parse following string",
+"8241":"is the string empty?",
+"8244":"yes -\u003e nothing to do, then",
+"8248":"push TXTPTR to CPU stack",
+"8252":"point TXTPTR at the arg string",
+"8262":"point vZpPlayPtr at the general-purpose buffer",
+"8272":"copy one voice from the arg string into genPurposeBuf",
+"8277":"advance buffer pointer to start of next voice",
+"8281":"copy next voice from the arg string into genPurposeBuf",
+"8286":"advance buffer pointer to start of next voice",
+"8290":"copy final voice from the arg string into genPurposeBuf",
+"8295":"initialize note lengths (1, bc will be decremented before check)",
+"8303":"initialize (and disable) the APU sweep registers",
+"8311":"record all three voices as active",
+"8313":"disable DMA and noise channels, enable triangle and the square waves",
+"8318":"tell NMI handler to start playing the music",
+"8320":"Stop if STOP is pressed",
+"8323":"check status of player",
+"8325":" \u003c 0? -\u003e error occurred, handle",
+"8327":" \u003e 0? -\u003e still playing, keep looping",
+"8329":"else, done playing",
+"8331":"disable NMI command",
+"8333":"disable all sound channels",
+"8336":"restore TXTPTR to point at BASIC",
+"8342":"-\u003e done!",
+"8343":"reset NMI handler command",
+"8347":"turn off all sound channels",
+"8350":" -\u003e syntax error",
 "8353":"push X (value is 18)",
 "8355":"push Y",
 "8359":"synchronize APU frame counter",
 "8365":"pull Y",
 "8367":"pull X",
 "8369":"pull A (pushed at start of NMI_DefaultHandler)",
+"8370":"-\u003e exit NMI handling",
+"8373":"start with third voice (voice 2)",
+"8375":"(the triangle channel)",
+"8379":"did a syntax error occur?",
+"8381":"yes -\u003e exit NMI so it can be handled by PLAY command",
+"8383":"update this voice\u0027s state for where we are in the music",
+"8388":"next (lower) voice number",
+"8390":"-\u003e loop back to handle voice, until all three handled",
+"8392":"-\u003e return and exit NMI handler",
+"8395":"is the current voice still playing?",
+"8397":"no -\u003e return, handle next voice",
+"8401":"is this voice currently playing a note or rest?",
+"8403":"yes -\u003e return, nothing to process",
+"8407":"set play ptr to next PLAY char for this voice",
+"8411":"deactivate sharp by default",
+"8415":"get cur PLAY char. End of PLAY string for cur voice?",
+"8417":"not end -\u003e handle the char",
+"8426":"remove this channel\u0027s mask from zpPlayStatus",
+"8433":"update this voice\u0027s buffer index (so it stays pointing at null char)",
+"8435":"-\u003e and return, handle next voice",
+"8436":"increment PLAY ptr (next char)",
+"8438":"was the play character a SPACE?",
+"8440":"yes -\u003e do nothing, handle next char",
+"8442":"got \u0027M\u0027 (envelope)?",
+"8444":"no -\u003e check next",
+"8446":"get M arg",
+"8448":"no arg? -\u003e error",
+"8450":"default (unused) value, assuming arg is \u00270\u0027",
+"8458":"neither 0 nor 1? -\u003e error",
+"8460":"mark envelope as used",
+"8462":"advance to next PLAY char",
+"8466":"set env use/don\u0027t use for this voice",
+"8468":"-\u003e handle next PLAY char",
+"8470":"got \u0027O\u0027 (octave)?",
+"8472":"no -\u003e check next",
+"8474":"get O arg",
+"8476":"no arg? -\u003e error",
+"8478":"advance to next char",
+"8480":" \u003e= \u00276\u0027?",
+"8482":"yes -\u003e error",
+"8485":"convert from ASCII digit, to binary number",
+"8487":" \u003c 0? -\u003e error",
+"8491":"set the octave value for cur voice",
+"8493":"-\u003e handle next PLAY char",
+"8495":"got \u0027T\u0027 (tempo)?",
+"8497":"no -\u003e check next",
+"8499":"get T arg",
+"8501":"no arg? -\u003e error",
+"8503":"advance to next PLAY char",
+"8505":"arg char too high to be a digit?",
+"8507":"yes -\u003e error",
+"8510":"convert from ASCII digit, to binary number",
+"8512":" \u003c= 0? -\u003e error",
+"8518":"set tempo for current voice",
+"8520":"-\u003e handle next PLAY char",
+"8522":"got \u0027V\u0027 (volume, or envelope length)?",
+"8524":"no -\u003e check next",
+"8526":"get first char of V arg",
+"8528":"no arg? -\u003e error",
+"8530":"advance next PLAY char",
+"8534":" \u003e \u00279\u0027? -\u003e error",
+"8537":"convert from ASCII digit, to binary number",
+"8539":" \u003c 0? -\u003e error",
+"8541":"was first char a \u00271\u0027?",
+"8543":"no -\u003e just a single-digit arg for V, then",
+"8545":"else, check for a 2nd digit",
+"8547":"char value \u003e= \u00276\u0027?",
+"8549":"yes -\u003e not part of our arg; so, just \u00271\u0027",
+"8552":"convert from ASCII code, to binary number of digit",
+"8554":"char \u003c \u00270\u0027? -\u003e not part of arg, so just \u00271\u0027",
+"8557":"the first \u00271\u0027 was a tens digit. Add ten to value from 2nd digit.",
+"8559":"advance to next PLAY char",
+"8561":"-\u003e set the volume",
+"8567":"set volume (or envelope) to user-specified level",
+"8569":"-\u003e handle next PLAY char",
+"8576":"got \u0027Y\u0027 (duty)?",
+"8578":"no -\u003e check next",
+"8580":"get Y arg",
+"8582":" \u003e= \u00274\u0027?",
+"8584":"yes -\u003e error",
+"8587":"convert from ASCII code, to binary number",
+"8589":" \u003c= 0? -\u003e error",
+"8591":"advance to next PLAY char",
+"8595":"shift left 3 places, for use as value in APU volume register",
+"8598":"save as \"duty\" value",
+"8600":"-\u003e handle next PLAY char",
+"8602":"got \u0027#\u0027?",
+"8604":"no -\u003e check next",
+"8608":"mark next note name as sharp",
+"8610":"-\u003e handle next PLAY char",
+"8612":"got \u0027R\u0027? (rest)",
+"8614":"no -\u003e check next",
+"8619":"take the current voice #",
+"8621":"multiply by 4, to get an APU register index",
+"8623":"set as the Y-reg value",
+"8624":"silence value for square channels",
+"8626":"are we on the triangle channel?",
+"8628":"no -\u003e keep square silence value",
+"8630":"yes -\u003e use silence value for triangle channel",
+"8632":"set silence for current voice\u0027s sound channel",
+"8635":"-\u003e return",
+"8636":"char \u003e= \u0027A\u0027?",
+"8638":"no -\u003e syntax error (unrecognized char)",
+"8640":"char \u003e \u0027G\u0027?",
+"8642":"yes -\u003e syntax error",
+"8644":"push char value",
+"8645":"get the note length, adjusted by tempo",
+"8648":"get the current voice number",
+"8651":"multiply by 4, for APU register index",
+"8654":"is this the triangle channel?",
+"8656":"no -\u003e handle for squarewave channel",
+"8658":"get the tempo-adjusted note length",
+"8661":"subtract 1",
+"8663":"less than 14?",
+"8665":"yes -\u003e just use the value",
+"8667":"else, use max of 14",
+"8669":"shift left 2 places",
+"8671":"are we using \"envelope\" for the triangle channel?",
+"8673":"yes, using -\u003e use our note-len-based value",
+"8675":"no, not using: set control flag, and set counter reload to 1",
+"8681":"merge the duty, envelope, and volume values",
+"8687":"write duty, envelope, and volume to APU register",
+"8690":"pull the note name (\u0027A\u0027 to \u0027G\u0027)",
+"8692":"convert A-G -\u003e 0-6",
+"8694":"set as Y-reg value",
+"8695":"get voice\u0027s current octave",
+"8698":"get base note value for the current octave",
+"8702":"add to that, the value for the note name",
+"8705":"add 2 if it\u0027s sharped",
+"8707":"save note value in X reg",
+"8708":"get current voice",
+"8710":"times 4 for APU register index",
+"8712":"save in Y reg",
+"8713":"triangle channel?",
+"8715":"no -\u003e use note value as-is for square waves",
+"8717":"yes, triangle: add one octave to get the actual note we\u0027ll use",
+"8722":"get the period length for the note value,",
+"8725":" and set the appropriate APU registers to trigger",
+"8728":" our note\u0027s pitch",
+"8734":"-\u003e return",
+"8735":"load the next char after note name (or \u0027R\u0027)",
+"8737":"no char after? -\u003e done parsing",
+"8739":" \u003e \u00279\u0027?",
+"8741":"yes -\u003e not a note length, done parsing",
+"8744":"convert from ASCII digit code, to binary number",
+"8746":" \u003c 0? -\u003e not a note length, done parsing",
+"8749":"convert number to a note length (from table)",
+"8754":"set note length for this voice",
+"8756":"advance to next PLAY char",
+"8763":"stick note length into WAccum (single byte)",
+"8769":"stick voice\u0027s tempo mark into WParam (single byte)",
+"8771":"multiply these",
+"8778":"set it as the \"real\" note length",
+"8782":"update the PLAY buffer index for this voice",
+"8784":"-\u003e and return",
+"8785":"end of string?",
+"8788":"yes -\u003e null-terminate and return",
+"8790":"decrement string length",
+"8793":"get a char from the string (and increment pointer)",
+"8796":"colon? -\u003e null-terminate and return",
+"8802":"copy it into general-purpose buffer",
+"8804":"advance genPurposeBuf pointer",
+"8806":"(always) -\u003e loop around to copy next character",
+"8812":"terminate with a null char",
 "8836":"anything in the high byte?",
 "8839":"We\u0027re looking for values that fit in a byte",
 "8875":"process more tightly-bound operations",
@@ -5648,6 +5847,13 @@
 
 "15816":{
 "Text":"remove trailing spaces from lineBuffer",
+"IsFancy":true,
+"BoxMode":false,
+"MaxWidth":80,
+"BackgroundColor":0},
+
+"189":{
+"Text":"(note names begin with \u0027A\u0027, but values start at \u0027C\u0027 and wrap around)",
 "IsFancy":true,
 "BoxMode":false,
 "MaxWidth":80,
@@ -14496,6 +14702,258 @@
 "Value":39194,
 "Source":"User",
 "Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"8342":{
+"Label":"rts_A086",
+"Value":41094,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"8808":{
+"Label":"nullTerm",
+"Value":41560,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"8785":{
+"Label":"PLAY_copyVoiceToGenPurpBuf",
+"Value":41537,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"8343":{
+"Label":"playError",
+"Value":41095,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"8320":{
+"Label":"playLp",
+"Value":41072,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"8392":{
+"Label":"rts_A0B8",
+"Value":41144,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"8371":{
+"Label":"PM_FeedTheVoices",
+"Value":41123,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"8379":{
+"Label":"voiceLp",
+"Value":41131,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"8393":{
+"Label":"PM_FeedCurVoice",
+"Value":41145,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"8413":{
+"Label":"PM_DoCurPlayChar",
+"Value":41165,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"8436":{
+"Label":"PM_ProcessCurPlayChar",
+"Value":41188,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"8442":{
+"Label":"PM_isCharM",
+"Value":41194,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"8470":{
+"Label":"PM_isCharO",
+"Value":41222,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"8495":{
+"Label":"PM_isCharT",
+"Value":41247,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"8522":{
+"Label":"PM_isCharV",
+"Value":41274,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"8576":{
+"Label":"PM_isCharY",
+"Value":41328,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"8602":{
+"Label":"PM_isCharSharp",
+"Value":41354,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"8612":{
+"Label":"PM_isCharR",
+"Value":41364,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"8636":{
+"Label":"PM_isCharNoteName",
+"Value":41388,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"8571":{
+"Label":"PM_SetSyntaxError",
+"Value":41323,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"8462":{
+"Label":"setEnv",
+"Value":41214,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"8520":{
+"Label":"pmDoCurPlayChar_A138",
+"Value":41272,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"8565":{
+"Label":"setVol",
+"Value":41317,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"8563":{
+"Label":"setVolOne",
+"Value":41315,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"179":{
+"Label":"tbl_NoteLengths",
+"Value":32931,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"8758":{
+"Label":"parseDone",
+"Value":41510,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"8735":{
+"Label":"PM_calcNoteLen",
+"Value":41487,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"8632":{
+"Label":"setVol",
+"Value":41384,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"8681":{
+"Label":"square",
+"Value":41433,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"8687":{
+"Label":"setVol",
+"Value":41439,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"8669":{
+"Label":"notMax",
+"Value":41421,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"8677":{
+"Label":"keepEnv",
+"Value":41429,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"196":{
+"Label":"tbl_OctaveBaseNoteVals",
+"Value":32948,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"189":{
+"Label":"tbl_NoteNameToValue",
+"Value":32941,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"35":{
+"Label":"tbl_NoteValToPdLen",
+"Value":32787,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"8722":{
+"Label":"sq",
+"Value":41474,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
 "LabelAnno":"None"}},
 
 "OperandFormats":{
@@ -14575,30 +15033,611 @@
 "Extra":null},
 
 "35":{
-"Length":144,
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Hex",
+"SymbolRef":null,
+"Extra":null},
+
+"37":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Hex",
+"SymbolRef":null,
+"Extra":null},
+
+"39":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Hex",
+"SymbolRef":null,
+"Extra":null},
+
+"41":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Hex",
+"SymbolRef":null,
+"Extra":null},
+
+"43":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Hex",
+"SymbolRef":null,
+"Extra":null},
+
+"45":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Hex",
+"SymbolRef":null,
+"Extra":null},
+
+"47":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Hex",
+"SymbolRef":null,
+"Extra":null},
+
+"49":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Hex",
+"SymbolRef":null,
+"Extra":null},
+
+"51":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Hex",
+"SymbolRef":null,
+"Extra":null},
+
+"53":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Hex",
+"SymbolRef":null,
+"Extra":null},
+
+"55":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Hex",
+"SymbolRef":null,
+"Extra":null},
+
+"57":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Hex",
+"SymbolRef":null,
+"Extra":null},
+
+"59":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Hex",
+"SymbolRef":null,
+"Extra":null},
+
+"61":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Hex",
+"SymbolRef":null,
+"Extra":null},
+
+"63":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Hex",
+"SymbolRef":null,
+"Extra":null},
+
+"65":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Hex",
+"SymbolRef":null,
+"Extra":null},
+
+"67":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Hex",
+"SymbolRef":null,
+"Extra":null},
+
+"69":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Hex",
+"SymbolRef":null,
+"Extra":null},
+
+"71":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Hex",
+"SymbolRef":null,
+"Extra":null},
+
+"73":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Hex",
+"SymbolRef":null,
+"Extra":null},
+
+"75":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Hex",
+"SymbolRef":null,
+"Extra":null},
+
+"77":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Hex",
+"SymbolRef":null,
+"Extra":null},
+
+"79":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Hex",
+"SymbolRef":null,
+"Extra":null},
+
+"81":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Hex",
+"SymbolRef":null,
+"Extra":null},
+
+"83":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Hex",
+"SymbolRef":null,
+"Extra":null},
+
+"85":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Hex",
+"SymbolRef":null,
+"Extra":null},
+
+"87":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Hex",
+"SymbolRef":null,
+"Extra":null},
+
+"89":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Hex",
+"SymbolRef":null,
+"Extra":null},
+
+"91":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Hex",
+"SymbolRef":null,
+"Extra":null},
+
+"93":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Hex",
+"SymbolRef":null,
+"Extra":null},
+
+"95":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Hex",
+"SymbolRef":null,
+"Extra":null},
+
+"97":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Hex",
+"SymbolRef":null,
+"Extra":null},
+
+"99":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Hex",
+"SymbolRef":null,
+"Extra":null},
+
+"101":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Hex",
+"SymbolRef":null,
+"Extra":null},
+
+"103":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Hex",
+"SymbolRef":null,
+"Extra":null},
+
+"105":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Hex",
+"SymbolRef":null,
+"Extra":null},
+
+"107":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Hex",
+"SymbolRef":null,
+"Extra":null},
+
+"109":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Hex",
+"SymbolRef":null,
+"Extra":null},
+
+"111":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Hex",
+"SymbolRef":null,
+"Extra":null},
+
+"113":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Hex",
+"SymbolRef":null,
+"Extra":null},
+
+"115":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Hex",
+"SymbolRef":null,
+"Extra":null},
+
+"117":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Hex",
+"SymbolRef":null,
+"Extra":null},
+
+"119":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Hex",
+"SymbolRef":null,
+"Extra":null},
+
+"121":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Hex",
+"SymbolRef":null,
+"Extra":null},
+
+"123":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Hex",
+"SymbolRef":null,
+"Extra":null},
+
+"125":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Hex",
+"SymbolRef":null,
+"Extra":null},
+
+"127":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Hex",
+"SymbolRef":null,
+"Extra":null},
+
+"129":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Hex",
+"SymbolRef":null,
+"Extra":null},
+
+"131":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Hex",
+"SymbolRef":null,
+"Extra":null},
+
+"133":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Hex",
+"SymbolRef":null,
+"Extra":null},
+
+"135":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Hex",
+"SymbolRef":null,
+"Extra":null},
+
+"137":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Hex",
+"SymbolRef":null,
+"Extra":null},
+
+"139":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Hex",
+"SymbolRef":null,
+"Extra":null},
+
+"141":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Hex",
+"SymbolRef":null,
+"Extra":null},
+
+"143":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Hex",
+"SymbolRef":null,
+"Extra":null},
+
+"145":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Hex",
+"SymbolRef":null,
+"Extra":null},
+
+"147":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Hex",
+"SymbolRef":null,
+"Extra":null},
+
+"149":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Hex",
+"SymbolRef":null,
+"Extra":null},
+
+"151":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Hex",
+"SymbolRef":null,
+"Extra":null},
+
+"153":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Hex",
+"SymbolRef":null,
+"Extra":null},
+
+"155":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Hex",
+"SymbolRef":null,
+"Extra":null},
+
+"157":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Hex",
+"SymbolRef":null,
+"Extra":null},
+
+"159":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Hex",
+"SymbolRef":null,
+"Extra":null},
+
+"161":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Hex",
+"SymbolRef":null,
+"Extra":null},
+
+"163":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Hex",
+"SymbolRef":null,
+"Extra":null},
+
+"165":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Hex",
+"SymbolRef":null,
+"Extra":null},
+
+"167":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Hex",
+"SymbolRef":null,
+"Extra":null},
+
+"169":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Hex",
+"SymbolRef":null,
+"Extra":null},
+
+"171":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Hex",
+"SymbolRef":null,
+"Extra":null},
+
+"173":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Hex",
+"SymbolRef":null,
+"Extra":null},
+
+"175":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Hex",
+"SymbolRef":null,
+"Extra":null},
+
+"177":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Hex",
+"SymbolRef":null,
+"Extra":null},
+
+"179":{
+"Length":8,
 "Format":"Dense",
 "SubFormat":"None",
 "SymbolRef":null,
 "Extra":null},
 
-"179":{
-"Length":10,
+"187":{
+"Length":2,
 "Format":"Dense",
 "SubFormat":"None",
 "SymbolRef":null,
 "Extra":null},
 
 "189":{
-"Length":7,
-"Format":"Dense",
-"SubFormat":"None",
+"Length":1,
+"Format":"NumericLE",
+"SubFormat":"Decimal",
+"SymbolRef":null,
+"Extra":null},
+
+"190":{
+"Length":1,
+"Format":"NumericLE",
+"SubFormat":"Decimal",
+"SymbolRef":null,
+"Extra":null},
+
+"191":{
+"Length":1,
+"Format":"NumericLE",
+"SubFormat":"Decimal",
+"SymbolRef":null,
+"Extra":null},
+
+"192":{
+"Length":1,
+"Format":"NumericLE",
+"SubFormat":"Decimal",
+"SymbolRef":null,
+"Extra":null},
+
+"193":{
+"Length":1,
+"Format":"NumericLE",
+"SubFormat":"Decimal",
+"SymbolRef":null,
+"Extra":null},
+
+"194":{
+"Length":1,
+"Format":"NumericLE",
+"SubFormat":"Decimal",
+"SymbolRef":null,
+"Extra":null},
+
+"195":{
+"Length":1,
+"Format":"NumericLE",
+"SubFormat":"Decimal",
 "SymbolRef":null,
 "Extra":null},
 
 "196":{
-"Length":6,
-"Format":"Dense",
-"SubFormat":"None",
+"Length":1,
+"Format":"NumericLE",
+"SubFormat":"Decimal",
+"SymbolRef":null,
+"Extra":null},
+
+"197":{
+"Length":1,
+"Format":"NumericLE",
+"SubFormat":"Decimal",
+"SymbolRef":null,
+"Extra":null},
+
+"198":{
+"Length":1,
+"Format":"NumericLE",
+"SubFormat":"Decimal",
+"SymbolRef":null,
+"Extra":null},
+
+"199":{
+"Length":1,
+"Format":"NumericLE",
+"SubFormat":"Decimal",
+"SymbolRef":null,
+"Extra":null},
+
+"200":{
+"Length":1,
+"Format":"NumericLE",
+"SubFormat":"Decimal",
+"SymbolRef":null,
+"Extra":null},
+
+"201":{
+"Length":1,
+"Format":"NumericLE",
+"SubFormat":"Decimal",
 "SymbolRef":null,
 "Extra":null},
 
@@ -16994,6 +18033,46 @@
 
 "Extra":null},
 
+"8262":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"genPurposeBuf",
+"Part":"High"},
+
+"Extra":null},
+
+"8266":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"genPurposeBuf",
+"Part":"Low"},
+
+"Extra":null},
+
+"8275":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"PLAY_INDEX_V1",
+"Part":"Low"},
+
+"Extra":null},
+
+"8284":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"PLAY_INDEX_V2",
+"Part":"Low"},
+
+"Extra":null},
+
 "8316":{
 "Length":2,
 "Format":"NumericLE",
@@ -17022,6 +18101,255 @@
 "Label":"NC_NoCmd",
 "Part":"Low"},
 
+"Extra":null},
+
+"8371":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Decimal",
+"SymbolRef":null,
+"Extra":null},
+
+"8375":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"CHAN_MASK_TRI",
+"Part":"Low"},
+
+"Extra":null},
+
+"8409":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"SHARP_UNUSED",
+"Part":"Low"},
+
+"Extra":null},
+
+"8442":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Ascii",
+"SymbolRef":null,
+"Extra":null},
+
+"8450":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"ENV_UNUSED",
+"Part":"Low"},
+
+"Extra":null},
+
+"8452":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Ascii",
+"SymbolRef":null,
+"Extra":null},
+
+"8456":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Ascii",
+"SymbolRef":null,
+"Extra":null},
+
+"8460":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"ENV_USED",
+"Part":"Low"},
+
+"Extra":null},
+
+"8470":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Ascii",
+"SymbolRef":null,
+"Extra":null},
+
+"8480":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Ascii",
+"SymbolRef":null,
+"Extra":null},
+
+"8485":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Ascii",
+"SymbolRef":null,
+"Extra":null},
+
+"8495":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Ascii",
+"SymbolRef":null,
+"Extra":null},
+
+"8505":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Ascii",
+"SymbolRef":null,
+"Extra":null},
+
+"8510":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Ascii",
+"SymbolRef":null,
+"Extra":null},
+
+"8522":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Ascii",
+"SymbolRef":null,
+"Extra":null},
+
+"8532":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Ascii",
+"SymbolRef":null,
+"Extra":null},
+
+"8541":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Decimal",
+"SymbolRef":null,
+"Extra":null},
+
+"8547":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Ascii",
+"SymbolRef":null,
+"Extra":null},
+
+"8576":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Ascii",
+"SymbolRef":null,
+"Extra":null},
+
+"8582":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Ascii",
+"SymbolRef":null,
+"Extra":null},
+
+"8587":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Ascii",
+"SymbolRef":null,
+"Extra":null},
+
+"8602":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Ascii",
+"SymbolRef":null,
+"Extra":null},
+
+"8606":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"SHARP_USED",
+"Part":"Low"},
+
+"Extra":null},
+
+"8612":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Ascii",
+"SymbolRef":null,
+"Extra":null},
+
+"8636":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Ascii",
+"SymbolRef":null,
+"Extra":null},
+
+"8640":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Ascii",
+"SymbolRef":null,
+"Extra":null},
+
+"8663":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Decimal",
+"SymbolRef":null,
+"Extra":null},
+
+"8667":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Decimal",
+"SymbolRef":null,
+"Extra":null},
+
+"8692":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Ascii",
+"SymbolRef":null,
+"Extra":null},
+
+"8719":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"NOTE_VAL_OCTAVE",
+"Part":"Low"},
+
+"Extra":null},
+
+"8739":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Ascii",
+"SymbolRef":null,
+"Extra":null},
+
+"8744":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Ascii",
+"SymbolRef":null,
+"Extra":null},
+
+"8796":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Ascii",
+"SymbolRef":null,
 "Extra":null},
 
 "8878":{
@@ -25988,6 +27316,26 @@
 "ClearPrevious":false},
 
 "8238":{
+"Variables":[{
+"DataDescriptor":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Hex",
+"SymbolRef":null,
+"Extra":null},
+
+"Comment":"",
+"HasWidth":true,
+"Direction":"ReadWrite",
+"MultiMask":null,
+"Label":"vZpPlayPtr",
+"Value":145,
+"Source":"Variable",
+"Type":"ExternalAddr",
+"LabelAnno":"None"}],
+"ClearPrevious":true},
+
+"8815":{
 "Variables":[],
 "ClearPrevious":true},
 
