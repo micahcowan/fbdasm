@@ -3478,6 +3478,33 @@
 "13237":"RESUME without ERROR. RESUME called but no ON ERROR installed.",
 "13239":"No BG Data",
 "13241":"Unprintable Error",
+"13245":"when used below (SetPpuCtrlAndEnableNmi), sets bg to use separate tiles from sprites; everything else defaults",
+"13249":"if used, will disable sprites, enable background",
+"13251":"disables all rendering",
+"13298":"initialize the APU frame counter",
+"13309":"set SCREEN 0 as the current screen",
+"13311":"clear and activate SCREEN 0",
+"13314":"reset palette sets to their startup values",
+"13322":"clear the function-key definitions",
+"13331":"\u003c- this is being as a counter of function keys, not offsets",
+"13333":"did we do 8 fn key definition?",
+"13335":"yes -\u003e we\u0027re done",
+"13337":"convert fnkey # to an index into the defns area",
+"13340":"and move to the Y reg",
+"13341":"load a character from the hard-coded default",
+"13344":"terminating null char? -\u003e finished with this def, on to the next",
+"13346":"store char in assigned definition space",
+"13349":"incr source idx",
+"13350":"incr dest idx",
+"13351":"(always) -\u003e on to copying next character",
+"13360":"\"underscore\" tile character",
+"13362":"(set as cursor when KANA mode active)",
+"13364":"\"box\" tile character",
+"13366":"(set as normal cursor)",
+"13368":"initialize to normal (non-KANA) mode",
+"13371":"read from PPUSTATUS until vblank flag is clear, to clear it",
+"13376":"now read from it until it\u0027s set again.",
+"13379":"then we know we\u0027ve hit vblank",
 "13386":"setup bg palette set no. 1",
 "13392":"select writing bg palette set",
 "13394":"set the palette set",
@@ -5854,6 +5881,13 @@
 
 "189":{
 "Text":"(note names begin with \u0027A\u0027, but values start at \u0027C\u0027 and wrap around)",
+"IsFancy":true,
+"BoxMode":false,
+"MaxWidth":80,
+"BackgroundColor":0},
+
+"13331":{
+"Text":"initialize the fn key definitions to their boot-up defaults",
 "IsFancy":true,
 "BoxMode":false,
 "MaxWidth":80,
@@ -14952,6 +14986,55 @@
 "8722":{
 "Label":"sq",
 "Value":41474,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"13360":{
+"Label":"InitKanaMode",
+"Value":46112,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"13322":{
+"Label":"fkeyClrLp",
+"Value":46074,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"13331":{
+"Label":"fkeyDefsLp",
+"Value":46083,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"13381":{
+"Label":"rts_B435",
+"Value":46133,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"13376":{
+"Label":"waitLp",
+"Value":46128,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"13341":{
+"Label":"defnCpyLp",
+"Value":46093,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"13354":{
+"Label":"nxtFnKey",
+"Value":46106,
 "Source":"User",
 "Type":"NonUniqueLocalAddr",
 "LabelAnno":"None"}},

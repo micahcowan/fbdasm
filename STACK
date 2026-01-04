@@ -13,7 +13,6 @@ BRANCH STACK:
 
   CmdFn_BGTOOL
 
-  Add comments to InitPpuApu
 
 
   The scroll adjustment that happens in INPUT at @adjForScrlLp - is that a bug?
