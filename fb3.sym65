@@ -192,12 +192,13 @@ fnKey6_DfnBuf   @  $4D0   16
 fnKey7_DfnBuf   @  $4E0   16
 fnKey8_DfnBuf   @  $4F0   16
 lineBuffer      @  $500   256; NMICMD_BufferCurLine copies the full current, potentially multi-row line to here
+bgtCurRowTileIds@  $510   16 ; tile IDs for the currently-selected row of tiles in SELECT mode, separated by spaces
 ;fileName       @  $580   17; SAVE and LOAD put their string arg here.
 isRowWrappedArray0  @  $601 24 ; Marks which visible screen rows are wrapped from previous line, if SCREEN 0.
 isRowWrappedArray1  @  $61B 24 ; Marks which visible screen rows are wrapped from previous line, if SCREEN 1.
 kbdDataAry      @  $634   9  ; Key down bitmap. See loc $B9A1 for content details
 sprTwoByTwoFlags @ $63D   8  ; 1x1-tile (#$00) vs 2x2 (#$01), for each actor.
-sprAttrFlags    @  $645   8  ; Sprite tile attributes for the 8 actor. See SpAtt_* for flag values.
+sprAttrFlags    @  $645   8  ; Sprite tile attributes for the 8 actors. See SpAtt_* for flag values.
 sprTileMaps     @  $680   32 ; Sprite tile maps for the 8 actors (4 tiles/actor)
 defMovSFacing   @  $6C0      ; Actor MOVE direction (swapped with type, relative to DEF MOVE arg order)
 defMovSActorFrm @  $6C1      ; Low nybble: MOVE character type (Mario, Lady, Star Killer, etc)A; high nybble: which frame of animation frame we're on
@@ -221,6 +222,10 @@ ROWS = 24
 STRLEN_MAX = 32
 
 NUM_ACTORS = 8  ; number of animated characters ("actors") in Family BASIC
+
+NUM_PALETTES = 4; number of palettes in a palette set
+
+TileId_emptyBox = $B0
 
 FOR_STK_MARKER   = $00FD  ; special CPU stack marker for FOR-loop data
 GOSUB_STK_MARKER = $00FF  ; special CPU stack marker for RETURN data

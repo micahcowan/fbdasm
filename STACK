@@ -12,8 +12,12 @@ SEARCH STACK:
 BRANCH STACK:
 
   CmdFn_BGTOOL
+  ->$C2E8 after init from BGTOOL
+      $C14F
 
 
+  BUG: (v3 only, probably?) BGTOOL changes the palette for a portion of the bottom of the screen when you type RETURN in SELECT mode. BUT, the tiles for which the palette changes will be WRONG if vScroll1 isn't 0 (and it doesn't set it to 0). You can reproduce this by typing "SCREEN 1" and running some BASIC that scrolls the screen a few lines (or do so via typing). Use "CLS 1" before BGTOOL to prevent the bug.
+  Thought not to happen with v2, bc BGTOOL isn't invoked directly from BASIC, and some initialization probably happens before the menu screen that lets you start BASIC and BGTOOL.
 
   The scroll adjustment that happens in INPUT at @adjForScrlLp - is that a bug?
     Doesn't seem right to me.

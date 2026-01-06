@@ -3975,6 +3975,76 @@
 "16252":"now send the designated data buffer",
 "16267":"and a checksum (count of the ones in all bytes)",
 "16279":"send a final \"one\" bit at the end",
+"16350":"clear SCREEN 1",
+"16353":"reset the palette sets to their hard-coded defaults",
+"16361":"clear sprite tile attrs for the 8 actors.",
+"16366":"-\u003e loop until 8 actors\u0027 sprite attrs cleared",
+"16370":"set SCREEN 1 as current screen",
+"16378":"put cursor at x:0,y:21",
+"16380":"Control-Z",
+"16382":"invokes Control-Z\u0027s ClearToEndOfScreen function",
+"16385":" (clearing from 0,21 to end of screen: last 4 rows)",
+"16387":"set the other SCREEN 1 zp var",
+"16389":"clear all sprite info from OAM DMA area",
+"16392":"wait for vblank",
+"16399":"set screen 1 for PPU, and set BG to use BG tiles",
+"16404":"enact the PPUCTRL changes",
+"16407":"turn sprites on",
+"16412":"???",
+"16735":"clear all sprite data",
+"16738":"empty box tile ID",
+"16748":"???",
+"17038":"LOCATE 5,22",
+"17048":"print \"MODE\" at 5,22",
+"17055":"LOCATE 5,23",
+"17057":"get the current mode index",
+"17059":"times 2 for use as a string-table index",
+"17069":"point zpOutputStr at the indexed string",
+"17071":"and print it",
+"17096":"push CH, CV",
+"17108":"locate 10,22",
+"17110":"get the currently-selected palette number",
+"17112":"add #$30 to convert to ASCII digit",
+"17114":"print the digit (after \"MODE\") at bottom of screen",
+"17118":"pull \u0026 restore CH, CV",
+"17144":"turn sprites on",
+"17149":"currently-selected tile idx = 0",
+"17151":"current tile row = 0",
+"17158":"set current palette to 3 bc we\u0027ll increment before displaying",
+"17160":"increment (wraparound to 0) and set for tile menu",
+"17169":"LOCATE 12,23",
+"17180":"LOCATE 12,23",
+"17251":"increment the palette number",
+"17255":"did we advance past the last palette #?",
+"17257":"yes -\u003e wrap around to zero and then continue",
+"17261":"copy for the top two of the quadrants covered in an attr byte",
+"17263":"then push that value to CPU stack",
+"17264":"wait for vblank so it\u0027s safe to mess with PPU",
+"17269":"go to $27F3 in VRAM, corresponding to",
+"17271":" the palette ids for SELECT mode\u0027s displayed tiles",
+"17276":"make a version that covers just the top-right quadrant",
+"17278":"store that as the first attr (this avoids setting color on the text",
+"17281":" to the left of the tile menu)",
+"17284":"copy the full attribute byte, for the next 4 bytes",
+"17290":"-\u003e done",
+"17432":"save cursor position",
+"17441":"LOCATE 12, 22",
+"17443":"get the current tile row for displaying",
+"17445":"load the starting tile ID for that row",
+"17448":"and save it",
+"17454":"get tile ID",
+"17456":"store in buffer",
+"17459":"increment dst buffer index",
+"17460":"SPACE character",
+"17462":"store that after row tile, in buffer",
+"17465":"incr dst buf index",
+"17466":"next tile ID for row",
+"17468":"one fewer tile remaining",
+"17469":"-\u003e loop until 8 tiles done",
+"17478":"wait for next vblank so it\u0027s safe to write to VRAM",
+"17481":"LOCATE 12, 13",
+"17484":"copy the tile row buffer out to screen",
+"17503":"-\u003e restore cursor position, then done",
 "17506":"xpos += 2 (left margin)",
 "17510":"get the scroll value for the active screen",
 "17520":"divide vert. scroll amt by 8 (convert pixels to tiles)",
@@ -5891,6 +5961,34 @@
 "IsFancy":true,
 "BoxMode":false,
 "MaxWidth":80,
+"BackgroundColor":0},
+
+"17059":{
+"Text":"Print the name of the BGTOOL mode whose ID is in the A register.",
+"IsFancy":true,
+"BoxMode":false,
+"MaxWidth":80,
+"BackgroundColor":0},
+
+"17032":{
+"Text":"Print the currently-selected BGTOOL mode at the bottom of the screen.",
+"IsFancy":true,
+"BoxMode":false,
+"MaxWidth":80,
+"BackgroundColor":0},
+
+"17030":{
+"Text":"Store the mode id in register A, and print the mode at bottom of screen.",
+"IsFancy":true,
+"BoxMode":false,
+"MaxWidth":80,
+"BackgroundColor":0},
+
+"17074":{
+"Text":"the starting tile ID for each row of 8 tiles that can be viewed in BGTOOL\u0027s SELECT mode. (Skips \"character\" tiles; hence the leap to $b8 after the row that starts with $18 - $20 would be the space character)",
+"IsFancy":true,
+"BoxMode":false,
+"MaxWidth":80,
 "BackgroundColor":0}},
 
 "Notes":{
@@ -6171,7 +6269,7 @@
 "LabelAnno":"None"},
 
 "14542":{
-"Label":"jtbl_CtrlCharInputHandlers",
+"Label":"jtbl_CtrlCharHandlers",
 "Value":47294,
 "Source":"User",
 "Type":"GlobalAddr",
@@ -8187,11 +8285,11 @@
 "LabelAnno":"Generated"},
 
 "16350":{
-"Label":"TBFCE",
+"Label":"ClrScr1ThenBgTool",
 "Value":49102,
 "Source":"User",
 "Type":"GlobalAddr",
-"LabelAnno":"Generated"},
+"LabelAnno":"None"},
 
 "18087":{
 "Label":"TC697",
@@ -15037,6 +15135,111 @@
 "Value":46106,
 "Source":"User",
 "Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"16361":{
+"Label":"attrClrLp",
+"Value":49113,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"16943":{
+"Label":"strMODE",
+"Value":49695,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"16992":{
+"Label":"tbl_BgToolModeStrs",
+"Value":49744,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"17059":{
+"Label":"BgtPrintModeStr",
+"Value":49811,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"17032":{
+"Label":"BgtPrintCurrentMode",
+"Value":49784,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"17030":{
+"Label":"BgtSetAndPrintCurrentMode",
+"Value":49782,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"17245":{
+"Label":"wrapAround",
+"Value":49997,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"17259":{
+"Label":"wrapCont",
+"Value":50011,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"17251":{
+"Label":"BgtIncrPaletteNumAndSet",
+"Value":50003,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"17284":{
+"Label":"cpyLp",
+"Value":50036,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"17093":{
+"Label":"BgtIncrPaletteNumAndDisplay",
+"Value":49845,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"17074":{
+"Label":"tbl_BgSelectTileRowStarts",
+"Value":49826,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"17454":{
+"Label":"tilesLp",
+"Value":50206,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"17484":{
+"Label":"writeLp",
+"Value":50236,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"17432":{
+"Label":"BgtCalcAndDisplayTileSelectRow",
+"Value":50184,
+"Source":"User",
+"Type":"GlobalAddr",
 "LabelAnno":"None"}},
 
 "OperandFormats":{
@@ -21096,6 +21299,20 @@
 
 "Extra":null},
 
+"16372":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Decimal",
+"SymbolRef":null,
+"Extra":null},
+
+"16376":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Decimal",
+"SymbolRef":null,
+"Extra":null},
+
 "16577":{
 "Length":2,
 "Format":"NumericLE",
@@ -21141,7 +21358,7 @@
 "Format":"NumericLE",
 "SubFormat":"Symbol",
 "SymbolRef":{
-"Label":"TBFCE",
+"Label":"ClrScr1ThenBgTool",
 "Part":"Low"},
 
 "Extra":null},
@@ -21171,6 +21388,16 @@
 "Format":"NumericLE",
 "SubFormat":"Hex",
 "SymbolRef":null,
+"Extra":null},
+
+"16738":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"TileId_emptyBox",
+"Part":"Low"},
+
 "Extra":null},
 
 "16943":{
@@ -21282,10 +21509,79 @@
 
 "Extra":null},
 
+"17032":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Decimal",
+"SymbolRef":null,
+"Extra":null},
+
+"17036":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Decimal",
+"SymbolRef":null,
+"Extra":null},
+
+"17040":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"strMODE",
+"Part":"Low"},
+
+"Extra":null},
+
+"17044":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"strMODE",
+"Part":"High"},
+
+"Extra":null},
+
 "17074":{
-"Length":13,
+"Length":8,
 "Format":"Dense",
 "SubFormat":"None",
+"SymbolRef":null,
+"Extra":null},
+
+"17082":{
+"Length":5,
+"Format":"Dense",
+"SubFormat":"None",
+"SymbolRef":null,
+"Extra":null},
+
+"17102":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Decimal",
+"SymbolRef":null,
+"Extra":null},
+
+"17106":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Decimal",
+"SymbolRef":null,
+"Extra":null},
+
+"17163":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Decimal",
+"SymbolRef":null,
+"Extra":null},
+
+"17167":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Decimal",
 "SymbolRef":null,
 "Extra":null},
 
@@ -21376,6 +21672,16 @@
 
 "Extra":null},
 
+"17255":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"NUM_PALETTES",
+"Part":"Low"},
+
+"Extra":null},
+
 "17382":{
 "Length":2,
 "Format":"NumericLE",
@@ -21384,6 +21690,20 @@
 "Label":"NC_RestoreCharAtCursor",
 "Part":"Low"},
 
+"Extra":null},
+
+"17435":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Decimal",
+"SymbolRef":null,
+"Extra":null},
+
+"17439":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Decimal",
+"SymbolRef":null,
 "Extra":null},
 
 "17514":{
@@ -28175,6 +28495,102 @@
 "ClearPrevious":false},
 
 "16175":{
+"Variables":[],
+"ClearPrevious":true},
+
+"16350":{
+"Variables":[{
+"DataDescriptor":{
+"Length":1,
+"Format":"NumericLE",
+"SubFormat":"Hex",
+"SymbolRef":null,
+"Extra":null},
+
+"Comment":"",
+"HasWidth":true,
+"Direction":"ReadWrite",
+"MultiMask":null,
+"Label":"vZpBgToolModeId",
+"Value":124,
+"Source":"Variable",
+"Type":"ExternalAddr",
+"LabelAnno":"None"},
+
+{
+"DataDescriptor":{
+"Length":1,
+"Format":"NumericLE",
+"SubFormat":"Hex",
+"SymbolRef":null,
+"Extra":null},
+
+"Comment":"which row of tiles is showing in the tile SELECT menu",
+"HasWidth":true,
+"Direction":"ReadWrite",
+"MultiMask":null,
+"Label":"vZpBgtSelectCurTileRow",
+"Value":125,
+"Source":"Variable",
+"Type":"ExternalAddr",
+"LabelAnno":"None"},
+
+{
+"DataDescriptor":{
+"Length":1,
+"Format":"NumericLE",
+"SubFormat":"Hex",
+"SymbolRef":null,
+"Extra":null},
+
+"Comment":"",
+"HasWidth":true,
+"Direction":"ReadWrite",
+"MultiMask":null,
+"Label":"vZpTileIdTmp",
+"Value":126,
+"Source":"Variable",
+"Type":"ExternalAddr",
+"LabelAnno":"None"},
+
+{
+"DataDescriptor":{
+"Length":1,
+"Format":"NumericLE",
+"SubFormat":"Hex",
+"SymbolRef":null,
+"Extra":null},
+
+"Comment":"index to which of the tiles in current tile row is the active tile for insertion",
+"HasWidth":true,
+"Direction":"ReadWrite",
+"MultiMask":null,
+"Label":"vZpBgtCurRowSelTileNum",
+"Value":127,
+"Source":"Variable",
+"Type":"ExternalAddr",
+"LabelAnno":"None"},
+
+{
+"DataDescriptor":{
+"Length":1,
+"Format":"NumericLE",
+"SubFormat":"Hex",
+"SymbolRef":null,
+"Extra":null},
+
+"Comment":"currently-selected palette num for inserted tiles",
+"HasWidth":true,
+"Direction":"ReadWrite",
+"MultiMask":null,
+"Label":"vZpBgtCurPaletteNum",
+"Value":136,
+"Source":"Variable",
+"Type":"ExternalAddr",
+"LabelAnno":"None"}],
+"ClearPrevious":false},
+
+"17506":{
 "Variables":[],
 "ClearPrevious":true},
 
