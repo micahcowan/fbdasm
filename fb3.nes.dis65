@@ -5292,7 +5292,7 @@
 "BackgroundColor":0},
 
 "12871":{
-"Text":"Prints the two-character error code and (XXX presumably) returns to direct mode.\r\n",
+"Text":"Prints the two-character error code, saves running context, and returns to direct mode.\r\n",
 "IsFancy":true,
 "BoxMode":false,
 "MaxWidth":80,

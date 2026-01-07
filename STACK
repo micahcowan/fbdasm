@@ -6,10 +6,11 @@
 # Unlike a 6502 CPU stack, all addresses given are the actual address
 # (and not one less).
 
-SEARCH STACK:
-  any ??? or XXX comments
-
 BRANCH STACK:
+
+  Walk the code from _Reset, ensuring that we didn't get any bleedover from
+  local vars, avoiding magic numbers where practical, and adding any vital
+  comments if necessary
 
   done:
 
