@@ -762,7 +762,53 @@
 "21":"End of \"GAME 1\"",
 "23":"End of \"GAME 2\"",
 "25":"End of \"GAME 3\"",
+"207":"turn off rendering",
 "216":"JMP opcode",
+"226":"set default NMI handler to NMI_DefaultHandler",
+"228":"init various PPU, APU stuff",
+"231":"clear bg screen 1",
+"236":"send screen updates to screen 0",
+"242":"read keyboard",
+"245":"null char returned? -\u003e done checking",
+"247":"else, either key being held, or kbd not connected",
+"249":"-\u003e loop until key-down reported for 30 checks",
+"257":"LOCATE 5,4",
+"266":"ask the user to please connect the keyboard",
+"269":"read keyboard",
+"272":"-\u003e loop until null character returned (kbd connected)",
+"274":"is the backup switch on?",
+"277":"off -\u003e good to go!",
+"279":"on: this locks the battery-backed RAM, which we don\u0027t want",
+"288":"LOCATE 1,4",
+"297":"ask the user to turn off the cart\u0027s backup switch",
+"300":"test backup switch",
+"303":"-\u003e loop until it\u0027s off",
+"307":"clear zpBgGotFlag",
+"311":"did we already restore program from battery backup?",
+"313":"yes -\u003e skip restoration, then",
+"318":"does battery-backed RAM indicate a program is backed-up?",
+"320":"no -\u003e",
+"322":"clear screen 1",
+"328":"note whether we have BG data backed-up",
+"330":"copy battery-backed TXTEND to the real one",
+"340":"copy (hard-coded) basicProgram start to TXTTAB",
+"351":"delete the backup vars, now that they\u0027re restored",
+"354":"(avoids them getting out of date, forces user to run BACKUP cmd again)",
+"357":"-\u003e loop until backup vars deleted (5 bytes)",
+"359":"clear BASIC vars",
+"362":"init zero-page vars",
+"365":"print the \"HOT START\" message",
+"368":"CRLF",
+"371":"have we got bg data backed-up, too?",
+"373":"no -\u003e start up BASIC",
+"375":"yes, bg backed up: indicate it",
+"383":"print \"[BG]\"",
+"386":"CRLF",
+"389":"restore the backed-up bg data",
+"392":"enter BASIC",
+"400":"clear screen 1",
+"405":"no backup avail, so mark it \"restored\" to avoid future check",
+"409":"if no backup, no backed-up BG data",
 "419":"disable sprites",
 "424":"JMP opcode?",
 "426":"idk why we\u0027re JMPing to the null byte",
@@ -796,6 +842,10 @@
 "553":"and output it",
 "594":"Falls thru to next string start",
 "598":"Falls thru to next string start",
+"624":"initialize stack pointer register",
+"625":"clear zero-page vars",
+"628":"initialize basic start/end (empty)",
+"631":"print BASIC startup text",
 "634":"clear \"stopped\" flag",
 "637":"store zero (EH_NO_HANDLER)",
 "641":"turn off auto-increment and erase its data",
@@ -3459,6 +3509,14 @@
 "13029":"and queue for output",
 "13032":"move cursor to start of a line (unless it is already)",
 "13047":"queue for output: \"BREAK\"",
+"13071":"print \"NS-HUBASIC V3.0 \"",
+"13074":"next line",
+"13085":"print \"(C) NINTENDO/SHARP/HUDSON\"",
+"13088":"next line",
+"13108":"-\u003e print \"BYTES FREE\", then return",
+"13119":"print \"BASIC HOT START \"",
+"13122":"next line",
+"13125":"-\u003e print how many bytes free, then return",
 "13199":"NEXT without FOR",
 "13201":"Syntax Error",
 "13203":"RETURN without GOSUB",
@@ -16046,6 +16104,90 @@
 "Value":49607,
 "Source":"User",
 "Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"274":{
+"Label":"haveKbd",
+"Value":33026,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"242":{
+"Label":"keyRdLp",
+"Value":32994,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"269":{
+"Label":"waitKbdConn",
+"Value":33021,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"300":{
+"Label":"waitBuSwOff",
+"Value":33052,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"305":{
+"Label":"buSwOff",
+"Value":33057,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"395":{
+"Label":"str_BG",
+"Value":33147,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"351":{
+"Label":"delBuVarsLp",
+"Value":33103,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"13091":{
+"Label":"bytesFree",
+"Value":45843,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"392":{
+"Label":"basic",
+"Value":33144,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"12822":{
+"Label":"RestoreBackupBgData",
+"Value":45574,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"400":{
+"Label":"RstNoBackupReady",
+"Value":33152,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"622":{
+"Label":"RstNoBackupStartBasic",
+"Value":33374,
+"Source":"User",
+"Type":"GlobalAddr",
 "LabelAnno":"None"}},
 
 "OperandFormats":{
@@ -16763,11 +16905,138 @@
 
 "Extra":null},
 
+"238":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Decimal",
+"SymbolRef":null,
+"Extra":null},
+
+"259":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"DTU__KEYBOARD_WO_SETSUZOKU",
+"Part":"Low"},
+
+"Extra":null},
+
+"264":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"DTU__SHITE_KUDASAI",
+"Part":"Low"},
+
+"Extra":null},
+
+"290":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"DTU__BACKUP_SWITCH_WO",
+"Part":"Low"},
+
+"Extra":null},
+
+"295":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"DTU__OFF_NI_SHITE_KUDASAI",
+"Part":"Low"},
+
+"Extra":null},
+
+"311":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"BU_RESTORED_MARK",
+"Part":"Low"},
+
+"Extra":null},
+
+"318":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"BU_AVAIL_MARK",
+"Part":"Low"},
+
+"Extra":null},
+
+"335":{
+"Length":3,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"bbTXTEND",
+"Part":"Low"},
+
+"Extra":null},
+
+"340":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"basicProgram",
+"Part":"Low"},
+
+"Extra":null},
+
+"344":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"basicProgram",
+"Part":"High"},
+
+"Extra":null},
+
+"375":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"str_BG",
+"Part":"Low"},
+
+"Extra":null},
+
+"379":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"str_BG",
+"Part":"High"},
+
+"Extra":null},
+
 "395":{
 "Length":5,
 "Format":"StringNullTerm",
 "SubFormat":"Ascii",
 "SymbolRef":null,
+"Extra":null},
+
+"403":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"BU_RESTORED_MARK",
+"Part":"Low"},
+
 "Extra":null},
 
 "450":{
@@ -20686,6 +20955,86 @@
 "Format":"NumericLE",
 "SubFormat":"Ascii",
 "SymbolRef":null,
+"Extra":null},
+
+"13063":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"strNS_HUDSON",
+"Part":"Low"},
+
+"Extra":null},
+
+"13067":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"strNS_HUDSON",
+"Part":"High"},
+
+"Extra":null},
+
+"13077":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"strCOPYRIGHT_MSG",
+"Part":"Low"},
+
+"Extra":null},
+
+"13081":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"strCOPYRIGHT_MSG",
+"Part":"High"},
+
+"Extra":null},
+
+"13100":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"strBYTES_FREE",
+"Part":"Low"},
+
+"Extra":null},
+
+"13104":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"strBYTES_FREE",
+"Part":"High"},
+
+"Extra":null},
+
+"13111":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"strBASIC_HOT_START",
+"Part":"Low"},
+
+"Extra":null},
+
+"13115":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"strBASIC_HOT_START",
+"Part":"High"},
+
 "Extra":null},
 
 "13128":{
@@ -28578,6 +28927,30 @@
 "Extra":"↑FB3_CHRROM.bin"}},
 
 "LvTables":{
+"202":{
+"Variables":[{
+"DataDescriptor":{
+"Length":1,
+"Format":"NumericLE",
+"SubFormat":"Hex",
+"SymbolRef":null,
+"Extra":null},
+
+"Comment":"",
+"HasWidth":true,
+"Direction":"ReadWrite",
+"MultiMask":null,
+"Label":"vZpKeyRdCtr",
+"Value":40,
+"Source":"Variable",
+"Type":"ExternalAddr",
+"LabelAnno":"None"}],
+"ClearPrevious":false},
+
+"400":{
+"Variables":[],
+"ClearPrevious":true},
+
 "1360":{
 "Variables":[{
 "DataDescriptor":{

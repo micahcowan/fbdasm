@@ -104,7 +104,7 @@ zpKyRptLongCtr  @  $77      ; Key-repeat: delay count-down to first key repeat o
 zpKyNotRpt      @  $78      ; Key-repeat: #$01 = waiting on first key repeat, #$00 = on subsequent repeats
 zpKyRptShtCtr   @  $79      ; Key-repeat: delay count-down for repeating key past the first, longer pause.
 zpKeyRepeating  @  $7B      ; Key-repeat: #$FF = key is actively repeating, #$00 = key not repeating
-zp7C            @  $7C
+zpBgGotFlag     @  $7C      ; zero-page copy of bgGotFlag from battery RAM
 zp7D            @  $7D
 zp7E            @  $7E
 zpForLimitVal   @  $80    2 ; the limiting value that will cause an exit from FOR statement
@@ -122,6 +122,7 @@ zpSavedTxtChar  @  $98
 zpToken         @  $99
 zpSavedTXTPTR   @  $9A    2 ; Saved val of zpTXTPTR
 zpPaletteNum    @  $9C
+zpBackupRstrd   @  $9E      ; Set to #$59 if BASIC was restored from battery backup
 zpLoadQFlag     @  $9F      ; True if we're in "LOAD?" rather than "LOAD"
 zpNxtAutoLNum   @  $A0    2 ; Next line number to use (for AUTO)
 zpAutoLNumIncr  @  $A2    2 ; How much to auto-increment each line number (from AUTO)
@@ -215,6 +216,8 @@ defMovSPosX     @  $6C6      ; Actor MOVE, current X position
 defMovSPosY     @  $6C7      ; Actor MOVE, current Y position
 genPurposeBuf   @  $700   256; user directive messages (at least) get writen out to here
 
+bbBackupAvail   @  $6001  ; non-zero if program saved to battery backup
+bbTXTEND        @  $6002  ; backed-up TXTEND (end of program text)
 bgGotFlag       @  $6004  ; non-zero if bg data is saved at $6C00
 bgGetVScroll    @  $6005  ; saved vscroll for saved screen data
 basicProgram    @  $6006  ; The start of the BASIC program in memory
@@ -238,6 +241,8 @@ NUM_PALETTES = 4; number of palettes in a palette set
 BGT_MODESEL_ITEMS = 5   ; how many menu items in BGTOOL mode-select menu
 BGT_SELECT_NUM_TROWS = 13   ; how many tile rows in BGTOOL SELECT mode's tile menu
 
+BU_RESTORED_MARK = $59
+BU_AVAIL_MARK    = $4C
 FOR_STK_MARKER   = $00FD  ; special CPU stack marker for FOR-loop data
 GOSUB_STK_MARKER = $00FF  ; special CPU stack marker for RETURN data
 

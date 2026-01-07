@@ -9,7 +9,6 @@ BEGIN {
     OK=0
     ucnt=0
     dcnt=0
-    debug=0
 }
 
 /; ROM Header/ { OK=1 }
