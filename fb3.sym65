@@ -226,9 +226,12 @@ memoryTop       @  $6FFF  ; What FRETOP is set to by default
 
 COLS = 28
 ROWS = 24
+MAP_ROWS = 30   ; number of rows in a PPU nametable (240px / 8px tiles)
+VPIXELS = 240   ; number of pixels in a PPU nametable, vertically
 BGT_ROWS = 21   ; number of rows in BGTOOL (excluding bottom status area)
 HMARGIN = 2     ; horizontal margin size (in tiles/chars)
 VMARGIN = 3     ; certical margin size (in tiles/chars)
+TILE_PIXELS = 8 ; pixels in a tile (either dimension)
 
 SELMD_LAST_TILEPOS = 26
 SELMD_FRST_TILEPOS = 12

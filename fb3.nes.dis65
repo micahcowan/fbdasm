@@ -1716,6 +1716,16 @@
 "4848":"inc so we can\u0027t get #$00",
 "4853":" = 32768?",
 "4863":"this num preceded by \u0027-\u0027?",
+"4873":"skip the \u0027\u0026\u0027",
+"4879":"got an (optional) \u0027H\u0027?",
+"4883":"yes -\u003e skip it",
+"4888":"push hex-num prefix token",
+"4889":"convert hex string to binary number",
+"4892":"pull token byte",
+"4893":"store it in tokenized line",
+"4898":"store low byte of converted num",
+"4903":"and high byte",
+"4906":"-\u003e return to tokenize loop",
 "4913":"space?",
 "4915":"no -\u003e rts",
 "4917":"yes: store and check next",
@@ -9549,7 +9559,7 @@
 "LabelAnno":"None"},
 
 "8818":{
-"Label":"errIllVal",
+"Label":"errIllVal_A262",
 "Value":41570,
 "Source":"User",
 "Type":"LocalOrGlobalAddr",
@@ -14039,7 +14049,7 @@
 "Label":"lt30",
 "Value":50286,
 "Source":"User",
-"Type":"GlobalAddr",
+"Type":"NonUniqueLocalAddr",
 "LabelAnno":"None"},
 
 "17592":{
@@ -16490,6 +16500,188 @@
 "Value":37412,
 "Source":"User",
 "Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"4886":{
+"Label":"noH",
+"Value":37638,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"4909":{
+"Label":"rts_931D",
+"Value":37661,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"5102":{
+"Label":"rts_93DE",
+"Value":37854,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"6037":{
+"Label":"__",
+"Value":38789,
+"Source":"User",
+"Type":"LocalOrGlobalAddr",
+"LabelAnno":"None"},
+
+"8815":{
+"Label":"errSyn_A25F",
+"Value":41567,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"13592":{
+"Label":"scr0",
+"Value":46344,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"13606":{
+"Label":"notOverfl",
+"Value":46358,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"13811":{
+"Label":"scr0",
+"Value":46563,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"13820":{
+"Label":"notOvfl",
+"Value":46572,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"13831":{
+"Label":"scr0",
+"Value":46583,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"13833":{
+"Label":"scr1",
+"Value":46585,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"13868":{
+"Label":"scrZLp",
+"Value":46620,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"13849":{
+"Label":"scrOneLp",
+"Value":46601,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"13886":{
+"Label":"setLoc",
+"Value":46638,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"13921":{
+"Label":"scr0",
+"Value":46673,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"13991":{
+"Label":"rowLp",
+"Value":46743,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"14086":{
+"Label":"ts1",
+"Value":46838,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"14083":{
+"Label":"ts2",
+"Value":46835,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"14080":{
+"Label":"ts3",
+"Value":46832,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"14096":{
+"Label":"spcLp",
+"Value":46848,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"14118":{
+"Label":"rts",
+"Value":46870,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"15718":{
+"Label":"skpTrm",
+"Value":48470,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"16290":{
+"Label":"shftLp",
+"Value":49042,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"16304":{
+"Label":"sndOne",
+"Value":49056,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"16300":{
+"Label":"dex",
+"Value":49052,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"17520":{
+"Label":"scr0",
+"Value":50272,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
 "LabelAnno":"None"}},
 
 "OperandFormats":{
@@ -18658,6 +18850,13 @@
 "Label":"tok_OP_MINUS",
 "Part":"Low"},
 
+"Extra":null},
+
+"4879":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Ascii",
+"SymbolRef":null,
 "Extra":null},
 
 "4886":{
@@ -21814,6 +22013,36 @@
 
 "Extra":null},
 
+"13598":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"VMARGIN",
+"Part":"Low"},
+
+"Extra":null},
+
+"13600":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"MAP_ROWS",
+"Part":"Low"},
+
+"Extra":null},
+
+"13604":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"MAP_ROWS",
+"Part":"Low"},
+
+"Extra":null},
+
 "13761":{
 "Length":2,
 "Format":"NumericLE",
@@ -21844,6 +22073,36 @@
 
 "Extra":null},
 
+"13812":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"TILE_PIXELS",
+"Part":"Low"},
+
+"Extra":null},
+
+"13814":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"VPIXELS",
+"Part":"Low"},
+
+"Extra":null},
+
+"13822":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"VRAM_screen0",
+"Part":"Low"},
+
+"Extra":null},
+
 "13839":{
 "Length":2,
 "Format":"NumericLE",
@@ -21861,6 +22120,16 @@
 "SymbolRef":{
 "Label":"VRAM_screen0",
 "Part":"High"},
+
+"Extra":null},
+
+"13888":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"ROWS",
+"Part":"Low"},
 
 "Extra":null},
 
@@ -21922,6 +22191,48 @@
 "Label":"ROWS",
 "Part":"Low"},
 
+"Extra":null},
+
+"14065":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Decimal",
+"SymbolRef":null,
+"Extra":null},
+
+"14069":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Decimal",
+"SymbolRef":null,
+"Extra":null},
+
+"14073":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Decimal",
+"SymbolRef":null,
+"Extra":null},
+
+"14080":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Decimal",
+"SymbolRef":null,
+"Extra":null},
+
+"14083":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Decimal",
+"SymbolRef":null,
+"Extra":null},
+
+"14086":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Decimal",
+"SymbolRef":null,
 "Extra":null},
 
 "14180":{
