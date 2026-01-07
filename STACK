@@ -11,8 +11,7 @@ SEARCH STACK:
 
 BRANCH STACK:
 
-
-.
+  done:
 
 
   BUG: (v3 only, probably?) BGTOOL changes the palette for a portion of the bottom of the screen when you type RETURN in SELECT mode. BUT, the tiles for which the palette changes will be WRONG if vScroll1 isn't 0 (and it doesn't set it to 0). You can reproduce this by typing "SCREEN 1" and running some BASIC that scrolls the screen a few lines (or do so via typing). Use "CLS 1" before BGTOOL to prevent the bug.
