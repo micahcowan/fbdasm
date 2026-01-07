@@ -3173,6 +3173,9 @@
 "11923":"send updates, only, to scr 0.",
 "11928":"SCREEN 0. Save base addr high byte.",
 "11934":"Tell PPU to switch active screen to 0",
+"11944":"set SCREEN 0",
+"11952":"mask out bg base addr, so SCREEN 0 is displayed by PPU",
+"11956":"-\u003e enact updated PPUCTRL, then return",
 "11976":"read arg",
 "11979":" \u003e= 8?",
 "11981":"yes -\u003e error",
@@ -3497,9 +3500,9 @@
 "13349":"incr source idx",
 "13350":"incr dest idx",
 "13351":"(always) -\u003e on to copying next character",
-"13360":"\"underscore\" tile character",
+"13360":"\"white box\" tile character",
 "13362":"(set as cursor when KANA mode active)",
-"13364":"\"box\" tile character",
+"13364":"\"underscore\" tile character",
 "13366":"(set as normal cursor)",
 "13368":"initialize to normal (non-KANA) mode",
 "13371":"read from PPUSTATUS until vblank flag is clear, to clear it",
@@ -3678,7 +3681,7 @@
 "14560":"TAB (Control-I)",
 "14562":"LF (Control-J)",
 "14564":"HOME (Control-K)",
-"14566":"Control-L",
+"14566":"CLR/Shift-HOME (Control-L)",
 "14568":"CR (Control-M)",
 "14578":"INSERT (Control-R)",
 "14586":"Control-V",
@@ -3975,7 +3978,7 @@
 "16252":"now send the designated data buffer",
 "16267":"and a checksum (count of the ones in all bytes)",
 "16279":"send a final \"one\" bit at the end",
-"16350":"clear SCREEN 1",
+"16350":"clear SCREEN 1, restart BGTOOL",
 "16353":"reset the palette sets to their hard-coded defaults",
 "16361":"clear sprite tile attrs for the 8 actors.",
 "16366":"-\u003e loop until 8 actors\u0027 sprite attrs cleared",
@@ -3990,10 +3993,139 @@
 "16399":"set screen 1 for PPU, and set BG to use BG tiles",
 "16404":"enact the PPUCTRL changes",
 "16407":"turn sprites on",
-"16412":"???",
+"16412":"move BGTOOL cursor to 0,0",
+"16418":"use BG palette 0",
+"16420":"???",
+"16423":"-\u003e done with init, enter SELECT mode",
+"16467":"cursor on last column?",
+"16469":"yes -\u003e cursor to start of next screen row",
+"16471":"else, move cursor right",
+"16474":"zero register A, to prevent further key handling",
+"16477":"cursor on first column?",
+"16480":"yes -\u003e cursor to end of prev row",
+"16482":"else, move cursor left",
+"16485":"-\u003e done",
+"16490":"move cursor to last column",
+"16493":"cursor already at top line?",
+"16496":"-\u003e done (nothing to do)",
+"16498":"else move cursor up",
+"16501":"-\u003e done",
+"16506":"move cursor to start of line",
+"16512":"cursor already on bottom line?",
+"16514":"yes -\u003e done (nothing to do)",
+"16516":"else move cursor down one row",
+"16519":"(always) -\u003e done",
+"16521":"turn off sprites",
+"16524":"save the tiles behind where menu will be drawn",
+"16527":"LOCATE 0,0",
+"16530":"display the mode-select menu",
+"16533":"LOCATE 0,0",
+"16538":"set \u0027\u003e\u0027 as prompt at 0,0 and read a character",
+"16541":"handle menu keypresses",
+"16557":"no match? -\u003e reprompt",
+"16559":"restore tiles that were behind mode-select menu",
+"16567":"LOCATE 0,21",
+"16571":"print ^Z (clear to end of screen)",
+"16574":"restore BASIC prompt cursor chars",
+"16579":"set SCREEN 0 base page",
+"16581":"reset palette set definitions",
+"16584":"clear the screen (we just did this with Ctrl-Z?)",
+"16587":"clear sprite definitions",
+"16590":"hide all sprites, clear attributes",
+"16599":"set SCREEN 0",
+"16601":"activate new PPUCTRL value, enable NMI",
+"16604":"-\u003e return to BASIC",
+"16607":"already at top menu item?",
+"16609":"yes -\u003e just reprompt",
+"16611":"else go up a row",
+"16613":"-\u003e reprompt",
+"16618":"already at bottom menu item?",
+"16620":"yes -\u003e just reprompt",
+"16622":"else go down a row",
+"16624":"-\u003e reprompt",
+"16626":"get cursor row # (= menu item #)",
+"16628":"times 2 for jump-table index",
+"16630":"get entry point for selected mode",
+"16640":"-\u003e and jump to entry point",
+"16666":"using this location to indicate save vs restore",
+"16669":"turn off screen rendering",
+"16674":"number of rows to save/restore = 9",
+"16678":"start buffer index at 0",
+"16680":"LOCATE 0,0",
+"16686":"set current VRAM addr to cursor position",
+"16689":"\"restore\" mode?",
+"16692":"yes -\u003e skip faked PPUDATA read",
+"16694":"else, fake a read from PPU",
+"16697":"number of cols to save/restore per row = 10",
+"16701":"\"restore\" mode?",
+"16704":"yes -\u003e restore buffered tile",
+"16706":"else, get next tile from VRAM",
+"16709":"save to buffer",
+"16715":"get the original tile ID from the save/restore buffer",
+"16718":"write it to VRAM",
+"16721":"incr index into tile buffer",
+"16722":"decr remaining rows to copy",
+"16723":"rows left? -\u003e save or restore next row",
+"16725":"save buffer index",
+"16727":"one fewer row to save/restore",
+"16729":"out of rows? -\u003e done",
+"16731":"move cursor to next screen row",
+"16733":"-\u003e loop to handle next row",
 "16735":"clear all sprite data",
 "16738":"empty box tile ID",
-"16748":"???",
+"16740":"set that as sprite graphic",
+"16745":"clear sprite attrs",
+"16748":"get bgtool cursor X position",
+"16752":"add 2 for margin",
+"16756":"times 8 (tiles -\u003e pixels)",
+"16757":"set as cursor sprite x pos",
+"16760":"get bgtool cursor Y position",
+"16764":"add 3 for vert margin",
+"16768":"times 8 (tiles -\u003e pixels)",
+"16769":"set as cursor sprite y pos",
+"16772":"subtract one (for framing? idk)",
+"16781":"restore text prompt cursor chars",
+"16784":"restore the tiles from before mode-select menu",
+"16789":"print that we\u0027re in CHAR mode",
+"16792":"turn off sprites (using normal prompt cursor chars instead)",
+"16795":"copy BGTOOL cursor pos to global (text) cursor",
+"16798":"save the new cursor pos",
+"16801":"copy global (text) cursor pos to BGTOOL cursor pos",
+"16811":"update cursor position display",
+"16814":"restore cursor pos (changed during display update)",
+"16817":"read keyboard (with flashing cursor prompt)",
+"16820":"handle special keys:",
+"16830":"no special key? then echo it here (draw to background)",
+"16833":"if we exceeded last row, return to it",
+"16836":"-\u003e prompt for another input key",
+"16839":"go to start of next line",
+"16845":"-\u003e prompt for next input",
+"16850":"cursor y pos \u003e= last BG row?",
+"16852":"yes -\u003e fix",
+"16854":"else -\u003e return",
+"16857":"set y pos to last BG row",
+"16859":"-\u003e return",
+"16865":"LOCATE 0,22",
+"16877":"print \"X:\"",
+"16880":"CRLF (start of next line)",
+"16893":"print \"Y:\"",
+"16899":"put cursor x pos into WAccum",
+"16907":"LOCATE 2,22",
+"16909":"print cursor x pos",
+"16912":"put cursor y pos into WAccum",
+"16921":"LOCATE 2,23",
+"16923":"set WAccum high byte to 0",
+"16926":"convert WAccum (cursor position) to decimal string",
+"16929":"point output string at decimal string",
+"16932":"...plus 3, so we get the final 2 digits (skips 3 leading zeroes)",
+"16940":"-\u003e print the coordinate, and return",
+"17006":"start with first menu item",
+"17010":"print SPACE char",
+"17015":"print the menu item string",
+"17018":"move cursor to start of next line",
+"17021":"advance menu item",
+"17025":"printed six menu items?",
+"17027":"no -\u003e loop and print next item",
 "17038":"LOCATE 5,22",
 "17048":"print \"MODE\" at 5,22",
 "17055":"LOCATE 5,23",
@@ -4001,19 +4133,46 @@
 "17059":"times 2 for use as a string-table index",
 "17069":"point zpOutputStr at the indexed string",
 "17071":"and print it",
+"17087":"select next palette in palette set",
 "17096":"push CH, CV",
 "17108":"locate 10,22",
 "17110":"get the currently-selected palette number",
 "17112":"add #$30 to convert to ASCII digit",
 "17114":"print the digit (after \"MODE\") at bottom of screen",
 "17118":"pull \u0026 restore CH, CV",
+"17124":"save global cursor pos",
+"17127":"set it to bgt cursor pos",
+"17132":"write a space over this location",
+"17135":"restore global cursor pos",
+"17138":"-\u003e done",
 "17144":"turn sprites on",
 "17149":"currently-selected tile idx = 0",
 "17151":"current tile row = 0",
+"17153":"print that we\u0027re in SELECT mode",
 "17158":"set current palette to 3 bc we\u0027ll increment before displaying",
 "17160":"increment (wraparound to 0) and set for tile menu",
-"17169":"LOCATE 12,23",
-"17180":"LOCATE 12,23",
+"17169":"LOCATE 12,23 (useless, immediately relocated in next subrtn)",
+"17171":"show the current set of bg tiles",
+"17177":"show the cursor box, and print its position",
+"17180":"LOCATE 12,23 (just under the first SELECT-menu tile)",
+"17185":"set \u0027^\u0027 as the kbd cursor and prompt for keyboard input",
+"17191":"start with index 0",
+"17193":"into SELECT\u0027s recognized-keys table",
+"17196":"got one? -\u003e handle key",
+"17198":"else, index++",
+"17199":"out of acceptable keys in table?",
+"17201":"no -\u003e loop to check next acceptable key value",
+"17206":"multiply key index times 2, for jump-table index",
+"17208":"get the address to jump to",
+"17218":"-\u003e then do the jump",
+"17229":"Esc",
+"17231":"Enter",
+"17233":"Shift-Home",
+"17235":"Home",
+"17237":"Backspace (DEL)",
+"17239":"Ins",
+"17241":"Space",
+"17243":"D",
 "17251":"increment the palette number",
 "17255":"did we advance past the last palette #?",
 "17257":"yes -\u003e wrap around to zero and then continue",
@@ -4027,6 +4186,54 @@
 "17281":" to the left of the tile menu)",
 "17284":"copy the full attribute byte, for the next 4 bytes",
 "17290":"-\u003e done",
+"17299":"LOCATE 5,22",
+"17301":"Control-E",
+"17303":"print ^E (clear to end of line - erases menu tiles)",
+"17306":"LOCATE 5,23",
+"17308":"Control-E",
+"17310":"print ^E (clear to end of line - erases ^ prompt)",
+"17313":"-\u003e present mode-select menu",
+"17316":"get current tiles-row index",
+"17318":"first row? -\u003e done; nothing to do",
+"17320":"else decr row",
+"17322":"-\u003e continue SELECT mode",
+"17325":"get current tiles-row index",
+"17327":"on last row of tiles?",
+"17329":"yes -\u003e done; nothing to do",
+"17331":"else go to next tile row",
+"17333":"(always) -\u003e done (redisplay)",
+"17335":"get cursor position",
+"17337":"cursor at last tile of row?",
+"17339":"yes -\u003e done; nothing to do",
+"17341":"else advance cursor by two",
+"17345":"and tile selection by one",
+"17347":"(always) -\u003e done (redisplay)",
+"17351":"cursor at first tile of row?",
+"17353":"yes -\u003e done; nothing to do",
+"17355":"else back up cursor two spaces",
+"17359":"select previous tile",
+"17361":"(always) -\u003e done (redisplay)",
+"17363":"save prompt cursor location",
+"17366":"copy bgtCH,bgtCV to CH,CV",
+"17369":"calculate VRAM addr for new position",
+"17372":"get tile-menu row #",
+"17374":"get starting tile ID for row",
+"17378":"add which tile in row is selected",
+"17380":"save as the tile ID to write",
+"17384":"write the tile to screen",
+"17389":"set the palette at cursor\u0027s current quadrant,",
+"17391":" to current SELECT palette choice",
+"17394":"after writing tile, advance BGTOOL cursor to next tile cell",
+"17400":"did we go past the end of the screen?",
+"17402":"yes -\u003e move cursor to first cell of next row",
+"17404":"restore prompt cursor location",
+"17407":"-\u003e return to SELECT kbd prompt",
+"17412":"put bgtool cursor at start of line",
+"17415":"advance bgtool cursor to next line",
+"17421":"moved past the end of BGTOOL screen?",
+"17423":"no -\u003e done",
+"17425":"yes -\u003e lock it to last row of BGTOOL",
+"17430":"-\u003e done",
 "17432":"save cursor position",
 "17441":"LOCATE 12, 22",
 "17443":"get the current tile row for displaying",
@@ -4100,6 +4307,19 @@
 "17693":"START HEADER CREATION",
 "17695":"Indicate this header precedes screen data",
 "17719":"END HEADER CREATION",
+"17733":"wait for next vblank, then disable screen rendering",
+"17740":"go to the VRAM address we\u0027ll be copying from",
+"17743":"fake PPU read",
+"17748":"read a tile ID",
+"17751":"save it to buffer",
+"17754":"next tile",
+"17755":"-\u003e loop until 256 tiles read",
+"17760":"restore screen rendering",
+"17763":"send the header for this page of the BG data",
+"17766":"send the data packet for this page",
+"17769":"advance to next VRAM page",
+"17773":"sent all VRAM pages for the bg screen?",
+"17775":"no -\u003e loop until 4 pages sent",
 "17781":"set up dest ptr: first page of screen 1",
 "17789":"find and read a header",
 "17792":"error? -\u003e rts",
@@ -4120,6 +4340,88 @@
 "17850":"are we at the end of screen 1?",
 "17852":"no -\u003e read next page of screen data",
 "17854":"yes: return!",
+"17857":"turn off dest mode",
+"17861":"move dest cursor sprite offscreen",
+"17864":"go to mode-select menu",
+"17872":"(unused)",
+"17876":"set flag for whether we\u0027re MOVE or COPY",
+"17878":"restore the tiles that were behind the mode-select menu",
+"17881":"turn on sprites",
+"17886":"we\u0027re in \"source\" state",
+"17888":"update display of what MODE this is",
+"17891":"redraw cursor sprite and coords",
+"17894":"update/redraw destination cursor sprite",
+"17899":"prompt for a char (use a blank prompt char (no flashing))",
+"17902":"handle arrow keys",
+"17905":"handle other keys:",
+"17917":"unrecognized key? -\u003e reprompt",
+"17919":"in \"destination\" state?",
+"17921":"no -\u003e nothing to do; reprompt",
+"17923":"save global cursor pos",
+"17926":"bgt cursor pos to global cursor pos",
+"17929":"get VRAM addr for cursor location",
+"17938":"write the source tile\u0027s ID to the current tile position",
+"17945":"write the source tile\u0027s palette to the current tile quad",
+"17948":"restore global cursor pos",
+"17951":"are we MOVE?",
+"17953":"no -\u003e just reprompt then",
+"17957":"MOVE completed, turn off \"destination\" state",
+"17961":"save global cursor",
+"17964":"copy bgt cursor to global cursor pos",
+"17967":"and calc the VRAM addr for that spot",
+"17972":"get the tile that\u0027s under the cursor",
+"17977":"and copy it as the destination cursor sprite graphic",
+"17979":"are we MOVE?",
+"17981":"no, copy -\u003e skip erasing existing tile",
+"17983":"yes, move",
+"17989":"write space char to current tile pos (erasing existing)",
+"17994":"turn on destination state",
+"17996":"copy tile\u0027s palette to dest cursor palette",
+"18003":"restore global cursor",
+"18006":"-\u003e go back to COPY/MOVE input prompt",
+"18009":"are we in \"source\" state?",
+"18011":"yes -\u003e hide the dest cursor sprite",
+"18020":"get the sprite palette for dest cursor",
+"18022":"and set for dest cursor sprite",
+"18025":"get bgt cursor x pos",
+"18029":"add 2 for the margin",
+"18031":"times 8 (tiles -\u003e pixels)",
+"18034":"save as dest cursor x pos",
+"18037":"get bgt cursor y pos",
+"18041":"add 3 for margin",
+"18043":"times 8 (tiles -\u003e pixels)",
+"18046":"save as dest cursor y pos",
+"18049":"decrement by one (for framing?)",
+"18052":"-\u003e done",
+"18055":"move dest sprite offscreen to hide it",
+"18087":"restore tiles from before menu display",
+"18095":"LOCATE 0,22",
+"18099":"print Ctrl-Z, clearing to end of screen (rows 22,23)",
+"18102":"activate SCREEN 0",
+"18105":"restore normal text prompt characters",
+"18108":"clear screen 0",
+"18119":"print \"SAVE OR LOAD?\"",
+"18122":"prompt for keyboard char",
+"18135":"echo the typed \u0027S\u0027",
+"18138":"prompt for the filename",
+"18141":"save the background out to tape",
+"18144":"-\u003e restart BGTOOL",
+"18147":"echo the typed \u0027L\u0027",
+"18150":"prompt for the filename",
+"18153":"load the background from tape",
+"18156":"-\u003e restart BGTOOL",
+"18159":"cursor to start of next line",
+"18170":"print \"FILENAME\", followed by double-quote char",
+"18173":"read line of input from user",
+"18179":"did we get STOP key?",
+"18181":"yes -\u003e abort load/save, restart BGTOOL in SELECT mode",
+"18183":"point TXTPTR at lineBuffer",
+"18186":"lineBuffer includes \"FILE NAME\" in it;",
+"18188":" skip over that prompt (but not double-quote char)",
+"18190":"get the filename into the \"cassette header\" area of buffer",
+"18193":"-\u003e and copy that back to the start of lineBuffer (erasing \"FILE NAME\" prompt and dquot)",
+"18196":"pull up caller subrtn\u0027s return address",
+"18198":"-\u003e and restart BGTOOL",
 "18201":"Mario",
 "18203":"Lady",
 "18205":"Fighter Fly",
@@ -5986,6 +6288,90 @@
 
 "17074":{
 "Text":"the starting tile ID for each row of 8 tiles that can be viewed in BGTOOL\u0027s SELECT mode. (Skips \"character\" tiles; hence the leap to $b8 after the row that starts with $18 - $20 would be the space character)",
+"IsFancy":true,
+"BoxMode":false,
+"MaxWidth":80,
+"BackgroundColor":0},
+
+"16447":{
+"Text":"Move the tile cursor (box sprite) according to the cursor key that was typed.",
+"IsFancy":true,
+"BoxMode":false,
+"MaxWidth":80,
+"BackgroundColor":0},
+
+"16521":{
+"Text":"\r\n",
+"IsFancy":true,
+"BoxMode":false,
+"MaxWidth":80,
+"BackgroundColor":0},
+
+"17221":{
+"Text":"A table of the recognized input keys in BGTOOL\u0027s SELECT mode",
+"IsFancy":true,
+"BoxMode":false,
+"MaxWidth":80,
+"BackgroundColor":0},
+
+"17293":{
+"Text":"When ESC is typed while in SELECT mode",
+"IsFancy":true,
+"BoxMode":false,
+"MaxWidth":80,
+"BackgroundColor":0},
+
+"16735":{
+"Text":"\r\n",
+"IsFancy":true,
+"BoxMode":false,
+"MaxWidth":80,
+"BackgroundColor":0},
+
+"16626":{
+"Text":"\r\n",
+"IsFancy":true,
+"BoxMode":false,
+"MaxWidth":80,
+"BackgroundColor":0},
+
+"17141":{
+"Text":"BGTOOL SELECT mode, entry from mode-select menu",
+"IsFancy":true,
+"BoxMode":false,
+"MaxWidth":80,
+"BackgroundColor":0},
+
+"17144":{
+"Text":"entry from BGTOOL command, or via CLEAR mode selection",
+"IsFancy":true,
+"BoxMode":false,
+"MaxWidth":80,
+"BackgroundColor":0},
+
+"17335":{
+"Text":"\r\n",
+"IsFancy":true,
+"BoxMode":false,
+"MaxWidth":80,
+"BackgroundColor":0},
+
+"17349":{
+"Text":"\r\n",
+"IsFancy":true,
+"BoxMode":false,
+"MaxWidth":80,
+"BackgroundColor":0},
+
+"17363":{
+"Text":"\r\n",
+"IsFancy":true,
+"BoxMode":false,
+"MaxWidth":80,
+"BackgroundColor":0},
+
+"16426":{
+"Text":"Copy BGTOOL\u0027s cursor coords to global (text) cursor coords",
 "IsFancy":true,
 "BoxMode":false,
 "MaxWidth":80,
@@ -8166,60 +8552,60 @@
 "LabelAnno":"None"},
 
 "17293":{
-"Label":"TC37D",
+"Label":"BgtSELECT_ModeMenu",
 "Value":50045,
 "Source":"User",
 "Type":"GlobalAddr",
-"LabelAnno":"Generated"},
+"LabelAnno":"None"},
 
 "17087":{
-"Label":"TC2AF",
+"Label":"BgtSELECT_NextPalette",
 "Value":49839,
 "Source":"User",
 "Type":"GlobalAddr",
-"LabelAnno":"Generated"},
+"LabelAnno":"None"},
 
 "17316":{
-"Label":"TC394",
+"Label":"BgtSELECT_TileMenuPrevRow",
 "Value":50068,
 "Source":"User",
 "Type":"GlobalAddr",
-"LabelAnno":"Generated"},
+"LabelAnno":"None"},
 
 "17325":{
-"Label":"TC39D",
+"Label":"BgtSELECT_TileMenuNextRow",
 "Value":50077,
 "Source":"User",
 "Type":"GlobalAddr",
-"LabelAnno":"Generated"},
+"LabelAnno":"None"},
 
 "17335":{
-"Label":"TC3A7",
+"Label":"BgtSELECT_TileMenuNextTile",
 "Value":50087,
 "Source":"User",
 "Type":"GlobalAddr",
-"LabelAnno":"Generated"},
+"LabelAnno":"None"},
 
 "17349":{
-"Label":"TC3B5",
+"Label":"BgtSELECT_TileMenuPrevTile",
 "Value":50101,
 "Source":"User",
 "Type":"GlobalAddr",
-"LabelAnno":"Generated"},
+"LabelAnno":"None"},
 
 "17363":{
-"Label":"TC3C3",
+"Label":"BgtSELECT_WriteTile",
 "Value":50115,
 "Source":"User",
 "Type":"GlobalAddr",
-"LabelAnno":"Generated"},
+"LabelAnno":"None"},
 
 "17124":{
-"Label":"TC2D4",
+"Label":"BgtSELECT_DeleteTile",
 "Value":49876,
 "Source":"User",
 "Type":"GlobalAddr",
-"LabelAnno":"Generated"},
+"LabelAnno":"None"},
 
 "10303":{
 "Label":"OpFn_NotEq",
@@ -8264,46 +8650,46 @@
 "LabelAnno":"None"},
 
 "17141":{
-"Label":"TC2E5",
+"Label":"BgtMode_SELECT",
 "Value":49893,
 "Source":"User",
 "Type":"GlobalAddr",
-"LabelAnno":"Generated"},
+"LabelAnno":"None"},
 
 "17870":{
-"Label":"TC5BE",
+"Label":"BgtMode_COPY",
 "Value":50622,
 "Source":"User",
 "Type":"GlobalAddr",
-"LabelAnno":"Generated"},
+"LabelAnno":"None"},
 
 "17867":{
-"Label":"TC5BB",
+"Label":"BgtMode_MOVE",
 "Value":50619,
 "Source":"User",
 "Type":"GlobalAddr",
-"LabelAnno":"Generated"},
+"LabelAnno":"None"},
 
 "16350":{
-"Label":"ClrScr1ThenBgTool",
+"Label":"BgtMode_CLEAR",
 "Value":49102,
 "Source":"User",
 "Type":"GlobalAddr",
 "LabelAnno":"None"},
 
 "18087":{
-"Label":"TC697",
+"Label":"BgtMode_FILE",
 "Value":50839,
 "Source":"User",
 "Type":"GlobalAddr",
-"LabelAnno":"Generated"},
+"LabelAnno":"None"},
 
 "16781":{
-"Label":"TC17D",
+"Label":"BgtMode_CHAR",
 "Value":49533,
 "Source":"User",
 "Type":"GlobalAddr",
-"LabelAnno":"Generated"},
+"LabelAnno":"None"},
 
 "18249":{
 "Label":"mtbl_SideProfiles",
@@ -15089,7 +15475,7 @@
 "LabelAnno":"None"},
 
 "13360":{
-"Label":"InitKanaMode",
+"Label":"InitPromptChars",
 "Value":46112,
 "Source":"User",
 "Type":"GlobalAddr",
@@ -15240,6 +15626,426 @@
 "Value":50184,
 "Source":"User",
 "Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"16923":{
+"Label":"prCursPos",
+"Value":49675,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"16860":{
+"Label":"BgtPrintCursorPos",
+"Value":49612,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"16735":{
+"Label":"BgtUpdateCursorAndPrintPos",
+"Value":49487,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"16437":{
+"Label":"BgtSetCursorAndReadChar",
+"Value":49189,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"16447":{
+"Label":"BgtHandleCursorKeys",
+"Value":49199,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"16493":{
+"Label":"BgtCursorUp",
+"Value":49245,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"16509":{
+"Label":"BgtCursorDown",
+"Value":49261,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"16464":{
+"Label":"BgtCursorRight",
+"Value":49216,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"16477":{
+"Label":"BgtCursorLeft",
+"Value":49229,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"16474":{
+"Label":"BgtNullKey",
+"Value":49226,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"16504":{
+"Label":"BgtCursStartOfNextLn",
+"Value":49256,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"16488":{
+"Label":"BgtCursEndOfPrevLn",
+"Value":49240,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"17221":{
+"Label":"tbl_bgtSelModeKeys",
+"Value":49973,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"17193":{
+"Label":"whatKeyLp",
+"Value":49945,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"17205":{
+"Label":"handleKey",
+"Value":49957,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"17229":{
+"Label":"jtbl_bgtSelectKeyHandlers",
+"Value":49981,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"16661":{
+"Label":"BgtSaveTilesBehindMenu",
+"Value":49413,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"16664":{
+"Label":"BgtRestoreTilesBehindMenu",
+"Value":49416,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"16697":{
+"Label":"skipFake",
+"Value":49449,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"16715":{
+"Label":"restore",
+"Value":49467,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"16683":{
+"Label":"bgtMenu_SvRstLoop",
+"Value":49435,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"16721":{
+"Label":"nextIter",
+"Value":49473,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"16701":{
+"Label":"nextTile",
+"Value":49453,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"16655":{
+"Label":"bgtMenu_SvRstWrapup",
+"Value":49407,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"17008":{
+"Label":"menuLp",
+"Value":49760,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"17004":{
+"Label":"BgtDisplayModeSelectMenu",
+"Value":49756,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"16536":{
+"Label":"BgtMenu_Prompt",
+"Value":49288,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"16521":{
+"Label":"BgtModeSelectMenu",
+"Value":49273,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"16607":{
+"Label":"BgtModeSel_PrvMenuItem",
+"Value":49359,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"16616":{
+"Label":"BgtModeSel_NxtMenuItem",
+"Value":49368,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"16626":{
+"Label":"BgtModeSel_Select",
+"Value":49378,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"16559":{
+"Label":"BgtModeSel_ExitTool",
+"Value":49311,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"16643":{
+"Label":"jtbl_BgtModeEntryPoints",
+"Value":49395,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"17144":{
+"Label":"BgtStartupSelectMode",
+"Value":49896,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"17171":{
+"Label":"BgtSelectModeContinue",
+"Value":49923,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"17174":{
+"Label":"prompt",
+"Value":49926,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"17322":{
+"Label":"bgtSelModeCont_C39A",
+"Value":50074,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"16426":{
+"Label":"BgtCursorToGlobalCursor",
+"Value":49178,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"17404":{
+"Label":"rstCursAndDone",
+"Value":50156,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"17410":{
+"Label":"cursNextRow",
+"Value":50162,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"18053":{
+"Label":"BgtCpyMvHideDestCursor",
+"Value":50805,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"18009":{
+"Label":"BgtCpyMvUpdateDestCursor",
+"Value":50761,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"17855":{
+"Label":"BgtMvCpy_GoToModeSelect",
+"Value":50607,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"17891":{
+"Label":"BgtMvCpy_KbdPrompt",
+"Value":50643,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"17992":{
+"Label":"amCopy",
+"Value":50744,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"17961":{
+"Label":"BgtCpyMv_PickupTile",
+"Value":50713,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"17919":{
+"Label":"BgtCpyMv_DropTile",
+"Value":50671,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"17959":{
+"Label":"reprompt",
+"Value":50711,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"11942":{
+"Label":"BgtFile_GoToScreen0",
+"Value":44694,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"18135":{
+"Label":"BgtFile_Save",
+"Value":50887,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"18147":{
+"Label":"BgtFile_Load",
+"Value":50899,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"18144":{
+"Label":"bgtoolRestart_C6D0",
+"Value":50896,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"18076":{
+"Label":"strFILE_NAME",
+"Value":50828,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"18159":{
+"Label":"BgtFile_PromptFilename",
+"Value":50911,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"18196":{
+"Label":"abort",
+"Value":50948,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"16778":{
+"Label":"modeSelMenu_C17A",
+"Value":49530,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"16798":{
+"Label":"BgtChar_Prompt",
+"Value":49550,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"16839":{
+"Label":"BgtChar_Enter",
+"Value":49591,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"16848":{
+"Label":"BgtChar_MaybeFixCV",
+"Value":49600,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"16855":{
+"Label":"fix",
+"Value":49607,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
 "LabelAnno":"None"}},
 
 "OperandFormats":{
@@ -20092,6 +20898,16 @@
 "SymbolRef":null,
 "Extra":null},
 
+"13243":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"DEFAULT_PPUCTRL",
+"Part":"Low"},
+
+"Extra":null},
+
 "13307":{
 "Length":2,
 "Format":"NumericLE",
@@ -20100,6 +20916,23 @@
 "Label":"VRAM_screen0",
 "Part":"High"},
 
+"Extra":null},
+
+"13360":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"TileId_whiteBox",
+"Part":"Low"},
+
+"Extra":null},
+
+"13364":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Ascii",
+"SymbolRef":null,
 "Extra":null},
 
 "13382":{
@@ -21173,6 +22006,26 @@
 
 "Extra":null},
 
+"15504":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"CURS_FLASH_TM",
+"Part":"Low"},
+
+"Extra":null},
+
+"15524":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"CURS_FLASH_TM",
+"Part":"Low"},
+
+"Extra":null},
+
 "15699":{
 "Length":2,
 "Format":"NumericLE",
@@ -21313,6 +22166,150 @@
 "SymbolRef":null,
 "Extra":null},
 
+"16380":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"key_CtrlZ",
+"Part":"Low"},
+
+"Extra":null},
+
+"16447":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"key_CursorRight",
+"Part":"Low"},
+
+"Extra":null},
+
+"16451":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"key_CursorLeft",
+"Part":"Low"},
+
+"Extra":null},
+
+"16455":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"key_CursorUp",
+"Part":"Low"},
+
+"Extra":null},
+
+"16459":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"key_CursorDown",
+"Part":"Low"},
+
+"Extra":null},
+
+"16467":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"COLS",
+"Part":"Low"},
+
+"Extra":null},
+
+"16488":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"COLS",
+"Part":"Low"},
+
+"Extra":null},
+
+"16512":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"BGT_ROWS",
+"Part":"Low"},
+
+"Extra":null},
+
+"16536":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Ascii",
+"SymbolRef":null,
+"Extra":null},
+
+"16541":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"key_CursorUp",
+"Part":"Low"},
+
+"Extra":null},
+
+"16545":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"key_CursorDown",
+"Part":"Low"},
+
+"Extra":null},
+
+"16549":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"key_Space",
+"Part":"Low"},
+
+"Extra":null},
+
+"16553":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"key_Stop",
+"Part":"Low"},
+
+"Extra":null},
+
+"16565":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Decimal",
+"SymbolRef":null,
+"Extra":null},
+
+"16569":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"key_CtrlZ",
+"Part":"Low"},
+
+"Extra":null},
+
 "16577":{
 "Length":2,
 "Format":"NumericLE",
@@ -21323,12 +22320,32 @@
 
 "Extra":null},
 
+"16593":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"DEFAULT_PPUCTRL",
+"Part":"Low"},
+
+"Extra":null},
+
+"16618":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"BGT_MODESEL_ITEMS",
+"Part":"Low"},
+
+"Extra":null},
+
 "16643":{
 "Length":2,
 "Format":"NumericLE",
 "SubFormat":"Symbol",
 "SymbolRef":{
-"Label":"TC2E5",
+"Label":"BgtMode_SELECT",
 "Part":"Low"},
 
 "Extra":null},
@@ -21338,7 +22355,7 @@
 "Format":"NumericLE",
 "SubFormat":"Symbol",
 "SymbolRef":{
-"Label":"TC5BE",
+"Label":"BgtMode_COPY",
 "Part":"Low"},
 
 "Extra":null},
@@ -21348,7 +22365,7 @@
 "Format":"NumericLE",
 "SubFormat":"Symbol",
 "SymbolRef":{
-"Label":"TC5BB",
+"Label":"BgtMode_MOVE",
 "Part":"Low"},
 
 "Extra":null},
@@ -21358,7 +22375,7 @@
 "Format":"NumericLE",
 "SubFormat":"Symbol",
 "SymbolRef":{
-"Label":"ClrScr1ThenBgTool",
+"Label":"BgtMode_CLEAR",
 "Part":"Low"},
 
 "Extra":null},
@@ -21368,7 +22385,7 @@
 "Format":"NumericLE",
 "SubFormat":"Symbol",
 "SymbolRef":{
-"Label":"TC697",
+"Label":"BgtMode_FILE",
 "Part":"Low"},
 
 "Extra":null},
@@ -21378,7 +22395,7 @@
 "Format":"NumericLE",
 "SubFormat":"Symbol",
 "SymbolRef":{
-"Label":"TC17D",
+"Label":"BgtMode_CHAR",
 "Part":"Low"},
 
 "Extra":null},
@@ -21390,6 +22407,20 @@
 "SymbolRef":null,
 "Extra":null},
 
+"16672":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Decimal",
+"SymbolRef":null,
+"Extra":null},
+
+"16697":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Decimal",
+"SymbolRef":null,
+"Extra":null},
+
 "16738":{
 "Length":2,
 "Format":"NumericLE",
@@ -21397,6 +22428,132 @@
 "SymbolRef":{
 "Label":"TileId_emptyBox",
 "Part":"Low"},
+
+"Extra":null},
+
+"16752":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"HMARGIN",
+"Part":"Low"},
+
+"Extra":null},
+
+"16764":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"VMARGIN",
+"Part":"Low"},
+
+"Extra":null},
+
+"16820":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"key_Enter",
+"Part":"Low"},
+
+"Extra":null},
+
+"16824":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"key_Escape",
+"Part":"Low"},
+
+"Extra":null},
+
+"16850":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"BGT_ROWS",
+"Part":"Low"},
+
+"Extra":null},
+
+"16863":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Decimal",
+"SymbolRef":null,
+"Extra":null},
+
+"16867":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Ascii",
+"SymbolRef":null,
+"Extra":null},
+
+"16872":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Ascii",
+"SymbolRef":null,
+"Extra":null},
+
+"16883":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Ascii",
+"SymbolRef":null,
+"Extra":null},
+
+"16888":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Ascii",
+"SymbolRef":null,
+"Extra":null},
+
+"16901":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Decimal",
+"SymbolRef":null,
+"Extra":null},
+
+"16905":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Decimal",
+"SymbolRef":null,
+"Extra":null},
+
+"16917":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Decimal",
+"SymbolRef":null,
+"Extra":null},
+
+"16929":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"zpNumStrTmp",
+"Part":"Low"},
+
+"Extra":null},
+
+"16936":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"zpNumStrTmp",
+"Part":"High"},
 
 "Extra":null},
 
@@ -21571,6 +22728,16 @@
 "SymbolRef":null,
 "Extra":null},
 
+"17130":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"key_Space",
+"Part":"Low"},
+
+"Extra":null},
+
 "17163":{
 "Length":2,
 "Format":"NumericLE",
@@ -21585,10 +22752,87 @@
 "SymbolRef":null,
 "Extra":null},
 
+"17183":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Ascii",
+"SymbolRef":null,
+"Extra":null},
+
 "17221":{
-"Length":8,
-"Format":"Dense",
-"SubFormat":"None",
+"Length":1,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"key_Escape",
+"Part":"Low"},
+
+"Extra":null},
+
+"17222":{
+"Length":1,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"key_Enter",
+"Part":"Low"},
+
+"Extra":null},
+
+"17223":{
+"Length":1,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"key_Cls",
+"Part":"Low"},
+
+"Extra":null},
+
+"17224":{
+"Length":1,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"key_Home",
+"Part":"Low"},
+
+"Extra":null},
+
+"17225":{
+"Length":1,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"key_Del",
+"Part":"Low"},
+
+"Extra":null},
+
+"17226":{
+"Length":1,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"key_Insert",
+"Part":"Low"},
+
+"Extra":null},
+
+"17227":{
+"Length":1,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"key_Space",
+"Part":"Low"},
+
+"Extra":null},
+
+"17228":{
+"Length":1,
+"Format":"NumericLE",
+"SubFormat":"Ascii",
 "SymbolRef":null,
 "Extra":null},
 
@@ -21597,7 +22841,7 @@
 "Format":"NumericLE",
 "SubFormat":"Symbol",
 "SymbolRef":{
-"Label":"TC37D",
+"Label":"BgtSELECT_ModeMenu",
 "Part":"Low"},
 
 "Extra":null},
@@ -21607,7 +22851,7 @@
 "Format":"NumericLE",
 "SubFormat":"Symbol",
 "SymbolRef":{
-"Label":"TC2AF",
+"Label":"BgtSELECT_NextPalette",
 "Part":"Low"},
 
 "Extra":null},
@@ -21617,7 +22861,7 @@
 "Format":"NumericLE",
 "SubFormat":"Symbol",
 "SymbolRef":{
-"Label":"TC394",
+"Label":"BgtSELECT_TileMenuPrevRow",
 "Part":"Low"},
 
 "Extra":null},
@@ -21627,7 +22871,7 @@
 "Format":"NumericLE",
 "SubFormat":"Symbol",
 "SymbolRef":{
-"Label":"TC39D",
+"Label":"BgtSELECT_TileMenuNextRow",
 "Part":"Low"},
 
 "Extra":null},
@@ -21637,7 +22881,7 @@
 "Format":"NumericLE",
 "SubFormat":"Symbol",
 "SymbolRef":{
-"Label":"TC3A7",
+"Label":"BgtSELECT_TileMenuNextTile",
 "Part":"Low"},
 
 "Extra":null},
@@ -21647,7 +22891,7 @@
 "Format":"NumericLE",
 "SubFormat":"Symbol",
 "SymbolRef":{
-"Label":"TC3B5",
+"Label":"BgtSELECT_TileMenuPrevTile",
 "Part":"Low"},
 
 "Extra":null},
@@ -21657,7 +22901,7 @@
 "Format":"NumericLE",
 "SubFormat":"Symbol",
 "SymbolRef":{
-"Label":"TC3C3",
+"Label":"BgtSELECT_WriteTile",
 "Part":"Low"},
 
 "Extra":null},
@@ -21667,7 +22911,7 @@
 "Format":"NumericLE",
 "SubFormat":"Symbol",
 "SymbolRef":{
-"Label":"TC2D4",
+"Label":"BgtSELECT_DeleteTile",
 "Part":"Low"},
 
 "Extra":null},
@@ -21682,12 +22926,86 @@
 
 "Extra":null},
 
+"17293":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Decimal",
+"SymbolRef":null,
+"Extra":null},
+
+"17297":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Decimal",
+"SymbolRef":null,
+"Extra":null},
+
+"17327":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"BGT_SELECT_NUM_TROWS",
+"Part":"Low"},
+
+"Extra":null},
+
+"17337":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"SELMD_LAST_TILEPOS",
+"Part":"Low"},
+
+"Extra":null},
+
+"17351":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"SELMD_FRST_TILEPOS",
+"Part":"Low"},
+
+"Extra":null},
+
 "17382":{
 "Length":2,
 "Format":"NumericLE",
 "SubFormat":"Symbol",
 "SymbolRef":{
 "Label":"NC_RestoreCharAtCursor",
+"Part":"Low"},
+
+"Extra":null},
+
+"17400":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"COLS",
+"Part":"Low"},
+
+"Extra":null},
+
+"17421":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"BGT_ROWS",
+"Part":"Low"},
+
+"Extra":null},
+
+"17425":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"BGT_ROWS",
 "Part":"Low"},
 
 "Extra":null},
@@ -21800,12 +23118,62 @@
 
 "Extra":null},
 
+"17773":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"VRAM_screen1",
+"Part":"High"},
+
+"Extra":null},
+
 "17797":{
 "Length":2,
 "Format":"NumericLE",
 "SubFormat":"Symbol",
 "SymbolRef":{
 "Label":"CAS_HDR_SCREEN",
+"Part":"Low"},
+
+"Extra":null},
+
+"17897":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"key_Space",
+"Part":"Low"},
+
+"Extra":null},
+
+"17905":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"key_Escape",
+"Part":"Low"},
+
+"Extra":null},
+
+"17909":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"key_Insert",
+"Part":"Low"},
+
+"Extra":null},
+
+"17913":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"key_Del",
 "Part":"Low"},
 
 "Extra":null},
@@ -21830,12 +23198,109 @@
 
 "Extra":null},
 
+"17983":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"key_Space",
+"Part":"Low"},
+
+"Extra":null},
+
 "17987":{
 "Length":2,
 "Format":"NumericLE",
 "SubFormat":"Symbol",
 "SymbolRef":{
 "Label":"NC_RestoreCharAtCursor",
+"Part":"Low"},
+
+"Extra":null},
+
+"18015":{
+"Length":3,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"oamSprTileId",
+"Part":"Low"},
+
+"Extra":null},
+
+"18022":{
+"Length":3,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"oamSprAttr",
+"Part":"Low"},
+
+"Extra":null},
+
+"18029":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"HMARGIN",
+"Part":"Low"},
+
+"Extra":null},
+
+"18034":{
+"Length":3,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"oamSprXPos",
+"Part":"Low"},
+
+"Extra":null},
+
+"18041":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"VMARGIN",
+"Part":"Low"},
+
+"Extra":null},
+
+"18046":{
+"Length":3,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"oamSprYPos",
+"Part":"Low"},
+
+"Extra":null},
+
+"18049":{
+"Length":3,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"oamSprYPos",
+"Part":"Low"},
+
+"Extra":null},
+
+"18053":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Decimal",
+"SymbolRef":null,
+"Extra":null},
+
+"18055":{
+"Length":3,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"oamSprYPos",
 "Part":"Low"},
 
 "Extra":null},
@@ -21852,6 +23317,23 @@
 "Format":"StringNullTerm",
 "SubFormat":"Ascii",
 "SymbolRef":null,
+"Extra":null},
+
+"18093":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Decimal",
+"SymbolRef":null,
+"Extra":null},
+
+"18097":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"key_CtrlZ",
+"Part":"Low"},
+
 "Extra":null},
 
 "18111":{
@@ -21871,6 +23353,50 @@
 "SymbolRef":{
 "Label":"strSAVE_OR_LOAD_Q",
 "Part":"High"},
+
+"Extra":null},
+
+"18125":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Ascii",
+"SymbolRef":null,
+"Extra":null},
+
+"18129":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Ascii",
+"SymbolRef":null,
+"Extra":null},
+
+"18162":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"strFILE_NAME",
+"Part":"Low"},
+
+"Extra":null},
+
+"18166":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"strFILE_NAME",
+"Part":"High"},
+
+"Extra":null},
+
+"18179":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"key_Stop",
+"Part":"Low"},
 
 "Extra":null},
 
@@ -27361,6 +28887,26 @@
 "ClearPrevious":false},
 
 "5685":{
+"Variables":[{
+"DataDescriptor":{
+"Length":1,
+"Format":"NumericLE",
+"SubFormat":"Hex",
+"SymbolRef":null,
+"Extra":null},
+
+"Comment":"flag to indicate whether we\u0027re handling \"CLICK ON/OFF\" or \"TR ON/OFF\"",
+"HasWidth":true,
+"Direction":"ReadWrite",
+"MultiMask":null,
+"Label":"vZpAmClick",
+"Value":116,
+"Source":"Variable",
+"Type":"ExternalAddr",
+"LabelAnno":"None"}],
+"ClearPrevious":true},
+
+"5720":{
 "Variables":[],
 "ClearPrevious":true},
 
@@ -28507,6 +30053,60 @@
 "SymbolRef":null,
 "Extra":null},
 
+"Comment":"index into buffer for saving tiles from behind BGTOOL mode-select menu",
+"HasWidth":true,
+"Direction":"ReadWrite",
+"MultiMask":null,
+"Label":"vZpBgtTileBufIdx",
+"Value":61,
+"Source":"Variable",
+"Type":"ExternalAddr",
+"LabelAnno":"None"},
+
+{
+"DataDescriptor":{
+"Length":1,
+"Format":"NumericLE",
+"SubFormat":"Hex",
+"SymbolRef":null,
+"Extra":null},
+
+"Comment":"",
+"HasWidth":true,
+"Direction":"ReadWrite",
+"MultiMask":null,
+"Label":"vZpRowsRemain",
+"Value":116,
+"Source":"Variable",
+"Type":"ExternalAddr",
+"LabelAnno":"None"},
+
+{
+"DataDescriptor":{
+"Length":1,
+"Format":"NumericLE",
+"SubFormat":"Hex",
+"SymbolRef":null,
+"Extra":null},
+
+"Comment":"",
+"HasWidth":true,
+"Direction":"ReadWrite",
+"MultiMask":null,
+"Label":"vZpBgtMenuItemIdx",
+"Value":117,
+"Source":"Variable",
+"Type":"ExternalAddr",
+"LabelAnno":"None"},
+
+{
+"DataDescriptor":{
+"Length":1,
+"Format":"NumericLE",
+"SubFormat":"Hex",
+"SymbolRef":null,
+"Extra":null},
+
 "Comment":"",
 "HasWidth":true,
 "Direction":"ReadWrite",
@@ -28632,6 +30232,84 @@
 "Source":"Variable",
 "Type":"ExternalAddr",
 "LabelAnno":"None"}],
+"ClearPrevious":true},
+
+"17855":{
+"Variables":[{
+"DataDescriptor":{
+"Length":1,
+"Format":"NumericLE",
+"SubFormat":"Hex",
+"SymbolRef":null,
+"Extra":null},
+
+"Comment":"color palette # for the destination cursor",
+"HasWidth":true,
+"Direction":"ReadWrite",
+"MultiMask":null,
+"Label":"vZpDestCursPalette",
+"Value":136,
+"Source":"Variable",
+"Type":"ExternalAddr",
+"LabelAnno":"None"},
+
+{
+"DataDescriptor":{
+"Length":1,
+"Format":"NumericLE",
+"SubFormat":"Hex",
+"SymbolRef":null,
+"Extra":null},
+
+"Comment":"tile id for the move/copy destination cursor sprite",
+"HasWidth":true,
+"Direction":"ReadWrite",
+"MultiMask":null,
+"Label":"vZpDestCursTileId",
+"Value":145,
+"Source":"Variable",
+"Type":"ExternalAddr",
+"LabelAnno":"None"},
+
+{
+"DataDescriptor":{
+"Length":1,
+"Format":"NumericLE",
+"SubFormat":"Hex",
+"SymbolRef":null,
+"Extra":null},
+
+"Comment":"true if we\u0027re the destination cursor is active",
+"HasWidth":true,
+"Direction":"ReadWrite",
+"MultiMask":null,
+"Label":"vZpDestStateOn",
+"Value":174,
+"Source":"Variable",
+"Type":"ExternalAddr",
+"LabelAnno":"None"},
+
+{
+"DataDescriptor":{
+"Length":1,
+"Format":"NumericLE",
+"SubFormat":"Hex",
+"SymbolRef":null,
+"Extra":null},
+
+"Comment":"flag var for whether we\u0027re MOVE or COPY",
+"HasWidth":true,
+"Direction":"ReadWrite",
+"MultiMask":null,
+"Label":"vZpAmMove",
+"Value":175,
+"Source":"Variable",
+"Type":"ExternalAddr",
+"LabelAnno":"None"}],
+"ClearPrevious":true},
+
+"18087":{
+"Variables":[],
 "ClearPrevious":true},
 
 "19051":{

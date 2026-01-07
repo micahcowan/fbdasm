@@ -58,7 +58,7 @@ zpPpuCtrlVal    @  $32
 zpPpuMaskVal    @  $33
 zpMulScratch    @  $34    8 ; Used for multiplication scratch space. Only the first four are ever actually used!
 zpTmp3C         @  $3C
-zpNumStrTmp     @  $3D    5 ; Holds str output from HexStrFromWord and DecStrFromWOrd
+zpNumStrTmp     @  $3D    5 ; Holds str output from HexStrFromWord and DecStrFromWord
 zpFindLNum      @  $44    2
 zpTmp46         @  $46    1 ; various miscellaneous uses
 zpLineStartRow  @  $47      ; the screen row at which current typed line starts (only set AFTER typing is finished)
@@ -191,9 +191,14 @@ fnKey5_DfnBuf   @  $4C0   16
 fnKey6_DfnBuf   @  $4D0   16
 fnKey7_DfnBuf   @  $4E0   16
 fnKey8_DfnBuf   @  $4F0   16
+; $500 buffer locations
 lineBuffer      @  $500   256; NMICMD_BufferCurLine copies the full current, potentially multi-row line to here
-bgtCurRowTileIds@  $510   16 ; tile IDs for the currently-selected row of tiles in SELECT mode, separated by spaces
+bgtCH           @  $505      ; horiz. pos of tile cursor, in BGTOOL mode
+bgtCV           @  $506      ; vert. pos of tile cursor, in BGTOOL mode
+;bgtCurRowTileIds@  $510   16 ; tile IDs for the currently-selected row of tiles in SELECT mode, separated by spaces
+bgtMenuTilesBuf @  $520   90 ; saved tiles from behind BGTOOL mode-select menu
 ;fileName       @  $580   17; SAVE and LOAD put their string arg here.
+;
 isRowWrappedArray0  @  $601 24 ; Marks which visible screen rows are wrapped from previous line, if SCREEN 0.
 isRowWrappedArray1  @  $61B 24 ; Marks which visible screen rows are wrapped from previous line, if SCREEN 1.
 kbdDataAry      @  $634   9  ; Key down bitmap. See loc $B9A1 for content details
@@ -218,14 +223,20 @@ memoryTop       @  $6FFF  ; What FRETOP is set to by default
 
 COLS = 28
 ROWS = 24
+BGT_ROWS = 21   ; number of rows in BGTOOL (excluding bottom status area)
+HMARGIN = 2     ; horizontal margin size (in tiles/chars)
+VMARGIN = 3     ; certical margin size (in tiles/chars)
 
+SELMD_LAST_TILEPOS = 26
+SELMD_FRST_TILEPOS = 12
+
+DEFAULT_PPUCTRL = $10
 STRLEN_MAX = 32
 
 NUM_ACTORS = 8  ; number of animated characters ("actors") in Family BASIC
-
 NUM_PALETTES = 4; number of palettes in a palette set
-
-TileId_emptyBox = $B0
+BGT_MODESEL_ITEMS = 5   ; how many menu items in BGTOOL mode-select menu
+BGT_SELECT_NUM_TROWS = 13   ; how many tile rows in BGTOOL SELECT mode's tile menu
 
 FOR_STK_MARKER   = $00FD  ; special CPU stack marker for FOR-loop data
 GOSUB_STK_MARKER = $00FF  ; special CPU stack marker for RETURN data
@@ -292,6 +303,8 @@ DTU__OFF_NI_SHITE_KUDASAI   = 4
 DTU__NI_SHITE_KUDASAI       = 5
 DTU__SHITE_KUDASAI          = 6
 
+CURS_FLASH_TM = 128     ; how long to hide/show the cursor when flashing
+
 ; Flags for zpErrHandStat
 EH_NO_HANDLER       = $00
 EH_HANDLER_DEFINED  = $01
@@ -319,6 +332,24 @@ err_NR          = $12       ; "NR" - No Resume
 err_RE          = $13       ; "RE" - RESUME without ERROR
 err_NB          = $14       ; "NB" - No BG Data
 err_UP          = $15       ; "UP" - Unprintable Error
+
+key_Stop        = $03       ; Control-C, (but ^C not always equiv to STOP)
+key_Del         = $08       ; Control-H / Backspace
+key_Tab         = $09       ; Control-I
+key_Home        = $0B       ; Control-K
+key_Cls         = $0C       ; Control-L
+key_Enter       = $0D       ; Control-M
+key_Insert      = $12       ; Control-R
+key_CtrlZ       = $1A       ; Control-Z (clear to end of screen)
+key_Escape      = $1B       ; Control-[
+key_CursorRight = $1C       ; Control-\
+key_CursorLeft  = $1D       ; Control-]
+key_CursorUp    = $1E       ; Control-^
+key_CursorDown  = $1F       ; Control-_
+key_Space       = $20
+
+TileId_emptyBox = $B0
+TileId_whiteBox = $FD
 
 tok_LNUM_AFTER  = $0B       ; indicates a line number (word) follows this byte
 tok_LLINK_AFTER = $0C       ; indicates a direct link to a line follows - only used during a RENUM
